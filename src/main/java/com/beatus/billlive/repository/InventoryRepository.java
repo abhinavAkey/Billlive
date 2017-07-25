@@ -6,14 +6,12 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.beatus.billlive.domain.model.Inventory;
 
-
-@Repository
-@Transactional
+@Component("inventoryRepository")
 public class InventoryRepository {
 	
 	private static final Logger logger = LoggerFactory.getLogger(InventoryRepository.class);

@@ -13,6 +13,9 @@ public class ItemDTO {
 	private String marginPercentage;
 	private String taxOnMargin;
 	private String taxId;
+	private String isAdded;
+	private String isUpdated;
+	private String isDeleted;
 	
 	public String getItemId() {
 		return itemId;
@@ -79,5 +82,23 @@ public class ItemDTO {
 	}
 	public void setQuantity(String quantity) {
 		this.quantity = quantity;
+	}
+	public String getIsAdded() {
+		return isAdded;
+	}
+	public void setIsAdded(String isAdded) {
+		this.isAdded = isAdded;
+	}
+	public String getIsUpdated() {
+		return isUpdated;
+	}
+	public void setIsUpdated(String isUpdated) {
+		this.isUpdated = isUpdated;
+	}
+	public String getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(String isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 }

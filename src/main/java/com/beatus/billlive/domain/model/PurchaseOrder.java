@@ -13,6 +13,8 @@ public class PurchaseOrder {
 	private String unitPrice;
 	private String totalAmount;
 	private String taxId;
+	private String isUpdated;
+	private String isDeleted;
 	
 	public String getTaxId() {
 		return taxId;
@@ -73,5 +75,23 @@ public class PurchaseOrder {
 	}
 	public void setTotalAmount(String totalAmount) {
 		this.totalAmount = totalAmount;
+	}
+	public QuantityType getQuantityType() {
+		return quantityType;
+	}
+	public void setQuantityType(QuantityType quantityType) {
+		this.quantityType = quantityType;
+	}
+	public String getIsUpdated() {
+		return isUpdated;
+	}
+	public void setIsUpdated(String isUpdated) {
+		this.isUpdated = isUpdated;
+	}
+	public String getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(String isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 }

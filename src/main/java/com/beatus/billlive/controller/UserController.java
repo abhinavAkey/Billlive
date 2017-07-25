@@ -2,9 +2,9 @@ package com.beatus.billlive.controller;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,28 +18,23 @@ import com.beatus.billlive.service.UserService;
 import com.beatus.billlive.validation.UserValidator;
 import com.beatus.billlive.validation.exception.UserDataException;
 
-
-
 @Controller
-@RequestMapping("/company")
+@RequestMapping("/api")
 public class UserController {
 	
+	@Resource(name = "userService")
 	private UserService userService;
+	
+	@Resource(name = "userValidator")
 	private UserValidator userValidator;
 	
-	@Autowired(required=true)
-	@Qualifier(value="userService")
-	public void setUserService(UserService ps){
-		this.userService = ps;
-	}
-	
-	@RequestMapping(value = "/getallusers", method = RequestMethod.GET)
+	@RequestMapping(value = "/company/getallusers", method = RequestMethod.GET)
 	public @ResponseBody List<UserData> getAllUsers() {
 		List<UserData> userList = userService.getAllUsers();
 		return userList;
 	}
 	
-	@RequestMapping(value = "/getuser", method = RequestMethod.GET)
+	@RequestMapping(value = "/company/getuser", method = RequestMethod.GET)
 	public @ResponseBody UserData getUserById(String uId) throws UserDataException {
 		if(StringUtils.isNotBlank(uId)){
 			UserData userData = userService.getUserById(uId);
@@ -51,7 +46,7 @@ public class UserController {
 	}
 	
 	//For add and update user both
-	@RequestMapping(value= "/signup", method = RequestMethod.POST)
+	@RequestMapping(value= "/company/signup", method = RequestMethod.POST)
 	public @ResponseBody String addUser(@RequestBody UserData userData) throws UserDataException{
 		if(userValidator.validateUserData(userData)){
 			String isUserCreated = userService.addUser(userData);
@@ -61,14 +56,14 @@ public class UserController {
 		}	
 	}
 	
-	@RequestMapping("/remove/{id}")
-    public String removeUser(@PathVariable("id") int id){
+	@RequestMapping("/company/remove/{id}")
+    public String removeUser(@PathVariable("id") String uid){
 		
-        this.userService.removeUser(id);
+        this.userService.removeUser(uid);
         return "redirect:/users";
     }
  
-    @RequestMapping("/edit/{id}")
+    @RequestMapping("/companyO/edit/{id}")
     public String editUser(@PathVariable("id") int id, Model model){
        
         return "user";

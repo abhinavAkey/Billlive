@@ -1,11 +1,12 @@
 package com.beatus.billlive.domain.model;
 
-public class Invoice {
+public class InvoiceData {
 
 	private String invoiceNumber;
 	private String invoiceFrom;
 	private String invoiceTo;
 	private String uid;
+	private String postId;
 	private String itemId;
 	private String dateOfBill;
 	private String dueDate;
@@ -14,6 +15,8 @@ public class Invoice {
 	private String unitPrice;
 	private String totalAmount;
 	private String taxId;
+	private String isUpdated;
+	private String isDeleted;
 	
 	public String getInvoiceNumber() {
 		return invoiceNumber;
@@ -86,5 +89,23 @@ public class Invoice {
 	}
 	public void setTaxId(String taxId) {
 		this.taxId = taxId;
+	}
+	public String getIsUpdated() {
+		return isUpdated;
+	}
+	public void setIsUpdated(String isUpdated) {
+		this.isUpdated = isUpdated;
+	}
+	public String getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(String isDeleted) {
+		this.isDeleted = isDeleted;
+	}
+	public String getPostId() {
+		return postId;
+	}
+	public void setPostId(String postId) {
+		this.postId = postId;
 	}
 }

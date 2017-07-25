@@ -3,15 +3,16 @@ package com.beatus.billlive.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.beatus.billlive.domain.model.Item;
+import com.beatus.billlive.domain.model.ItemData;
 import com.beatus.billlive.repository.ItemRepository;
 
 
 @Service
+@Component("itemService")
 public class ItemService {
 	
 	@Autowired
@@ -22,31 +23,31 @@ public class ItemService {
 	}
 
 	@Transactional
-	public void addItem(Item item) {
+	public void addItem(ItemData item) {
 		this.itemRepository.addItem(item);
 	}
 
 	
 	@Transactional
-	public void updateItem(Item item) {
+	public void updateItem(ItemData item) {
 		this.itemRepository.updateItem(item);
 	}
 
 
 	@Transactional
-	public List<Item> listItems() {
-		return this.itemRepository.listItems();
+	public List<ItemData> getAllItems(String uid) {
+		return this.itemRepository.getAllItems(uid);
 	}
 
 
 	@Transactional
-	public Item getItemById(int id) {
+	public ItemData getItemById(String id) {
 		return this.itemRepository.getItemById(id);
 	}
 
 
 	@Transactional
-	public void removeItem(int id) {
+	public void removeItem(String id) {
 		this.itemRepository.removeItem(id);
 	}
 

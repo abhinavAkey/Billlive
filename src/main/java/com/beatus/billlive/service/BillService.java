@@ -1,21 +1,30 @@
 package com.beatus.billlive.service;
 
+import javax.annotation.Resource;
+
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import com.beatus.billlive.config.ApplicationConfiguration;
 import com.beatus.billlive.domain.model.BillDTO;
+import com.beatus.billlive.repository.BillRepository;
 import com.beatus.billlive.validation.BillValidator;
 import com.beatus.billlive.validation.exception.BillValidationException;
 
+@Service
+@Component("billService")
 public class BillService {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationConfiguration.class);
 
-	@Autowired
-	BillValidator billValidator;
+	@Resource(name = "billRepository")
+	private BillRepository billRepository;
+	
+	@Resource(name = "billValidator")
+	private BillValidator billValidator;
 
 	public boolean addBillService(BillDTO bill) throws BillValidationException{
 		

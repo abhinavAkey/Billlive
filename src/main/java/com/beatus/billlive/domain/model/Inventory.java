@@ -33,6 +33,9 @@ public class Inventory {
 	@Column(name="minimum_stock_value")
 	private String minimumStockValue;
 	
+	private String isUpdated;
+	private String isDeleted;
+	
 	public String getInventoryId() {
 		return inventoryId;
 	}
@@ -92,5 +95,29 @@ public class Inventory {
 	}
 	public void setMinimumStockValue(String minimumStockValue) {
 		this.minimumStockValue = minimumStockValue;
+	}
+	public QuantityType getBuyQuantityType() {
+		return buyQuantityType;
+	}
+	public void setBuyQuantityType(QuantityType buyQuantityType) {
+		this.buyQuantityType = buyQuantityType;
+	}
+	public QuantityType getSellQuantityType() {
+		return sellQuantityType;
+	}
+	public void setSellQuantityType(QuantityType sellQuantityType) {
+		this.sellQuantityType = sellQuantityType;
+	}
+	public String getIsUpdated() {
+		return isUpdated;
+	}
+	public void setIsUpdated(String isUpdated) {
+		this.isUpdated = isUpdated;
+	}
+	public String getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(String isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 }

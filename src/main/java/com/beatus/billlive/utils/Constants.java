@@ -51,4 +51,5 @@ public class Constants {
 	public static final String PURCHASE_FROM = "purchaseFrom";
 	public static final String PURCHASE_TO = "purchaseTo";
 	public static final String PURCHASE_DATE = "purchaseDate";
+	public static final String APP_NAME = "billlive-2ebb8";
 }

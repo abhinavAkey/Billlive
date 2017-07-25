@@ -1,29 +1,19 @@
 package com.beatus.billlive.domain.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.List;
 
-@Entity
-@Table(name="item")
-public class Item {
-	@Id
-	@Column(name="item_id")
+
+public class ItemData {
+	
 	private String itemId;
-	@Column(name="hsn_code")
+	private String uid;
+	private String postId;
 	private String hsnCode;
-	@Column(name="gst_item_code")
 	private String gstItemCode;
-	@Column(name="item_name")
 	private String itemName;
-	@Column(name="item_desc")
 	private String itemDesc;
-	@Column(name="inventory_id")
-	private String inventoryId;
-	@Column(name="unit_price")
+	private List<Inventory> inventories;
 	private String unitPrice;
-	@Column(name="tax_id")
 	private String taxId;
 	
 	public String getItemId() {
@@ -56,12 +46,11 @@ public class Item {
 	public void setItemDesc(String itemDesc) {
 		this.itemDesc = itemDesc;
 	}
-	
-	public String getInventoryId() {
-		return inventoryId;
+	public List<Inventory> getInventories() {
+		return inventories;
 	}
-	public void setInventoryId(String inventoryId) {
-		this.inventoryId = inventoryId;
+	public void setInventories(List<Inventory> inventories) {
+		this.inventories = inventories;
 	}
 	public String getUnitPrice() {
 		return unitPrice;
@@ -75,5 +64,16 @@ public class Item {
 	public void setTaxId(String taxId) {
 		this.taxId = taxId;
 	}
-	
+	public String getPostId() {
+		return postId;
+	}
+	public void setPostId(String postId) {
+		this.postId = postId;
+	}
+	public String getUid() {
+		return uid;
+	}
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
 }

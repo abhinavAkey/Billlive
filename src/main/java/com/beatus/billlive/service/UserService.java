@@ -2,6 +2,9 @@ package com.beatus.billlive.service;
 
 import java.util.List;
 
+import javax.annotation.Resource;
+
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -9,13 +12,11 @@ import com.beatus.billlive.domain.model.UserData;
 import com.beatus.billlive.repository.UserRepository;
 
 @Service
+@Component("userService")
 public class UserService {
 	
+	@Resource(name = "userRepository")
 	private UserRepository userRepository;
-
-	public void setUserDAO(UserRepository userRepository) {
-		this.userRepository = userRepository;
-	}
 
 	@Transactional
 	public String addUser(UserData user) {
@@ -39,8 +40,8 @@ public class UserService {
 	}
 
 	@Transactional
-	public void removeUser(int id) {
-		this.userRepository.removeUser(id);
+	public void removeUser(String uid) {
+		this.userRepository.removeUser(uid);
 	}
 
 }

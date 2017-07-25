@@ -18,9 +18,14 @@ import javax.print.SimpleDoc;
 import javax.print.attribute.HashPrintRequestAttributeSet;
 import javax.print.attribute.PrintRequestAttributeSet;
 
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
+
 import com.beatus.billlive.domain.model.Receipt;
 import com.beatus.billlive.utils.PrinterOptions;
 
+@Service
+@Component("printerService")
 public class PrinterService implements Printable {
 
     public List<String> getPrinters(){

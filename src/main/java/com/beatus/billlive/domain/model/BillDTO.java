@@ -11,6 +11,8 @@ public class BillDTO {
 	private List<ItemDTO> items;
 	private String dateOfBill;
 	private String dueDate;
+	private String isUpdated;
+	private String isDeleted;
 	
 	public String getBillNumber() {
 		return billNumber;
@@ -53,5 +55,17 @@ public class BillDTO {
 	}
 	public void setItems(List<ItemDTO> items) {
 		this.items = items;
+	}
+	public String getIsUpdated() {
+		return isUpdated;
+	}
+	public void setIsUpdated(String isUpdated) {
+		this.isUpdated = isUpdated;
+	}
+	public String getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(String isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 }

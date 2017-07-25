@@ -2,14 +2,12 @@ package com.beatus.billlive.domain.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
 @Table(name="bill")
-public class Bill {
+public class BillData {
 	@Id
 	@Column(name="bill_number")
 	private String billNumber;
@@ -19,6 +17,7 @@ public class Bill {
 	private String billTo;
 	@Column(name="u_id")
 	private String uid;
+	private String postId;
 	@Column(name="item_id")
 	private String itemId;
 	@Column(name="date_of_bill")
@@ -45,6 +44,8 @@ public class Bill {
 	private String taxOnMargin;
 	@Column(name="tax_id")
 	private String taxId;
+	private String amountPaid;
+	private String amountDue;
 	
 	public String getBillNumber() {
 		return billNumber;
@@ -147,5 +148,23 @@ public class Bill {
 	}
 	public void setTaxOnMargin(String taxOnMargin) {
 		this.taxOnMargin = taxOnMargin;
+	}
+	public String getAmountPaid() {
+		return amountPaid;
+	}
+	public void setAmountPaid(String amountPaid) {
+		this.amountPaid = amountPaid;
+	}
+	public String getAmountDue() {
+		return amountDue;
+	}
+	public void setAmountDue(String amountDue) {
+		this.amountDue = amountDue;
+	}
+	public String getPostId() {
+		return postId;
+	}
+	public void setPostId(String postId) {
+		this.postId = postId;
 	}
 }
