@@ -63,7 +63,7 @@ public class UserController {
         return "redirect:/users";
     }
  
-    @RequestMapping("/companyO/edit/{id}")
+    @RequestMapping("/company/edit/{id}")
     public String editUser(@PathVariable("id") int id, Model model){
        
         return "user";
