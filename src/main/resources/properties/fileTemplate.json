@@ -1,0 +1,73 @@
+{
+  "templateId" :  1,
+  "templateName" :  "USER",
+  "dbSchemaName" :  "",
+  "dbTableName" :  "",
+  "validator" : "org.prabu.spring.excel.objectbinding.validator.UserValidator",
+  "columnTemplates" :  [
+                        {
+                            "id": 1,
+                            "pos": 0,
+                            "templateName": "item_id",
+                            "dbColumnName": "item_id",
+                            "beanColumnName": "itemId",
+                            "type": "VARCHAR"
+                          },
+                          {
+                            "id": 2,
+                            "pos": 1,
+                            "templateName": "hsn_code",
+                            "dbColumnName": "hsn_code",
+                            "beanColumnName": "hsnCode",
+                            "type": "VARCHAR"
+                          },
+                          {
+                            "id": 3,
+                            "pos": 2,
+                            "templateName": "gst_item_code",
+                            "dbColumnName": "gst_item_code",
+                            "beanColumnName": "gstItemCode",
+                            "type": "VARCHAR"
+                          },
+                          {
+                            "id": 4,
+                            "pos": 3,
+                            "templateName": "item_name",
+                            "dbColumnName": "item_name",
+                            "beanColumnName": "itemName",
+                            "type": "VARCHAR"
+                          },
+                          {
+                            "id": 5,
+                            "pos": 4,
+                            "templateName": "item_desc",
+                            "dbColumnName": "item_desc",
+                            "beanColumnName": "itemDesc",
+                            "type": "VARCHAR"
+                          },
+                          {
+                            "id": 6,
+                            "pos": 5,
+                            "templateName": "inventory_id",
+                            "dbColumnName": "inventory_id",
+                            "beanColumnName": "inventoryId",
+                            "type": "VARCHAR"
+                          },
+                          {
+                            "id": 7,
+                            "pos": 6,
+                            "templateName": "unit_price",
+                            "dbColumnName": "unit_price",
+                            "beanColumnName": "unitPrice",
+                            "type": "VARCHAR"
+                          },
+                          {
+                            "id": 8,
+                            "pos": 7,
+                            "templateName": "tax_id",
+                            "dbColumnName": "tax_id",
+                            "beanColumnName": "taxId",
+                            "type": "VARCHAR"
+                          }
+                          
+                        ] }
