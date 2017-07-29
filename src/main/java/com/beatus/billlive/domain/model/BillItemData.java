@@ -1,15 +1,15 @@
 package com.beatus.billlive.domain.model;
 
-public class ItemDTO {
+public class BillItemData {
 	
 	private String itemId;
 	private String inventoryId;
 	private String isTaxeble;
-	private Double productValue;
-	private QuantityType quantityType;
+	private QuantityType quantityType; 
 	private Double quantity;
 	private Double unitPriceInclusiveOfTaxes;
 	private Double unitPriceExclusiveOfTaxes;
+	private Double productValue;
 	private Double amountBeforeTax;
 	private Double taxAmountForItem;
 	private Double amountAfterTax;
@@ -17,9 +17,6 @@ public class ItemDTO {
 	private Double marginPercentage;
 	private Double taxOnMargin;
 	private String taxId;
-	private String isAdded;
-	private String isUpdated;
-	private String isDeleted;
 	
 	public String getItemId() {
 		return itemId;
@@ -27,7 +24,6 @@ public class ItemDTO {
 	public void setItemId(String itemId) {
 		this.itemId = itemId;
 	}
-
 	public String getInventoryId() {
 		return inventoryId;
 	}
@@ -39,12 +35,6 @@ public class ItemDTO {
 	}
 	public void setIsTaxeble(String isTaxeble) {
 		this.isTaxeble = isTaxeble;
-	}
-	public Double getProductValue() {
-		return productValue;
-	}
-	public void setProductValue(Double productValue) {
-		this.productValue = productValue;
 	}
 	public Double getQuantity() {
 		return quantity;
@@ -63,6 +53,12 @@ public class ItemDTO {
 	}
 	public void setUnitPriceExclusiveOfTaxes(Double unitPriceExclusiveOfTaxes) {
 		this.unitPriceExclusiveOfTaxes = unitPriceExclusiveOfTaxes;
+	}
+	public Double getProductValue() {
+		return productValue;
+	}
+	public void setProductValue(Double productValue) {
+		this.productValue = productValue;
 	}
 	public Double getAmountBeforeTax() {
 		return amountBeforeTax;
@@ -111,23 +107,5 @@ public class ItemDTO {
 	}
 	public void setQuantityType(QuantityType quantityType) {
 		this.quantityType = quantityType;
-	}
-	public String getIsAdded() {
-		return isAdded;
-	}
-	public void setIsAdded(String isAdded) {
-		this.isAdded = isAdded;
-	}
-	public String getIsUpdated() {
-		return isUpdated;
-	}
-	public void setIsUpdated(String isUpdated) {
-		this.isUpdated = isUpdated;
-	}
-	public String getIsDeleted() {
-		return isDeleted;
-	}
-	public void setIsDeleted(String isDeleted) {
-		this.isDeleted = isDeleted;
 	}
 }

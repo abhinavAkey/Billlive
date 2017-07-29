@@ -10,7 +10,7 @@ import com.beatus.billlive.validation.exception.BillValidationException;
 @Component("billValidator")
 public class BillValidator {
 	
-	public void validateBillData(BillDTO bill) throws BillValidationException{
+	public boolean validateBillData(BillDTO bill) throws BillValidationException{
 		if(bill == null || StringUtils.isBlank(bill.getUid())){
 			throw new BillValidationException("Bill data is null");
 		}
@@ -46,6 +46,7 @@ public class BillValidator {
 			}
 		}else {
 			throw new BillValidationException("In Bill the items data is not available");
-		}
+		}		
+		return true;
 	}
 }

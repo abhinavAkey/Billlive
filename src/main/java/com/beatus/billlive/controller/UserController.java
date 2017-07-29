@@ -25,16 +25,27 @@ public class UserController {
 	@Resource(name = "userService")
 	private UserService userService;
 	
-	@Resource(name = "userValidator")
-	private UserValidator userValidator;
-	
-	@RequestMapping(value = "/company/getallusers", method = RequestMethod.GET)
-	public @ResponseBody List<UserData> getAllUsers() {
-		List<UserData> userList = userService.getAllUsers();
-		return userList;
+	//For add and update user both
+	@RequestMapping(value= "/company/user/signup", method = RequestMethod.POST)
+	public @ResponseBody String addUser(@RequestBody UserData userData) throws UserDataException{
+		String isUserCreated = userService.addUser(userData);
+		return isUserCreated;
 	}
 	
-	@RequestMapping(value = "/company/getuser", method = RequestMethod.GET)
+	@RequestMapping(value= "/company/user/update", method = RequestMethod.POST)
+    public @ResponseBody String editUser(@RequestBody UserData userData) throws UserDataException{
+    	String isUserUpdated = userService.updateUser(userData);
+		return isUserUpdated;
+    }
+    
+    @RequestMapping("/company/user/remove/{id}")
+    public @ResponseBody String removeUser(@PathVariable("id") String uid){		
+    	String isUserRemoved = userService.removeUser(uid);
+		return isUserRemoved;
+    }
+ 
+    
+    @RequestMapping(value = "/company/getuser", method = RequestMethod.GET)
 	public @ResponseBody UserData getUserById(String uId) throws UserDataException {
 		if(StringUtils.isNotBlank(uId)){
 			UserData userData = userService.getUserById(uId);
@@ -44,29 +55,11 @@ public class UserController {
 		}
 		
 	}
-	
-	//For add and update user both
-	@RequestMapping(value= "/company/signup", method = RequestMethod.POST)
-	public @ResponseBody String addUser(@RequestBody UserData userData) throws UserDataException{
-		if(userValidator.validateUserData(userData)){
-			String isUserCreated = userService.addUser(userData);
-			return isUserCreated;
-		}else{
-			throw new UserDataException("User data passed cant be null or empty string");
-		}	
+    
+    @RequestMapping(value = "/company/getallusers", method = RequestMethod.GET)
+	public @ResponseBody List<UserData> getAllUsers() {
+		List<UserData> userList = userService.getAllUsers();
+		return userList;
 	}
-	
-	@RequestMapping("/company/remove/{id}")
-    public String removeUser(@PathVariable("id") String uid){
-		
-        this.userService.removeUser(uid);
-        return "redirect:/users";
-    }
- 
-    @RequestMapping("/company/edit/{id}")
-    public String editUser(@PathVariable("id") int id, Model model){
-       
-        return "user";
-    }
 	
 }

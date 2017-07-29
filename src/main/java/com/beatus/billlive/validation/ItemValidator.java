@@ -4,15 +4,16 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.ItemData;
-import com.beatus.billlive.validation.exception.ItemValidationException;
+import com.beatus.billlive.validation.exception.ItemDataException;
 
 @Component("itemValidator")
 public class ItemValidator {
 	
-	public void validateItemData(ItemData item) throws ItemValidationException{
+	public boolean validateItemData(ItemData item) throws ItemDataException{
 		if(item == null || StringUtils.isBlank(String.valueOf(item.getItemId()))){
-			throw new ItemValidationException("Item data is null");
+			throw new ItemDataException("Item data is null");
 		}
+		return false;
 	}
 
 }

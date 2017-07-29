@@ -1,38 +1,28 @@
 package com.beatus.billlive.domain.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import java.util.Map;
 
-@Entity
-@Table(name="inventory")
 public class Inventory {
-	@Id
-	@Column(name="inventory_id")
-	private String inventoryId;
-	@Column(name="item_id")
-	private String itemId;
-	@Column(name="date")
-	private String date;
-	@Column(name="quantity_desc")
-	private String quantityDesc;
 
+	private String inventoryId;
+	private String date;
+	private String quantityDesc;
 	private QuantityType buyQuantityType;
-	private QuantityType sellQuantityType;
-	@Column(name="actual_quantity")
-	private String actualQuantity;
-	@Column(name="remaining_quantity")
-	private String remainingQuantity;
-	@Column(name="purchase_id")
+	private Double actualQuantity;
+	private Double remainingQuantity;
+	private Double unitPrice;
+	private Double sellingPrice;
+	private QuantityType otherSellQuantityTypeOption;
+	private Double otherSellOptionQuantityEquivalent;
+	private Double otherSellOptionBuyingPrice;
+	private Double otherSellOptionSellingPrice;
+	private Map<String, Double> buyPricesPerQuantityType;
+	private Map<String, Double> sellPricesPerQuantityType;
 	private String purchaseId;
-	@Column(name="default_margin_Percentage")
-	private String defaultMarginPercentage;
-	@Column(name="default_margin_amount")
-	private String defaultMarginAmount;
-	@Column(name="minimum_stock_value")
-	private String minimumStockValue;
-	
+	private Double defaultMarginPercentage;
+	private Double defaultMarginAmount;
+	private Double minimumStockValue;
+	private String isAdded;
 	private String isUpdated;
 	private String isDeleted;
 	
@@ -41,12 +31,6 @@ public class Inventory {
 	}
 	public void setInventoryId(String inventoryId) {
 		this.inventoryId = inventoryId;
-	}
-	public String getItemId() {
-		return itemId;
-	}
-	public void setItemId(String itemId) {
-		this.itemId = itemId;
 	}
 	public String getDate() {
 		return date;
@@ -60,17 +44,65 @@ public class Inventory {
 	public void setQuantityDesc(String quantityDesc) {
 		this.quantityDesc = quantityDesc;
 	}
-	public String getActualQuantity() {
+	public Double getActualQuantity() {
 		return actualQuantity;
 	}
-	public void setActualQuantity(String actualQuantity) {
+	public void setActualQuantity(Double actualQuantity) {
 		this.actualQuantity = actualQuantity;
 	}
-	public String getRemainingQuantity() {
+	public Double getRemainingQuantity() {
 		return remainingQuantity;
 	}
-	public void setRemainingQuantity(String remainingQuantity) {
+	public void setRemainingQuantity(Double remainingQuantity) {
 		this.remainingQuantity = remainingQuantity;
+	}
+	public Double getUnitPrice() {
+		return unitPrice;
+	}
+	public void setUnitPrice(Double unitPrice) {
+		this.unitPrice = unitPrice;
+	}
+	public Double getSellingPrice() {
+		return sellingPrice;
+	}
+	public void setSellingPrice(Double sellingPrice) {
+		this.sellingPrice = sellingPrice;
+	}
+	public Double getOtherSellOptionQuantityEquivalent() {
+		return otherSellOptionQuantityEquivalent;
+	}
+	public void setOtherSellOptionQuantityEquivalent(Double otherSellOptionQuantityEquivalent) {
+		this.otherSellOptionQuantityEquivalent = otherSellOptionQuantityEquivalent;
+	}
+	public Double getOtherSellOptionBuyingPrice() {
+		return otherSellOptionBuyingPrice;
+	}
+	public void setOtherSellOptionBuyingPrice(Double otherSellOptionBuyingPrice) {
+		this.otherSellOptionBuyingPrice = otherSellOptionBuyingPrice;
+	}
+	public Double getOtherSellOptionSellingPrice() {
+		return otherSellOptionSellingPrice;
+	}
+	public void setOtherSellOptionSellingPrice(Double otherSellOptionSellingPrice) {
+		this.otherSellOptionSellingPrice = otherSellOptionSellingPrice;
+	}
+	public Double getDefaultMarginPercentage() {
+		return defaultMarginPercentage;
+	}
+	public void setDefaultMarginPercentage(Double defaultMarginPercentage) {
+		this.defaultMarginPercentage = defaultMarginPercentage;
+	}
+	public Double getDefaultMarginAmount() {
+		return defaultMarginAmount;
+	}
+	public void setDefaultMarginAmount(Double defaultMarginAmount) {
+		this.defaultMarginAmount = defaultMarginAmount;
+	}
+	public Double getMinimumStockValue() {
+		return minimumStockValue;
+	}
+	public void setMinimumStockValue(Double minimumStockValue) {
+		this.minimumStockValue = minimumStockValue;
 	}
 	public String getPurchaseId() {
 		return purchaseId;
@@ -78,35 +110,23 @@ public class Inventory {
 	public void setPurchaseId(String purchaseId) {
 		this.purchaseId = purchaseId;
 	}
-	public String getDefaultMarginPercentage() {
-		return defaultMarginPercentage;
-	}
-	public void setDefaultMarginPercentage(String defaultMarginPercentage) {
-		this.defaultMarginPercentage = defaultMarginPercentage;
-	}
-	public String getDefaultMarginAmount() {
-		return defaultMarginAmount;
-	}
-	public void setDefaultMarginAmount(String defaultMarginAmount) {
-		this.defaultMarginAmount = defaultMarginAmount;
-	}
-	public String getMinimumStockValue() {
-		return minimumStockValue;
-	}
-	public void setMinimumStockValue(String minimumStockValue) {
-		this.minimumStockValue = minimumStockValue;
-	}
 	public QuantityType getBuyQuantityType() {
 		return buyQuantityType;
 	}
 	public void setBuyQuantityType(QuantityType buyQuantityType) {
 		this.buyQuantityType = buyQuantityType;
 	}
-	public QuantityType getSellQuantityType() {
-		return sellQuantityType;
+	public QuantityType getOtherSellQuantityTypeOption() {
+		return otherSellQuantityTypeOption;
 	}
-	public void setSellQuantityType(QuantityType sellQuantityType) {
-		this.sellQuantityType = sellQuantityType;
+	public void setOtherSellQuantityTypeOption(QuantityType otherSellQuantityTypeOption) {
+		this.otherSellQuantityTypeOption = otherSellQuantityTypeOption;
+	}
+	public String getIsAdded() {
+		return isAdded;
+	}
+	public void setIsAdded(String isAdded) {
+		this.isAdded = isAdded;
 	}
 	public String getIsUpdated() {
 		return isUpdated;
@@ -119,5 +139,17 @@ public class Inventory {
 	}
 	public void setIsDeleted(String isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+	public Map<String, Double> getBuyPricesPerQuantityType() {
+		return buyPricesPerQuantityType;
+	}
+	public void setBuyPricesPerQuantityType(Map<String, Double> buyPricesPerQuantityType) {
+		this.buyPricesPerQuantityType = buyPricesPerQuantityType;
+	}
+	public Map<String, Double> getSellPricesPerQuantityType() {
+		return sellPricesPerQuantityType;
+	}
+	public void setSellPricesPerQuantityType(Map<String, Double> sellPricesPerQuantityType) {
+		this.sellPricesPerQuantityType = sellPricesPerQuantityType;
 	}
 }

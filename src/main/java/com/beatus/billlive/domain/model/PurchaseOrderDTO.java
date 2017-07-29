@@ -2,13 +2,16 @@ package com.beatus.billlive.domain.model;
 
 import java.util.List;
 
-public class PurchaseOrder {
+public class PurchaseOrderDTO {
 	
 	private String purchaseId;
 	private String purchaseFromContactId;
 	private String purchaseToContactId;
 	private String purchaseDate;
-	private List<ItemData> itemsInPurchaseOrder;
+	private List<ItemDTO> itemsInPurchaseOrder;
+	private String isAdded;
+	private String isUpdated;
+	private String isDeleted;
 	
 	public String getPurchaseId() {
 		return purchaseId;
@@ -16,6 +19,7 @@ public class PurchaseOrder {
 	public void setPurchaseId(String purchaseId) {
 		this.purchaseId = purchaseId;
 	}
+	
 	public String getPurchaseFromContactId() {
 		return purchaseFromContactId;
 	}
@@ -34,10 +38,28 @@ public class PurchaseOrder {
 	public void setPurchaseDate(String purchaseDate) {
 		this.purchaseDate = purchaseDate;
 	}
-	public List<ItemData> getItemsInPurchaseOrder() {
+	public List<ItemDTO> getItemsInPurchaseOrder() {
 		return itemsInPurchaseOrder;
 	}
-	public void setItemsInPurchaseOrder(List<ItemData> itemsInPurchaseOrder) {
+	public void setItemsInPurchaseOrder(List<ItemDTO> itemsInPurchaseOrder) {
 		this.itemsInPurchaseOrder = itemsInPurchaseOrder;
+	}
+	public String getIsAdded() {
+		return isAdded;
+	}
+	public void setIsAdded(String isAdded) {
+		this.isAdded = isAdded;
+	}
+	public String getIsUpdated() {
+		return isUpdated;
+	}
+	public void setIsUpdated(String isUpdated) {
+		this.isUpdated = isUpdated;
+	}
+	public String getIsDeleted() {
+		return isDeleted;
+	}
+	public void setIsDeleted(String isDeleted) {
+		this.isDeleted = isDeleted;
 	}
 }

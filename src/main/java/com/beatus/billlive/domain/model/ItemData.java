@@ -3,7 +3,7 @@ package com.beatus.billlive.domain.model;
 import java.util.List;
 
 
-public class ItemData {
+public class ItemData extends BaseData{
 	
 	private String itemId;
 	private String uid;
@@ -13,9 +13,8 @@ public class ItemData {
 	private String itemName;
 	private String itemDesc;
 	private List<Inventory> inventories;
-	private String unitPrice;
 	private String taxId;
-	
+
 	public String getItemId() {
 		return itemId;
 	}
@@ -51,12 +50,6 @@ public class ItemData {
 	}
 	public void setInventories(List<Inventory> inventories) {
 		this.inventories = inventories;
-	}
-	public String getUnitPrice() {
-		return unitPrice;
-	}
-	public void setUnitPrice(String unitPrice) {
-		this.unitPrice = unitPrice;
 	}
 	public String getTaxId() {
 		return taxId;

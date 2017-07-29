@@ -38,7 +38,7 @@ public class ItemRepository {
 	
 	public String addItem(ItemData itemData) {
 		try {
-			DatabaseReference itemsRef = databaseReference.child("items");
+			DatabaseReference itemsRef = databaseReference.child("items").child(itemData.getCompanyId());
 			Map<String, ItemData> item = new HashMap<String, ItemData>();
 			// Generate a reference to a new location and add some data using push()
 			DatabaseReference itemsPostRef = itemsRef.push();
@@ -66,7 +66,7 @@ public class ItemRepository {
 
 	public String updateItem(ItemData itemData) {
 		try {
-			DatabaseReference itemsRef = databaseReference.child("items");
+			DatabaseReference itemsRef = databaseReference.child("items").child(itemData.getCompanyId());
 			Map<String, Object> itemUpdates = new HashMap<String, Object>();
 			itemUpdates.put(itemData.getItemId(), itemData);
 			itemsRef.updateChildren(itemUpdates, new DatabaseReference.CompletionListener() {
@@ -87,19 +87,19 @@ public class ItemRepository {
 		}
 	}
 	
-	public String removeItem(String uid) {
+	public String removeItem(String companyId, String itemId) {
 		try {
-			DatabaseReference itemsRef = databaseReference.child("items");
+			DatabaseReference itemsRef = databaseReference.child("items").child(companyId);
 			Map<String, Object> itemUpdates = new HashMap<String, Object>();
-			itemUpdates.put(uid, null);
+			itemUpdates.put(itemId, null);
 			itemsRef.updateChildren(itemUpdates, new DatabaseReference.CompletionListener() {
 			    @Override
 			    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 			        if (databaseError != null) {
-			            System.out.println("Data could not be removed " + databaseError.getMessage() + " " + uid);
+			            System.out.println("Data could not be removed " + databaseError.getMessage() + " " + itemId);
 			            isDeleted = "N";
 			        } else {
-			        	logger.info("Item removed successfully, Item Details="+uid);
+			        	logger.info("Item removed successfully, Item Details="+itemId);
 			        	isDeleted = "Y";
 					}
 			    }
@@ -110,8 +110,8 @@ public class ItemRepository {
 		}
 	}
 	
-	public ItemData getItemById(String itemId) {
-		DatabaseReference itemDataRef = databaseReference.child("items");
+	public ItemData getItemById(String companyId, String itemId) {
+		DatabaseReference itemDataRef = databaseReference.child("items").child(companyId);
 		itemData = null;
 		itemDataRef.orderByChild("itemId").equalTo(itemId).addChildEventListener(new ChildEventListener() {
 		    @Override
@@ -144,9 +144,9 @@ public class ItemRepository {
 		return itemData;
 	}
 	
-	public List<ItemData> getAllItems(String uid) {
-		DatabaseReference itemDataRef = databaseReference.child("items");
-		itemDataRef.orderByChild("uid").equalTo(uid).addValueEventListener(new ValueEventListener() {
+	public List<ItemData> getAllItems(String companyId) {
+		DatabaseReference itemDataRef = databaseReference.child("items").child(itemData.getCompanyId());
+		itemDataRef.orderByChild("companyId").equalTo(companyId).addValueEventListener(new ValueEventListener() {
 		    public void onDataChange(DataSnapshot itemSnapshot) {
 		    	itemsList.clear();
 		        for (DataSnapshot itemPostSnapshot: itemSnapshot.getChildren()) {
@@ -162,6 +162,4 @@ public class ItemRepository {
 		});
 		return itemsList;
 	}
-
-
 }

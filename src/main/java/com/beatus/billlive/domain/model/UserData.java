@@ -19,6 +19,7 @@ public class UserData {
 	@Column(name="uid")
 	private String uid;
 	private String postId;
+	private String companyId;
 	private String firstName;
 	private String lastName;	
 	private String company;
@@ -142,5 +143,11 @@ public class UserData {
 	}
 	public void setTypeOfUser(String typeOfUser) {
 		this.typeOfUser = typeOfUser;
+	}
+	public String getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 }

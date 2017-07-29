@@ -52,4 +52,14 @@ public class Constants {
 	public static final String PURCHASE_TO = "purchaseTo";
 	public static final String PURCHASE_DATE = "purchaseDate";
 	public static final String APP_NAME = "billlive-2ebb8";
+	public static final String TONNES = "TONNES";
+	public static final String QUINTAL = "QUINTAL";
+	public static final String KG = "KG";
+	public static final String GRAMS = "GRAMS";
+	public static final String LITERS = "LITERS";
+	public static final String ML = "ML";
+	public static final String PIECES = "PIECES";
+	public static final String YES = "Y";
+	public static final String NO = "N";
+	public static final String COMPANY_ID = "companyId";
 }

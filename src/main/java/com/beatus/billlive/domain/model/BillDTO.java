@@ -5,12 +5,14 @@ import java.util.List;
 public class BillDTO {
 
 	private String billNumber;
-	private String billFrom;
-	private String billTo;
+	private String billFromContactId;
+	private String billToContactId;
+	private String companyId;
 	private String uid;
 	private List<ItemDTO> items;
 	private String dateOfBill;
 	private String dueDate;
+	private String isTaxeble;
 	private String isUpdated;
 	private String isDeleted;
 	
@@ -20,17 +22,17 @@ public class BillDTO {
 	public void setBillNumber(String billNumber) {
 		this.billNumber = billNumber;
 	}
-	public String getBillFrom() {
-		return billFrom;
+	public String getBillFromContactId() {
+		return billFromContactId;
 	}
-	public void setBillFrom(String billFrom) {
-		this.billFrom = billFrom;
+	public void setBillFromContactId(String billFromContactId) {
+		this.billFromContactId = billFromContactId;
 	}
-	public String getBillTo() {
-		return billTo;
+	public String getBillToContactId() {
+		return billToContactId;
 	}
-	public void setBillTo(String billTo) {
-		this.billTo = billTo;
+	public void setBillToContactId(String billToContactId) {
+		this.billToContactId = billToContactId;
 	}
 	public String getUid() {
 		return uid;
@@ -67,5 +69,17 @@ public class BillDTO {
 	}
 	public void setIsDeleted(String isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+	public String getIsTaxeble() {
+		return isTaxeble;
+	}
+	public void setIsTaxeble(String isTaxeble) {
+		this.isTaxeble = isTaxeble;
+	}
+	public String getCompanyId() {
+		return companyId;
+	}
+	public void setCompanyId(String companyId) {
+		this.companyId = companyId;
 	}
 }
