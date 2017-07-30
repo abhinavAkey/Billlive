@@ -72,6 +72,26 @@ public class FirebaseAuthentication {
 
     return task;
   }
+  public static Task<UserRecord> createUser(String email,String password) {
+	    // [START create_user]
+	    CreateRequest request = new CreateRequest()
+	        .setEmail(email)
+	        .setEmailVerified(false)
+	        .setPassword(password)
+	        .setDisabled(false);
+
+	    Task<UserRecord> task = FirebaseAuth.getInstance().createUser(request)
+	        .addOnSuccessListener(userRecord -> {
+	          // See the UserRecord reference doc for the contents of userRecord.
+	          System.out.println("Successfully created new user: " + userRecord.getUid());
+	        })
+	        .addOnFailureListener(e -> {
+	          System.err.println("Error creating new user: " + e.getMessage());
+	        });
+	    // [END create_user]
+
+	    return task;
+	  }
 
   public static Task<UserRecord> createUserWithUid() {
     // [START create_user_with_uid]

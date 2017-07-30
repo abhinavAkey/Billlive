@@ -1,17 +1,12 @@
 package com.beatus.billlive.service;
 
-import java.util.List;
-
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.beatus.billlive.domain.model.UserData;
 import com.beatus.billlive.repository.UserRepository;
-import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.UserValidator;
-import com.beatus.billlive.validation.exception.UserDataException;
 
 @Service
 @Component("userService")
@@ -22,12 +17,20 @@ public class UserService {
 	
 	@Resource(name = "userRepository")
 	private UserRepository userRepository;
-
-	public String addUser(UserData user) throws UserDataException {
+/*	public String addUser(UserData user) throws UserDataException {
 		try {
 			if(userValidator.validateUserData(user)){
-				user.setCompanyId(Utils.generateRandomKey(10));
-				return this.userRepository.addUser(user);
+				if(StringUtils.isNotBlank(user.getUid()) && StringUtils.isNotBlank(user.getCompanyId())){
+					UserData existingUser = userRepository.getUserById(user.getCompanyId(), user.getUid());
+					if(existingUser != null){
+						return updateUser(user);
+					}
+					return "N";
+				}else {
+					user.setUid(Utils.generateRandomKey(12));
+					
+					}
+					return userRepository.addUser(user);
 			}else {
 				return "N";
 			}
@@ -40,7 +43,16 @@ public class UserService {
 	public String updateUser(UserData user) throws UserDataException {
 		try {
 			if(userValidator.validateUserData(user)){
-				return this.userRepository.updateUser(user);
+				if(StringUtils.isNotBlank(user.getUid()) && StringUtils.isNotBlank(user.getCompanyId())){
+					UserData existingUser = userRepository.getUserById(user.getCompanyId(), user.getUid());
+					if(existingUser == null){
+						return addUser(user);
+					}else {
+						return updateUser(user);
+					}
+					
+				}
+				return userRepository.updateUser(user);
 			}else {
 				return "N";
 			}
@@ -49,15 +61,20 @@ public class UserService {
 		}
 	}
 	
-	public String removeUser(String uid) {
-		return this.userRepository.removeUser(uid);
+	public String removeUser(String companyId, String userId) {
+		return userRepository.removeUser(companyId, userId);
 	}
 
-	public List<UserData> getAllUsers() {
-		return this.userRepository.getAllUsers();
+	public List<UserData> getAllUsers(String companyId) {
+		return userRepository.getAllUsers(companyId);
 	}
 
-	public UserData getUserById(String uId) {
-		return this.userRepository.getUserById(uId);
+	public UserData getUserById(String companyId, String userId) {
+		return userRepository.getUserById(companyId, userId);
+	}*/
+
+	public String isRegistered(String uid) {
+		// TODO Auto-generated method stub
+		return userRepository.isRegistered(uid);
 	}
 }
