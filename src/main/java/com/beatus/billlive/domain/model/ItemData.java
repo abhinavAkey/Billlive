@@ -14,6 +14,7 @@ public class ItemData extends BaseData{
 	private String itemDesc;
 	private List<Inventory> inventories;
 	private String taxId;
+	private String isRemoved;
 
 	public String getItemId() {
 		return itemId;
@@ -68,5 +69,11 @@ public class ItemData extends BaseData{
 	}
 	public void setUid(String uid) {
 		this.uid = uid;
+	}
+	public String getIsRemoved() {
+		return isRemoved;
+	}
+	public void setIsRemoved(String isRemoved) {
+		this.isRemoved = isRemoved;
 	}
 }

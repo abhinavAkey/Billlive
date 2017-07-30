@@ -8,11 +8,11 @@ public class ItemDTO {
 	private Double productValue;
 	private QuantityType quantityType;
 	private Double quantity;
-	private Double unitPriceInclusiveOfTaxes;
-	private Double unitPriceExclusiveOfTaxes;
+	private Double actualUnitPrice;
 	private Double amountBeforeTax;
 	private Double taxAmountForItem;
 	private Double amountAfterTax;
+	private Double discount;
 	private Double marginAmount;
 	private Double marginPercentage;
 	private Double taxOnMargin;
@@ -52,17 +52,11 @@ public class ItemDTO {
 	public void setQuantity(Double quantity) {
 		this.quantity = quantity;
 	}
-	public Double getUnitPriceInclusiveOfTaxes() {
-		return unitPriceInclusiveOfTaxes;
+	public Double getActualUnitPrice() {
+		return actualUnitPrice;
 	}
-	public void setUnitPriceInclusiveOfTaxes(Double unitPriceInclusiveOfTaxes) {
-		this.unitPriceInclusiveOfTaxes = unitPriceInclusiveOfTaxes;
-	}
-	public Double getUnitPriceExclusiveOfTaxes() {
-		return unitPriceExclusiveOfTaxes;
-	}
-	public void setUnitPriceExclusiveOfTaxes(Double unitPriceExclusiveOfTaxes) {
-		this.unitPriceExclusiveOfTaxes = unitPriceExclusiveOfTaxes;
+	public void setActualUnitPrice(Double actualUnitPrice) {
+		this.actualUnitPrice = actualUnitPrice;
 	}
 	public Double getAmountBeforeTax() {
 		return amountBeforeTax;
@@ -129,5 +123,11 @@ public class ItemDTO {
 	}
 	public void setIsDeleted(String isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+	public Double getDiscount() {
+		return discount;
+	}
+	public void setDiscount(Double discount) {
+		this.discount = discount;
 	}
 }

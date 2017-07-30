@@ -12,6 +12,7 @@ public class BillDTO {
 	private List<ItemDTO> items;
 	private String dateOfBill;
 	private String dueDate;
+	private Double totalAmount;
 	private String isTaxeble;
 	private String isUpdated;
 	private String isDeleted;
@@ -81,5 +82,11 @@ public class BillDTO {
 	}
 	public void setCompanyId(String companyId) {
 		this.companyId = companyId;
+	}
+	public Double getTotalAmount() {
+		return totalAmount;
+	}
+	public void setTotalAmount(Double totalAmount) {
+		this.totalAmount = totalAmount;
 	}
 }

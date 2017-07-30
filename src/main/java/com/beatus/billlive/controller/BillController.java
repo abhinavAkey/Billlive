@@ -3,6 +3,9 @@ package com.beatus.billlive.controller;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -15,48 +18,94 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.beatus.billlive.domain.model.BillDTO;
 import com.beatus.billlive.domain.model.BillData;
 import com.beatus.billlive.service.BillService;
-import com.beatus.billlive.validation.exception.BillValidationException;
+import com.beatus.billlive.utils.Constants;
+import com.beatus.billlive.validation.exception.BillDataException;
 
 @Controller
 @RequestMapping("/api")
 public class BillController {
 	
+
 	@Resource(name = "billService")
 	private BillService billService;
-
+	
+	//For add and update bill both
 	@RequestMapping(value= "/company/bill/add", method = RequestMethod.POST)
-	public @ResponseBody String addBill(@RequestBody BillDTO billDTO) throws BillValidationException{
-		String isBillCreated = billService.addBill(billDTO);
+	public @ResponseBody String addBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
+		HttpSession session = request.getSession();
+    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+		String isBillCreated = billService.addBill(request, response, billDTO, companyId);
 		return isBillCreated;
 	}
 	
 	@RequestMapping(value= "/company/bill/update", method = RequestMethod.POST)
-    public @ResponseBody String editBill(@RequestBody BillDTO billDTO) throws BillValidationException{
-    	String isBillUpdated = billService.updateBill(billDTO);
+    public @ResponseBody String editBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
+		HttpSession session = request.getSession();
+    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+		String isBillUpdated = billService.updateBill(request, response, billDTO, companyId);
 		return isBillUpdated;
     }
     
     @RequestMapping("/company/bill/remove/{id}")
-    public @ResponseBody String removeBill(@PathVariable("id") String uid){		
-    	String isBillRemoved = billService.removeBill(bill);
-		return isBillRemoved;
+    public @ResponseBody String removeBill(@PathVariable("id") String billNumber, HttpServletRequest request, HttpServletResponse response) throws BillDataException{	
+    	if(StringUtils.isNotBlank(billNumber)){
+    		HttpSession session = request.getSession();
+        	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+        	String isBillRemoved = billService.removeBill(companyId, billNumber);
+    		return isBillRemoved;
+		}else{
+			throw new BillDataException("billId passed cant be null or empty string");
+		}
     }
  
     
-    @RequestMapping(value = "/company/getbill", method = RequestMethod.GET)
-	public @ResponseBody BillData getBillById(String uid) throws BillValidationException {
-		if(StringUtils.isNotBlank(uid)){
-			BillData billData = billService.getBillsByUid(uid);
-			return billData;
+    @RequestMapping(value = "/company/getbill/{id}", method = RequestMethod.GET)
+	public @ResponseBody BillDTO getBillById(@PathVariable("id") String billNumber, HttpServletRequest request, HttpServletResponse response) throws BillDataException {
+    	HttpSession session = request.getSession();
+    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+    	if(StringUtils.isNotBlank(billNumber) && StringUtils.isNotBlank(companyId)){
+    		BillDTO billDTO = billService.getBillByBillNumber(companyId, billNumber);
+			return billDTO;
 		}else{
-			throw new BillValidationException("uId passed cant be null or empty string");
+			throw new BillDataException("billId passed cant be null or empty string");
 		}
+		
 	}
     
     @RequestMapping(value = "/company/getallbills", method = RequestMethod.GET)
-	public @ResponseBody List<BillData> getAllBills() {
-		List<BillData> billList = billService.getAllBills();
-		return billList;
+	public @ResponseBody List<BillDTO> getAllBills(HttpServletRequest request, HttpServletResponse response) throws BillDataException {
+    	HttpSession session = request.getSession();
+    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+    	if(StringUtils.isNotBlank(companyId)){
+        	List<BillDTO> billList = billService.getAllBillsBasedOnCompanyId(companyId);
+			return billList;
+		}else{
+			throw new BillDataException("billId passed cant be null or empty string");
+		}
+	}
+    
+    @RequestMapping(value = "/company/getallbills/year/{year}/month/{month}", method = RequestMethod.GET)
+	public @ResponseBody List<BillDTO> getAllBillsInAMonth(@PathVariable("year") String year, @PathVariable("month") String month, HttpServletRequest request, HttpServletResponse response) throws BillDataException {
+    	HttpSession session = request.getSession();
+    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+    	if(StringUtils.isNotBlank(companyId)){
+        	List<BillDTO> billList = billService.getAllBillsInAMonth(companyId, year, month);
+			return billList;
+		}else{
+			throw new BillDataException("billId passed cant be null or empty string");
+		}
+	}
+    
+    @RequestMapping(value = "/company/getallbills/year/{year}", method = RequestMethod.GET)
+	public @ResponseBody List<BillDTO> getAllBillsInAMonth(@PathVariable("year") String year, HttpServletRequest request, HttpServletResponse response) throws BillDataException {
+    	HttpSession session = request.getSession();
+    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+    	if(StringUtils.isNotBlank(companyId)){
+        	List<BillDTO> billList = billService.getAllBillsInAnYear(companyId, year);
+			return billList;
+		}else{
+			throw new BillDataException("CompanyId passed cant be null or empty string");
+		}
 	}
 
 }

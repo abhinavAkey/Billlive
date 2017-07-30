@@ -88,7 +88,6 @@ public class ItemService {
 						}
 						item.setInventories(inventories);
 					}
-					return "N";
 				}
 				return itemRepository.updateItem(item);
 			}else {
@@ -99,16 +98,33 @@ public class ItemService {
 		}
 	}
 	
-	public String removeItem(String companyId, String itemId) {
-		return itemRepository.removeItem(companyId, itemId);
+	public String removeItem(String companyId, String itemId) {	
+		if(StringUtils.isNotBlank(itemId) && StringUtils.isNotBlank(companyId)){
+			ItemData itemData = itemRepository.getItemById(companyId, itemId);
+			itemData.setIsRemoved(Constants.YES);
+			return itemRepository.updateItem(itemData);
+		}
+		return "N";
 	}
 
 	public List<ItemData> getAllItems(String companyId) {
-		return itemRepository.getAllItems(companyId);
+		List<ItemData> items = itemRepository.getAllItems(companyId);
+		List<ItemData> itemsNotRemoved = new ArrayList<ItemData>();
+		for(ItemData item : items){
+			if(!Constants.YES.equalsIgnoreCase(item.getIsRemoved())){
+				itemsNotRemoved.add(item);
+			}
+		}
+		return itemsNotRemoved;
 	}
 
 	public ItemData getItemById(String companyId, String itemId) {
-		return itemRepository.getItemById(companyId, itemId);
+		ItemData itemData = itemRepository.getItemById(companyId, itemId);
+		if(!Constants.YES.equalsIgnoreCase(itemData.getIsRemoved())){
+			return itemData;
+		}else {
+			return null;
+		}
 	}
 
 	private void populateInventoryData(Inventory itemInventory){

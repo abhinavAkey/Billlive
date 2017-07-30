@@ -1,6 +1,6 @@
 package com.beatus.billlive.validation.exception;
 
-public class BillValidationException extends Exception {
+public class BillDataException extends Exception {
 
 	/**
 	 * @author vakey15
@@ -8,11 +8,11 @@ public class BillValidationException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public BillValidationException(String message) {
+	public BillDataException(String message) {
         super(message);
     }
 
-    public BillValidationException(String message, Throwable cause) {
+    public BillDataException(String message, Throwable cause) {
         super(message, cause);
     }
     

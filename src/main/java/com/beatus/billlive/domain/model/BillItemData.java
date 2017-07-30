@@ -13,10 +13,12 @@ public class BillItemData {
 	private Double amountBeforeTax;
 	private Double taxAmountForItem;
 	private Double amountAfterTax;
+	private Double discount;
 	private Double marginAmount;
 	private Double marginPercentage;
 	private Double taxOnMargin;
 	private String taxId;
+	private String isRemoved;
 	
 	public String getItemId() {
 		return itemId;
@@ -107,5 +109,17 @@ public class BillItemData {
 	}
 	public void setQuantityType(QuantityType quantityType) {
 		this.quantityType = quantityType;
+	}
+	public Double getDiscount() {
+		return discount;
+	}
+	public void setDiscount(Double discount) {
+		this.discount = discount;
+	}
+	public String getIsRemoved() {
+		return isRemoved;
+	}
+	public void setIsRemoved(String isRemoved) {
+		this.isRemoved = isRemoved;
 	}
 }

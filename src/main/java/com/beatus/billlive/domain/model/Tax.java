@@ -4,9 +4,10 @@ public class Tax {
 	
 	private String taxId;
 	private String taxDesc;
-	private String taxPercentageCGST;
-	private String taxPercentageSGST;
-	private String taxPercentageIGST;
+	private Double totalTaxPercentage; 
+	private Double taxPercentageCGST;
+	private Double taxPercentageSGST;
+	private Double taxPercentageIGST;
 	
 	public String getTaxId() {
 		return taxId;
@@ -20,22 +21,28 @@ public class Tax {
 	public void setTaxDesc(String taxDesc) {
 		this.taxDesc = taxDesc;
 	}
-	public String getTaxPercentageCGST() {
+	public Double getTotalTaxPercentage() {
+		return totalTaxPercentage;
+	}
+	public void setTotalTaxPercentage(Double totalTaxPercentage) {
+		this.totalTaxPercentage = totalTaxPercentage;
+	}
+	public Double getTaxPercentageCGST() {
 		return taxPercentageCGST;
 	}
-	public void setTaxPercentageCGST(String taxPercentageCGST) {
+	public void setTaxPercentageCGST(Double taxPercentageCGST) {
 		this.taxPercentageCGST = taxPercentageCGST;
 	}
-	public String getTaxPercentageSGST() {
+	public Double getTaxPercentageSGST() {
 		return taxPercentageSGST;
 	}
-	public void setTaxPercentageSGST(String taxPercentageSGST) {
+	public void setTaxPercentageSGST(Double taxPercentageSGST) {
 		this.taxPercentageSGST = taxPercentageSGST;
 	}
-	public String getTaxPercentageIGST() {
+	public Double getTaxPercentageIGST() {
 		return taxPercentageIGST;
 	}
-	public void setTaxPercentageIGST(String taxPercentageIGST) {
+	public void setTaxPercentageIGST(Double taxPercentageIGST) {
 		this.taxPercentageIGST = taxPercentageIGST;
 	}
 

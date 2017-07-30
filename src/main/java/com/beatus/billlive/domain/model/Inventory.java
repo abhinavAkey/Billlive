@@ -22,6 +22,8 @@ public class Inventory {
 	private Double defaultMarginPercentage;
 	private Double defaultMarginAmount;
 	private Double minimumStockValue;
+	private String isTaxeble;
+	private String taxid;
 	private String isAdded;
 	private String isUpdated;
 	private String isDeleted;
@@ -151,5 +153,17 @@ public class Inventory {
 	}
 	public void setSellPricesPerQuantityType(Map<String, Double> sellPricesPerQuantityType) {
 		this.sellPricesPerQuantityType = sellPricesPerQuantityType;
+	}
+	public String getIsTaxeble() {
+		return isTaxeble;
+	}
+	public void setIsTaxeble(String isTaxeble) {
+		this.isTaxeble = isTaxeble;
+	}
+	public String getTaxid() {
+		return taxid;
+	}
+	public void setTaxid(String taxid) {
+		this.taxid = taxid;
 	}
 }

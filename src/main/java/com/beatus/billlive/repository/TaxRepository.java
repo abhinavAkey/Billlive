@@ -107,8 +107,8 @@ public class TaxRepository {
 		}
 	}
 	
-	public Tax getTaxById(String taxId) {
-		DatabaseReference taxRef = databaseReference.child("taxs").child(taxId);
+	public Tax getTaxById(String companyId, String taxId) {
+		DatabaseReference taxRef = databaseReference.child("taxs").child(companyId);
 		tax = null;
 		taxRef.orderByChild("taxId").equalTo(taxId).addChildEventListener(new ChildEventListener() {
 		    @Override
@@ -141,8 +141,8 @@ public class TaxRepository {
 		return tax;
 	}
 	
-	public List<Tax> getAllTaxs() {
-		DatabaseReference taxRef = databaseReference.child("taxs");
+	public List<Tax> getAllTaxs(String companyId) {
+		DatabaseReference taxRef = databaseReference.child("taxs").child(companyId);
 		taxRef.orderByChild("taxId").addValueEventListener(new ValueEventListener() {
 		    public void onDataChange(DataSnapshot taxSnapshot) {
 		    	taxsList.clear();

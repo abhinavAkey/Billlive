@@ -3,6 +3,9 @@ package com.beatus.billlive.controller;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.Tax;
 import com.beatus.billlive.service.TaxService;
+import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.TaxValidator;
 import com.beatus.billlive.validation.exception.TaxException;
 
@@ -29,13 +33,19 @@ public class TaxController {
 	private TaxValidator taxValidator;
 	
 	@RequestMapping(value = "/company/getalltaxs", method = RequestMethod.GET)
-	public @ResponseBody List<Tax> getAllTaxs() {
-		List<Tax> taxList = taxService.getAllTaxs();
-		return taxList;
+	public @ResponseBody List<Tax> getAllTaxs(HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = request.getSession();
+    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+    	if(StringUtils.isNotBlank(companyId)){
+			List<Tax> taxList = taxService.getAllTaxs(companyId);
+			return taxList;
+    	}else {
+    		return null;
+    	}
 	}
 	
 	@RequestMapping(value = "/company/gettax", method = RequestMethod.GET)
-	public @ResponseBody Tax getTaxById(String taxId) throws TaxException {
+	public @ResponseBody Tax getTaxById(String taxId, HttpServletRequest request, HttpServletResponse response) throws TaxException {
 		if(StringUtils.isNotBlank(taxId)){
 			Tax taxData = taxService.getTaxById(taxId);
 			return taxData;
@@ -46,9 +56,11 @@ public class TaxController {
 	
 	//For add and update tax both
 	@RequestMapping(value= "/company/addtax", method = RequestMethod.POST)
-	public @ResponseBody String addTax(@RequestBody Tax taxData) throws TaxException{
+	public @ResponseBody String addTax(@RequestBody Tax taxData, HttpServletRequest request, HttpServletResponse response) throws TaxException{
 		if(taxValidator.validateTax(taxData)){
-			String isTaxCreated = taxService.addTax(taxData);
+			HttpSession session = request.getSession();
+        	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+			String isTaxCreated = taxService.addTax(taxData, companyId);
 			return isTaxCreated;
 		}else{
 			throw new TaxException("Tax data passed cant be null or empty string");

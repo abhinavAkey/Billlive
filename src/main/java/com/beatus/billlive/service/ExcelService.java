@@ -3,47 +3,27 @@ package com.beatus.billlive.service;
 
 
 
-import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.print.PageFormat;
-import java.awt.print.Printable;
-import java.awt.print.PrinterException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
-import javax.print.Doc;
-import javax.print.DocFlavor;
-import javax.print.DocPrintJob;
-import javax.print.PrintService;
-import javax.print.PrintServiceLookup;
-import javax.print.SimpleDoc;
-import javax.print.attribute.HashPrintRequestAttributeSet;
-import javax.print.attribute.PrintRequestAttributeSet;
-
+import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import com.beatus.billlive.domain.model.ExcelFile;
-import org.apache.commons.beanutils.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.beatus.billlive.domain.model.ColumnTemplate;
+import com.beatus.billlive.domain.model.ExcelFile;
 import com.beatus.billlive.domain.model.FileTemplate;
-import com.beatus.billlive.domain.model.Item;
+import com.beatus.billlive.domain.model.ItemData;
 import com.beatus.billlive.utils.FileUploadTemplateHandler;
 
 
@@ -105,7 +85,7 @@ public class ExcelService {
 			
 			for(int currRow = startRow; currRow <= endRow; currRow++){
 
-				item = new Item();
+				item = new ItemData();
 				Row row = (Row) sheet.getRow(currRow);
 				bindException = new BindException(item, ""+ row.getRowNum());
 				ColumnTemplate column;

@@ -62,4 +62,5 @@ public class Constants {
 	public static final String YES = "Y";
 	public static final String NO = "N";
 	public static final String COMPANY_ID = "companyId";
+	public static final Double DEFAULT_DOUBLE_VALUE = 0.00;
 }

@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.beatus.billlive.domain.model.Tax;
 import com.beatus.billlive.repository.TaxRepository;
+import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.TaxValidator;
 import com.beatus.billlive.validation.exception.TaxException;
 
@@ -23,15 +24,19 @@ public class TaxService {
 	@Resource(name = "taxRepository")
 	private TaxRepository taxRepository;
 
-	public String addTax(Tax tax) throws TaxException {
+	public String addTax(Tax tax, String companyId) throws TaxException {
 		try {
 			if(taxValidator.validateTax(tax)){
-				if(StringUtils.isNotBlank(tax.getTaxId()) && StringUtils.isNotBlank(tax.getTaxId())){
+				if(StringUtils.isNotBlank(tax.getTaxId())){
 					Tax existingTax = taxRepository.getTaxById(tax.getTaxId());
 					if(existingTax != null){
 						return updateTax(tax);
 					}
 					return "N";
+				}else {
+					String taxId = Utils.generateRandomKey(10);
+					tax.setTaxId(taxId);
+					return taxRepository.addTax(tax);
 				}
 			}
 			}catch (TaxException e) {
@@ -41,7 +46,7 @@ public class TaxService {
 	}
 
 
-	public String updateTax(Tax tax) throws TaxException {
+	public String updateTax(Tax tax, String companyId) throws TaxException {
 		try {
 			if(taxValidator.validateTax(tax)){
 				if(StringUtils.isNotBlank(tax.getTaxId()) && StringUtils.isNotBlank(tax.getTaxId())){
@@ -62,12 +67,12 @@ public class TaxService {
 		return taxRepository.removeTax(taxId);
 	}
 
-	public List<Tax> getAllTaxs() {
-		return taxRepository.getAllTaxs();
+	public List<Tax> getAllTaxs(String companyId) {
+		return taxRepository.getAllTaxs(companyId);
 	}
 
-	public Tax getTaxById(String taxId) {
-		return taxRepository.getTaxById(taxId);
+	public Tax getTaxById(String companyId, String taxId) {
+		return taxRepository.getTaxById(companyId, taxId);
 	}
 
 	
