@@ -1,3 +1,4 @@
+
 package com.beatus.billlive.domain.model;
 
 import java.util.List;
@@ -8,6 +9,12 @@ public class PurchaseOrder {
 	private String purchaseFromContactId;
 	private String purchaseToContactId;
 	private String purchaseDate;
+	private String Uid;
+	private String postId;
+	private String totalAmount;
+	private String year;	
+	private String month;
+	private String day;
 	private List<ItemData> itemsInPurchaseOrder;
 	
 	public String getPurchaseId() {
