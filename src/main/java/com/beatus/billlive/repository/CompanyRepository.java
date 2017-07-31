@@ -7,6 +7,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +17,6 @@ import org.springframework.stereotype.Component;
 import com.beatus.billlive.domain.model.CompanyData;
 import com.beatus.billlive.domain.model.CompanyUsers;
 import com.beatus.billlive.utils.Constants;
-import com.beatus.billlive.utils.Utils;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -46,8 +46,7 @@ public class CompanyRepository {
 	
 	public String addCompany(CompanyData companyData) {
 		try {
-			String companyId = Utils.generateRandomKey(10);
-			
+			String companyId = companyData.getCompanyId();
 			DatabaseReference companyUsersRef = databaseReference.child("companyUsers");
 			DatabaseReference companysRef = databaseReference.child("companys").child(companyData.getCompanyId());
 			Map<String, CompanyData> company = new HashMap<String, CompanyData>();
@@ -130,10 +129,11 @@ public class CompanyRepository {
 				if(companyId == null){
 					addCompanyUser(companyUsersRef, companyData, companyData.getCompanyId());
 				}
+				return companyData.getCompanyId();
 			}
-			return isUpdated;
+			return null;
 		} catch (Exception e) {
-			return isUpdated;	
+			return null;	
 		}
 	}
 	
@@ -161,37 +161,41 @@ public class CompanyRepository {
 	}
 	
 	public CompanyData getCompanyById(String companyId) {
-		DatabaseReference companyDataRef = databaseReference.child("companys").child(companyId);
-		companyData = null;
-		companyDataRef.orderByChild("companyId").equalTo(companyId).addChildEventListener(new ChildEventListener() {
-		    @Override
-		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-		        companyData = dataSnapshot.getValue(CompanyData.class);
-		        System.out.println(dataSnapshot.getKey() + " was " + companyData.getCompanyId());
-		    }
-
-			@Override
-			public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onChildRemoved(DataSnapshot snapshot) {
-				
-			}
-
-			@Override
-			public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
-		});
-		logger.info("Company loaded successfully, Company details=" + companyData);
-		return companyData;
+		if(StringUtils.isBlank(companyId)){
+			DatabaseReference companyDataRef = databaseReference.child("companys").child(companyId);
+			companyData = null;
+			companyDataRef.orderByChild("companyId").equalTo(companyId).addChildEventListener(new ChildEventListener() {
+			    @Override
+			    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
+			        companyData = dataSnapshot.getValue(CompanyData.class);
+			        System.out.println(dataSnapshot.getKey() + " was " + companyData.getCompanyId());
+			    }
+	
+				@Override
+				public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
+					
+				}
+	
+				@Override
+				public void onChildRemoved(DataSnapshot snapshot) {
+					
+				}
+	
+				@Override
+				public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
+					
+				}
+	
+				@Override
+				public void onCancelled(DatabaseError error) {
+					
+				}
+			});
+			logger.info("Company loaded successfully, Company details=" + companyData);
+			return companyData;
+		}else {
+			return null;
+		}
 	}
 	
 	public List<CompanyData> getAllCompanys(String companyId) {

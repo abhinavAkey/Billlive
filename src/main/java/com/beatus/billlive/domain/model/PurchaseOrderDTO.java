@@ -8,7 +8,16 @@ public class PurchaseOrderDTO {
 	private String purchaseFromContactId;
 	private String purchaseToContactId;
 	private String purchaseDate;
+	private String dateOfPurchaseOrder;
+	private String dueDate;
+	private String uid;
+	private String postId;
+	private String totalAmount;
 	private List<ItemDTO> itemsInPurchaseOrder;
+	private String isRemoved;
+	private String year;	
+	private String month;
+	private String day;
 	private String isAdded;
 	private String isUpdated;
 	private String isDeleted;
@@ -61,5 +70,59 @@ public class PurchaseOrderDTO {
 	}
 	public void setIsDeleted(String isDeleted) {
 		this.isDeleted = isDeleted;
+	}
+	public String getDateOfPurchaseOrder() {
+		return dateOfPurchaseOrder;
+	}
+	public void setDateOfPurchaseOrder(String dateOfPurchaseOrder) {
+		this.dateOfPurchaseOrder = dateOfPurchaseOrder;
+	}
+	public String getDueDate() {
+		return dueDate;
+	}
+	public void setDueDate(String dueDate) {
+		this.dueDate = dueDate;
+	}
+	public String getUid() {
+		return uid;
+	}
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
+	public String getPostId() {
+		return postId;
+	}
+	public void setPostId(String postId) {
+		this.postId = postId;
+	}
+	public String getTotalAmount() {
+		return totalAmount;
+	}
+	public void setTotalAmount(String totalAmount) {
+		this.totalAmount = totalAmount;
+	}
+	public String getIsRemoved() {
+		return isRemoved;
+	}
+	public void setIsRemoved(String isRemoved) {
+		this.isRemoved = isRemoved;
+	}
+	public String getYear() {
+		return year;
+	}
+	public void setYear(String year) {
+		this.year = year;
+	}
+	public String getMonth() {
+		return month;
+	}
+	public void setMonth(String month) {
+		this.month = month;
+	}
+	public String getDay() {
+		return day;
+	}
+	public void setDay(String day) {
+		this.day = day;
 	}
 }

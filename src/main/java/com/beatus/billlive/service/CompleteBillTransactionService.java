@@ -34,7 +34,7 @@ public class CompleteBillTransactionService {
 					if(existingCompleteBillTransaction != null){
 						return updateCompleteBillTransaction(completeBillTransaction, companyId);
 					}else {
-						completeBillTransaction.setBillTransactionId(Utils.generateRandomKey(12));
+						completeBillTransaction.setBillTransactionId(Utils.generateRandomKey(20));
 						return completeBillTransactionRepository.addCompleteBillTransaction(completeBillTransaction, companyId);
 					}
 				}

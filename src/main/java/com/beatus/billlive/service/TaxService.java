@@ -34,7 +34,7 @@ public class TaxService {
 					}
 					return "N";
 				}else {
-					String taxId = Utils.generateRandomKey(10);
+					String taxId = Utils.generateRandomKey(20);
 					tax.setTaxId(taxId);
 					return taxRepository.addTax(tax);
 				}

@@ -60,8 +60,10 @@ public class BillService {
 					companyId = billDTO.getCompanyId();
 				}
 				BillData existingBill = null;
-				if(StringUtils.isNotBlank(billDTO.getBillNumber()))
+				if(StringUtils.isNotBlank(billDTO.getBillNumber())){
 					existingBill = billRepository.getBillByBillNumber(companyId, billDTO.getBillNumber());
+					return updateBill(request, response, billDTO, companyId);
+				}
 				BillData billData = populateBillData(billDTO, existingBill, companyId);				
 				return billRepository.addBill(billData);
 			}
@@ -175,7 +177,7 @@ public class BillService {
 		billData.setBillFromContactId(billDTO.getBillFromContactId());
 		billData.setBillToContactId(billDTO.getBillToContactId());
 		if(existingBill == null  && StringUtils.isBlank(billDTO.getBillNumber())){
-			billData.setBillNumber(Utils.generateRandomKey(12));
+			billData.setBillNumber(Utils.generateRandomKey(20));
 		} 
 		if(existingBill != null){
 			billData.setBillNumber(billDTO.getBillNumber());

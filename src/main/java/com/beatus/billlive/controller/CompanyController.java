@@ -31,15 +31,18 @@ public class CompanyController {
 	//For add and update company both
 	@RequestMapping(value= "/company/company/add", method = RequestMethod.POST)
 	public @ResponseBody String addCompany(@RequestBody CompanyData companyData, HttpServletRequest request, HttpServletResponse response) throws CompanyDataException{
-		
-		String isCompanyCreated = companyService.addCompany(companyData);
-		return isCompanyCreated;
+		String companyId = companyService.addCompany(companyData);
+		HttpSession session = request.getSession();
+    	session.setAttribute(Constants.COMPANY_ID, companyId);
+		return companyId;
 	}
 	
 	@RequestMapping(value= "/company/company/update", method = RequestMethod.POST)
     public @ResponseBody String editCompany(@RequestBody CompanyData companyData, HttpServletRequest request, HttpServletResponse response) throws CompanyDataException{
-    	String isCompanyUpdated = companyService.updateCompany(companyData);
-		return isCompanyUpdated;
+    	String companyId = companyService.updateCompany(companyData);
+    	HttpSession session = request.getSession();
+    	session.setAttribute(Constants.COMPANY_ID, companyId);
+		return companyId;
     }
     
     @RequestMapping("/company/company/remove/{id}")

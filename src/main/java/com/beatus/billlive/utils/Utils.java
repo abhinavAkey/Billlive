@@ -12,7 +12,7 @@ import com.beatus.billlive.domain.model.ItemData;
 public class Utils {
 	
 	public static String generateRandomKey(final int numberOfCharacters) {
-    	String	randomNumber = RandomStringUtils.random(numberOfCharacters, 0, 0, false, true, null, new SecureRandom());
+    	String	randomNumber = RandomStringUtils.randomAlphanumeric(numberOfCharacters);
 		return randomNumber;
 	}
 	

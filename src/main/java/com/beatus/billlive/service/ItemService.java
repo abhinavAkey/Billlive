@@ -39,10 +39,10 @@ public class ItemService {
 					}
 					return "N";
 				}else {
-					item.setItemId(Utils.generateRandomKey(12));
+					item.setItemId(Utils.generateRandomKey(20));
 					List<Inventory> inventories = new ArrayList<Inventory>();
 					for(Inventory inv : item.getInventories()){
-						inv.setInventoryId(Utils.generateRandomKey(12));
+						inv.setInventoryId(Utils.generateRandomKey(20));
 						populateInventoryData(inv);
 						inv.setRemainingQuantity(inv.getActualQuantity());
 						inventories.add(inv);
@@ -81,7 +81,7 @@ public class ItemService {
 								}
 							}
 							if(!isExistingInventory){
-								inv.setInventoryId(Utils.generateRandomKey(12));
+								inv.setInventoryId(Utils.generateRandomKey(20));
 								populateInventoryData(inv);
 								inventories.add(inv);
 							}

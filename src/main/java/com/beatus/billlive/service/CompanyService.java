@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import com.beatus.billlive.domain.model.CompanyData;
 import com.beatus.billlive.repository.CompanyRepository;
+import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.CompanyValidator;
 import com.beatus.billlive.validation.exception.CompanyDataException;
 
@@ -26,35 +27,39 @@ public class CompanyService {
 	public String addCompany(CompanyData company) throws CompanyDataException {
 		try {
 			if(companyValidator.validateCompanyData(company)){
-				if(StringUtils.isNotBlank(company.getCompanyId()) && StringUtils.isNotBlank(company.getCompanyId())){
+				if(StringUtils.isNotBlank(company.getCompanyId())){
 					CompanyData existingCompany = companyRepository.getCompanyById(company.getCompanyId());
 					if(existingCompany != null){
 						return updateCompany(company);
 					}
-					return "N";
+				}else {
+					String companyId = Utils.generateRandomKey(20);
+					company.setCompanyId(companyId);
+					companyRepository.addCompany(company);
+					return companyId;
 				}
 			}
 			}catch (CompanyDataException e) {
-			throw e;
-		}
-		return "N";
+				throw e;
+			}
+		return null;
 	}
 
 
 	public String updateCompany(CompanyData company) throws CompanyDataException {
 		try {
 			if(companyValidator.validateCompanyData(company)){
-				if(StringUtils.isNotBlank(company.getCompanyId()) && StringUtils.isNotBlank(company.getCompanyId())){
-					CompanyData existingCompany = companyRepository.getCompanyById(company.getCompanyId());
-					if(existingCompany == null){
-						return addCompany(company);
-					}else {
-				return companyRepository.updateCompany(company);
+				if(company.getCompanyId() == null){
+					return addCompany(company);
+				}else {
+					String companyId = companyRepository.updateCompany(company);
+					return companyId;
+				}
 			}
-		} }}catch (CompanyDataException e) {
+		}catch (CompanyDataException e) {
 			throw e;
 		}
-		return "N";
+		return null;
 	}
 	
 	
