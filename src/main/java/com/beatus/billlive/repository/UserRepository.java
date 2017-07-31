@@ -21,16 +21,16 @@ public class UserRepository {
 	private String companyId = null;
 	private CompanyUsers companyUsers;
 
-	public String isRegistered(String Uid) {
+	public String isRegistered(String uid) {
 		
 		DatabaseReference companyUsersRef = databaseReference.child("companyusers");
-		companyUsersRef.orderByChild("Uid").equalTo(Uid).addChildEventListener(new ChildEventListener() {
+		companyUsersRef.orderByChild("uid").equalTo(uid).addChildEventListener(new ChildEventListener() {
 		    @Override
 		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
 		        companyUsers = dataSnapshot.getValue(CompanyUsers.class);
 		        if(companyUsers!=null){
 		        	if(StringUtils.isNotBlank(companyUsers.getUid()) && StringUtils.isNotBlank(companyUsers.getCompanyId())){
-		        		if(companyUsers.getUid() == Uid ){
+		        		if(companyUsers.getUid() == uid ){
 		        			companyId = companyUsers.getCompanyId();
 		        		}
 		        	}

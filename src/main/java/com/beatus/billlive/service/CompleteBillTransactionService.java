@@ -9,9 +9,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.beatus.billlive.domain.model.CompleteBillTransaction;
+import com.beatus.billlive.domain.model.PaymentTransaction;
 import com.beatus.billlive.repository.CompleteBillTransactionRepository;
 import com.beatus.billlive.utils.Constants;
-import com.beatus.billlive.validation.CompanyBillTransactionValidator;
+import com.beatus.billlive.utils.Utils;
+import com.beatus.billlive.validation.CompleteBillTransactionValidator;
 import com.beatus.billlive.validation.exception.CompleteBillTransactionException;
 
 @Service
@@ -19,7 +21,7 @@ import com.beatus.billlive.validation.exception.CompleteBillTransactionException
 public class CompleteBillTransactionService {
 	
 	@Resource(name = "completeBillTransactionValidator")
-	private CompanyBillTransactionValidator completeBillTransactionValidator;
+	private CompleteBillTransactionValidator completeBillTransactionValidator;
 	
 	@Resource(name = "completeBillTransactionRepository")
 	private CompleteBillTransactionRepository completeBillTransactionRepository;
@@ -27,12 +29,14 @@ public class CompleteBillTransactionService {
 	public String addCompleteBillTransaction(CompleteBillTransaction completeBillTransaction, String companyId) throws CompleteBillTransactionException {
 		try {
 			if(completeBillTransactionValidator.validateCompleteBillTransaction(completeBillTransaction)){
-				if(StringUtils.isNotBlank(completeBillTransaction.getBillNumber()) && StringUtils.isNotBlank(completeBillTransaction.getBillNumber())){
+				if(StringUtils.isNotBlank(completeBillTransaction.getBillNumber())){
 					CompleteBillTransaction existingCompleteBillTransaction = completeBillTransactionRepository.getCompleteBillTransactionById(completeBillTransaction.getBillNumber(), companyId);
 					if(existingCompleteBillTransaction != null){
 						return updateCompleteBillTransaction(completeBillTransaction, companyId);
+					}else {
+						completeBillTransaction.setBillTransactionId(Utils.generateRandomKey(12));
+						return completeBillTransactionRepository.addCompleteBillTransaction(completeBillTransaction, companyId);
 					}
-					return "N";
 				}
 			}
 			}catch (CompleteBillTransactionException e) {
@@ -45,27 +49,35 @@ public class CompleteBillTransactionService {
 	public String updateCompleteBillTransaction(CompleteBillTransaction completeBillTransaction, String companyId) throws CompleteBillTransactionException {
 		try {
 			if(completeBillTransactionValidator.validateCompleteBillTransaction(completeBillTransaction)){
-				if(StringUtils.isNotBlank(completeBillTransaction.getBillNumber()) && StringUtils.isNotBlank(completeBillTransaction.getBillNumber())){
+				if(StringUtils.isNotBlank(completeBillTransaction.getBillNumber())){
 					CompleteBillTransaction existingCompleteBillTransaction = completeBillTransactionRepository.getCompleteBillTransactionById(completeBillTransaction.getBillNumber(), companyId);
 					if(existingCompleteBillTransaction == null){
 						return addCompleteBillTransaction(completeBillTransaction, companyId);
 					}else {
-				return completeBillTransactionRepository.updateCompleteBillTransaction(completeBillTransaction);
+						List<PaymentTransaction> paymentTransactions = existingCompleteBillTransaction.getPaymentTransactions();
+						paymentTransactions.add(completeBillTransaction.getPaymentTransactions().get(0));
+						Double amountPaid = Constants.DEFAULT_DOUBLE_VALUE;
+						for(PaymentTransaction payment : paymentTransactions){
+							amountPaid += payment.getAmountPaid();				
+						}
+						completeBillTransaction.setTotalAmountPaid(amountPaid);
+						completeBillTransaction.setTotalAmountDue(completeBillTransaction.getTotalAmount() - amountPaid);
+						return completeBillTransactionRepository.updateCompleteBillTransaction(completeBillTransaction);
+					}
+				} 
 			}
-		} }}catch (CompleteBillTransactionException e) {
-			throw e;
-		}
+			}catch (CompleteBillTransactionException e) {
+				throw e;
+			}
 		return "N";
 	}
 	
 	
-	public List<CompleteBillTransaction> getAllCompleteBillTransactions(String billNumber) {
-		return completeBillTransactionRepository.getAllCompleteBillTransactions(billNumber);
+	public List<CompleteBillTransaction> getAllCompleteBillTransactions(String companyId) {
+		return completeBillTransactionRepository.getAllCompleteBillTransactions(companyId);
 	}
 
 	public CompleteBillTransaction getCompleteBillTransactionById(String billNumber, String companyId) {
-		
-		
 		return completeBillTransactionRepository.getCompleteBillTransactionById(billNumber,companyId);
 	}
 

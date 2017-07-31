@@ -1,6 +1,8 @@
 package com.beatus.billlive.service;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
@@ -73,8 +75,8 @@ public class UserService {
 		return userRepository.getUserById(companyId, userId);
 	}*/
 
-	public String isRegistered(String uid) {
-		// TODO Auto-generated method stub
-		return userRepository.isRegistered(uid);
+	public String isRegistered(HttpServletRequest request, HttpServletResponse response, String uid) {
+		String companyId = userRepository.isRegistered(uid);
+		return companyId;
 	}
 }

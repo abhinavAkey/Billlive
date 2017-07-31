@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.BillDTO;
-import com.beatus.billlive.domain.model.BillData;
 import com.beatus.billlive.service.BillService;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.exception.BillDataException;

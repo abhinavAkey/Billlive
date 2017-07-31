@@ -63,4 +63,5 @@ public class Constants {
 	public static final String NO = "N";
 	public static final String COMPANY_ID = "companyId";
 	public static final Double DEFAULT_DOUBLE_VALUE = 0.00;
+	public static final int MAX_INTERVAL = -1;
 }

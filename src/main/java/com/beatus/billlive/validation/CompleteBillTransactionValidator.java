@@ -7,7 +7,7 @@ import com.beatus.billlive.domain.model.CompleteBillTransaction;
 import com.beatus.billlive.validation.exception.CompleteBillTransactionException;
 
 @Component("companyValidator")
-public class CompanyBillTransactionValidator {
+public class CompleteBillTransactionValidator {
 	
 	public boolean validateCompleteBillTransaction(CompleteBillTransaction company) throws CompleteBillTransactionException{
 		if(company == null || StringUtils.isBlank(String.valueOf(company.getBillNumber()))){

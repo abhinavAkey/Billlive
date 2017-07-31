@@ -1,13 +1,18 @@
 package com.beatus.billlive.controller;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.service.UserService;
+import com.beatus.billlive.utils.Constants;
 
 @Controller
 @RequestMapping("/api")
@@ -66,10 +71,13 @@ public class UserController {
 			throw new UserDataException("userId passed cant be null or empty string");
 		}
 	}*/
-	@RequestMapping(value= "/company/user/isRegistered", method = RequestMethod.POST)
-	public @ResponseBody String isReistered(String Uid){
-		return userService.isRegistered(Uid);
-		
+	@RequestMapping(value= "/company/user/isRegistered", method = RequestMethod.GET)
+	public @ResponseBody String isRegistered(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid){
+		String companyId = userService.isRegistered(request, response, uid);
+		HttpSession session = request.getSession();
+		session.setAttribute(Constants.COMPANY_ID, companyId);
+		session.setMaxInactiveInterval(Constants.MAX_INTERVAL);
+		return companyId;
 	}
 
 	

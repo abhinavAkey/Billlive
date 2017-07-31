@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.Resource;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.CompanyData;
 import com.beatus.billlive.domain.model.CompanyUsers;
+import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -30,9 +33,12 @@ public class CompanyRepository {
     @Qualifier(value = "databaseReference")
     private DatabaseReference databaseReference;
 	
-	public String isAdded = "N";
-	public String isUpdated = "N";
-	public String isDeleted = "N";
+	@Resource(name = "userRepository")
+	private UserRepository userRepository;
+	
+	private String isAdded = "N";
+	private String isUpdated = "N";
+	private String isDeleted = "N";
 	
 	private CompanyData companyData = null;
 	
@@ -63,37 +69,48 @@ public class CompanyRepository {
 					}
 			    }
 			});
-			CompanyUsers companyUsers = new CompanyUsers();
-			for (int i = 0; i < companyData.getListUid().size(); i++) {
-				companyUsers.setUid(companyData.getListUid().get(i).getUid());
+			if(Constants.YES.equalsIgnoreCase(isAdded)){
+				addCompanyUser(companyUsersRef, companyData, companyId);
 			}
-			companyUsers.setCompanyId(companyId);
-			Map<String, CompanyUsers> companyUsersMap = new HashMap<String, CompanyUsers>();
-			DatabaseReference companyUsersPostRef = companyUsersRef.push();
-			String companyUsersPostId = companyUsersPostRef.getKey();
-			companyUsers.setPostId(companyUsersPostId);
-			companyUsersMap.put(companyUsers.getCompanyId(), companyUsers);
-			companyUsersPostRef.setValue(companyUsers, new DatabaseReference.CompletionListener() {
-			    @Override
-			    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-			        if (databaseError != null) {
-			            System.out.println("Data could not be saved " + databaseError.getMessage() + " " + companyUsers.getCompanyId());
-			            isAdded = "N";
-			        } else {
-			        	logger.info("Company saved successfully, Company Details="+companyUsers.getCompanyId());
-			        	isAdded = "Y";
-					}
-			    }
-			});
-			return isAdded;
+			if(Constants.YES.equalsIgnoreCase(isAdded)){
+				return companyId;
+			}else {
+				return null;
+			}
 		} catch (Exception e) {
-			return isAdded;	
+			return null;	
 		}
+	}
+
+	private void addCompanyUser(DatabaseReference companyUsersRef, CompanyData companyData, String companyId) {
+		CompanyUsers companyUsers = new CompanyUsers();
+		for (int i = 0; i < companyData.getListUid().size(); i++) {
+			companyUsers.setUid(companyData.getListUid().get(i).getUid());
+		}
+		companyUsers.setCompanyId(companyId);
+		Map<String, CompanyUsers> companyUsersMap = new HashMap<String, CompanyUsers>();
+		DatabaseReference companyUsersPostRef = companyUsersRef.push();
+		String companyUsersPostId = companyUsersPostRef.getKey();
+		companyUsers.setPostId(companyUsersPostId);
+		companyUsersMap.put(companyUsers.getUid(), companyUsers);
+		companyUsersPostRef.setValue(companyUsers, new DatabaseReference.CompletionListener() {
+		    @Override
+		    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+		        if (databaseError != null) {
+		            System.out.println("Data could not be saved " + databaseError.getMessage() + " " + companyUsers.getCompanyId());
+		            isAdded = "N";
+		        } else {
+		        	logger.info("Company saved successfully, Company Details="+companyUsers.getCompanyId());
+		        	isAdded = "Y";
+				}
+		    }
+		});	
 	}
 
 	public String updateCompany(CompanyData companyData) {
 		try {
 			DatabaseReference companysRef = databaseReference.child("companys").child(companyData.getCompanyId());
+			DatabaseReference companyUsersRef = databaseReference.child("companyUsers");
 			Map<String, Object> companyUpdates = new HashMap<String, Object>();
 			companyUpdates.put(companyData.getCompanyId(), companyData);
 			companysRef.updateChildren(companyUpdates, new DatabaseReference.CompletionListener() {
@@ -108,6 +125,12 @@ public class CompanyRepository {
 					}
 			    }
 			});
+			if(Constants.YES.equalsIgnoreCase(isUpdated)){
+				String companyId = userRepository.isRegistered(companyData.getListUid().get(0).getUid());
+				if(companyId == null){
+					addCompanyUser(companyUsersRef, companyData, companyData.getCompanyId());
+				}
+			}
 			return isUpdated;
 		} catch (Exception e) {
 			return isUpdated;	

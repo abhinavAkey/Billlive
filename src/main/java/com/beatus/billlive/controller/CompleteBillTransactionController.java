@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.beatus.billlive.domain.model.CompleteBillTransaction;
 import com.beatus.billlive.service.CompleteBillTransactionService;
 import com.beatus.billlive.utils.Constants;
-import com.beatus.billlive.validation.CompanyBillTransactionValidator;
+import com.beatus.billlive.validation.CompleteBillTransactionValidator;
 import com.beatus.billlive.validation.exception.CompleteBillTransactionException;
 
 @Controller
@@ -30,7 +30,7 @@ public class CompleteBillTransactionController {
 	private CompleteBillTransactionService completeBillTransactionService;
 	
 	@Resource(name = "completeBillTransactionValidator")
-	private CompanyBillTransactionValidator completeBillTransactionValidator;
+	private CompleteBillTransactionValidator completeBillTransactionValidator;
 	
 	@RequestMapping(value = "/company/getallcompleteBillTransactions", method = RequestMethod.GET)
 	public @ResponseBody List<CompleteBillTransaction> getAllCompleteBillTransactions(@RequestBody HttpServletRequest request, HttpServletResponse response) {
@@ -41,18 +41,17 @@ public class CompleteBillTransactionController {
 	}
 	
 	@RequestMapping(value = "/company/getcompleteBillTransaction", method = RequestMethod.GET)
-	public @ResponseBody CompleteBillTransaction getCompleteBillTransactionById(@RequestBody String completeBillTransactionId, HttpServletRequest request, HttpServletResponse response) throws CompleteBillTransactionException {
-		if(StringUtils.isNotBlank(completeBillTransactionId)){
+	public @ResponseBody CompleteBillTransaction getCompleteBillTransactionById(@RequestBody String billNumber, HttpServletRequest request, HttpServletResponse response) throws CompleteBillTransactionException {
+		if(StringUtils.isNotBlank(billNumber)){
 			HttpSession session = request.getSession();
 	    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
-			CompleteBillTransaction completeBillTransaction = completeBillTransactionService.getCompleteBillTransactionById(completeBillTransactionId, companyId);
+			CompleteBillTransaction completeBillTransaction = completeBillTransactionService.getCompleteBillTransactionById(billNumber, companyId);
 			return completeBillTransaction;
 		}else{
 			throw new CompleteBillTransactionException("completeBillTransactionId passed cant be null or empty string");
 		}
 	}
 	
-	//For add and update completeBillTransaction both
 	@RequestMapping(value= "/company/addcompleteBillTransaction", method = RequestMethod.POST)
 	public @ResponseBody String addCompleteBillTransaction(@RequestBody CompleteBillTransaction completeBillTransaction, HttpServletRequest request, HttpServletResponse response) throws CompleteBillTransactionException{
 		if(completeBillTransactionValidator.validateCompleteBillTransaction(completeBillTransaction)){
@@ -61,15 +60,21 @@ public class CompleteBillTransactionController {
 			String isCompleteBillTransactionCreated = completeBillTransactionService.addCompleteBillTransaction(completeBillTransaction, companyId);
 			return isCompleteBillTransactionCreated;
 		}else{
-			throw new CompleteBillTransactionException("CompleteBillTransaction data passed cant be null or empty string");
+			throw new CompleteBillTransactionException("CompleteBillTransaction data passed cant be null or empty");
 		}	
 	}
 	
 
-    @RequestMapping("/company/editcompleteBillTransaction/{id}")
-    public String editCompleteBillTransaction(@PathVariable("id") int id, Model model){
-       
-        return "completeBillTransaction";
-    }
+	@RequestMapping(value= "/company/updatecompleteBillTransaction", method = RequestMethod.POST)
+	public @ResponseBody String updateCompleteBillTransaction(@RequestBody CompleteBillTransaction completeBillTransaction, HttpServletRequest request, HttpServletResponse response) throws CompleteBillTransactionException{
+		if(completeBillTransactionValidator.validateCompleteBillTransaction(completeBillTransaction)){
+			HttpSession session = request.getSession();
+	    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+			String isCompleteBillTransactionUpdated = completeBillTransactionService.updateCompleteBillTransaction(completeBillTransaction, companyId);
+			return isCompleteBillTransactionUpdated;
+		}else{
+			throw new CompleteBillTransactionException("CompleteBillTransaction data passed cant be null or empty");
+		}	
+	}
 	
 }

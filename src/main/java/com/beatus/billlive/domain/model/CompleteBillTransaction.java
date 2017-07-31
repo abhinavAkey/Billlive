@@ -1,13 +1,16 @@
 package com.beatus.billlive.domain.model;
 
+import java.util.List;
+
 public class CompleteBillTransaction extends BaseData{
+	private String billTransactionId;
 	private String billNumber;
 	private String postId;
+	private String uid;
 	private Double totalAmount;
-	private String date;
-	private String reference;
-	private Double amountPaid;
-	private Double amountDue;
+	private List<PaymentTransaction> paymentTransactions; 
+	private Double totalAmountPaid;
+	private Double totalAmountDue;
 	
 	public String getBillNumber() {
 		return billNumber;
@@ -27,28 +30,34 @@ public class CompleteBillTransaction extends BaseData{
 	public void setTotalAmount(Double totalAmount) {
 		this.totalAmount = totalAmount;
 	}
-	public String getDate() {
-		return date;
+	public String getBillTransactionId() {
+		return billTransactionId;
 	}
-	public void setDate(String date) {
-		this.date = date;
+	public void setBillTransactionId(String billTransactionId) {
+		this.billTransactionId = billTransactionId;
 	}
-	public String getReference() {
-		return reference;
+	public String getUid() {
+		return uid;
 	}
-	public void setReference(String reference) {
-		this.reference = reference;
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
-	public Double getAmountPaid() {
-		return amountPaid;
+	public List<PaymentTransaction> getPaymentTransactions() {
+		return paymentTransactions;
 	}
-	public void setAmountPaid(Double amountPaid) {
-		this.amountPaid = amountPaid;
+	public void setPaymentTransactions(List<PaymentTransaction> paymentTransactions) {
+		this.paymentTransactions = paymentTransactions;
 	}
-	public Double getAmountDue() {
-		return amountDue;
+	public Double getTotalAmountPaid() {
+		return totalAmountPaid;
 	}
-	public void setAmountDue(Double amountDue) {
-		this.amountDue = amountDue;
+	public void setTotalAmountPaid(Double totalAmountPaid) {
+		this.totalAmountPaid = totalAmountPaid;
+	}
+	public Double getTotalAmountDue() {
+		return totalAmountDue;
+	}
+	public void setTotalAmountDue(Double totalAmountDue) {
+		this.totalAmountDue = totalAmountDue;
 	}
 }

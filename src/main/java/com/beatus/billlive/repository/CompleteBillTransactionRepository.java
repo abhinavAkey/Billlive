@@ -36,7 +36,7 @@ public class CompleteBillTransactionRepository {
 	
 	List<CompleteBillTransaction> completeBillTransactionsList = new ArrayList<CompleteBillTransaction>();
 	
-	public String addCompleteBillTransaction(CompleteBillTransaction completeBillTransactionData) {
+	public String addCompleteBillTransaction(CompleteBillTransaction completeBillTransactionData, String companyId) {
 		try {
 			DatabaseReference completeBillTransactionsRef = databaseReference.child("completeBillTransactions").child(completeBillTransactionData.getCompanyId());
 			Map<String, CompleteBillTransaction> completeBillTransaction = new HashMap<String, CompleteBillTransaction>();
@@ -145,7 +145,7 @@ public class CompleteBillTransactionRepository {
 	}
 	
 	public List<CompleteBillTransaction> getAllCompleteBillTransactions(String companyId) {
-		DatabaseReference completeBillTransactionDataRef = databaseReference.child("completeBillTransactions").child(completeBillTransactionData.getCompanyId());
+		DatabaseReference completeBillTransactionDataRef = databaseReference.child("completeBillTransactions").child(companyId);
 		completeBillTransactionDataRef.orderByChild("companyId").equalTo(companyId).addValueEventListener(new ValueEventListener() {
 		    public void onDataChange(DataSnapshot completeBillTransactionSnapshot) {
 		    	completeBillTransactionsList.clear();
