@@ -196,6 +196,8 @@ public class BillService {
 		billData.setDateOfBill(billDTO.getDateOfBill());
 		billData.setDueDate(billDTO.getDueDate());
 		billData.setCompanyId(billDTO.getCompanyId());
+		billData.setReferenceAadharCardNumber(billDTO.getReferenceAadharCardNumber());
+		billData.setReferenceMobileNumber(billDTO.getReferenceMobileNumber());
 		List<BillItemData> billItems = new ArrayList<BillItemData>();
 		for(ItemDTO itemDTO : billDTO.getItems()){
 			BillItemData billItem = new BillItemData();

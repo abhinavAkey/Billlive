@@ -13,6 +13,8 @@ public class BillDTO {
 	private String dateOfBill;
 	private String dueDate;
 	private Double totalAmount;
+	private String referenceMobileNumber;
+	private String referenceAadharCardNumber;
 	private String isTaxeble;
 	private String isUpdated;
 	private String isDeleted;
@@ -88,5 +90,17 @@ public class BillDTO {
 	}
 	public void setTotalAmount(Double totalAmount) {
 		this.totalAmount = totalAmount;
+	}
+	public String getReferenceMobileNumber() {
+		return referenceMobileNumber;
+	}
+	public void setReferenceMobileNumber(String referenceMobileNumber) {
+		this.referenceMobileNumber = referenceMobileNumber;
+	}
+	public String getReferenceAadharCardNumber() {
+		return referenceAadharCardNumber;
+	}
+	public void setReferenceAadharCardNumber(String referenceAadharCardNumber) {
+		this.referenceAadharCardNumber = referenceAadharCardNumber;
 	}
 }

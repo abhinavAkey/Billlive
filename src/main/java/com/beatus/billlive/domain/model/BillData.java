@@ -11,6 +11,8 @@ public class BillData extends BaseData{
 	private String postId;
 	private String dateOfBill;
 	private String dueDate;
+	private String referenceMobileNumber;
+	private String referenceAadharCardNumber;
 	private String isTaxeble;
 	private List<BillItemData> billItems;
 	private Double totalAmount;
@@ -102,5 +104,17 @@ public class BillData extends BaseData{
 	}
 	public void setIsRemoved(String isRemoved) {
 		this.isRemoved = isRemoved;
+	}
+	public String getReferenceMobileNumber() {
+		return referenceMobileNumber;
+	}
+	public void setReferenceMobileNumber(String referenceMobileNumber) {
+		this.referenceMobileNumber = referenceMobileNumber;
+	}
+	public String getReferenceAadharCardNumber() {
+		return referenceAadharCardNumber;
+	}
+	public void setReferenceAadharCardNumber(String referenceAadharCardNumber) {
+		this.referenceAadharCardNumber = referenceAadharCardNumber;
 	}
 }
