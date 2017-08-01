@@ -1,6 +1,6 @@
 package com.beatus.billlive.domain.model;
 
-public class Tax {
+public class Tax extends BaseData{
 	
 	private String taxId;
 	private String taxDesc;

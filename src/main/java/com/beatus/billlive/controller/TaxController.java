@@ -9,7 +9,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -32,52 +31,65 @@ public class TaxController {
 	@Resource(name = "taxValidator")
 	private TaxValidator taxValidator;
 	
-	@RequestMapping(value = "/company/getalltaxs", method = RequestMethod.GET)
-	public @ResponseBody List<Tax> getAllTaxs(HttpServletRequest request, HttpServletResponse response) {
-		HttpSession session = request.getSession();
-    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
-    	if(StringUtils.isNotBlank(companyId)){
-			List<Tax> taxList = taxService.getAllTaxs(companyId);
-			return taxList;
-    	}else {
-    		return null;
-    	}
-	}
-	
-	@RequestMapping(value = "/company/gettax", method = RequestMethod.GET)
-	public @ResponseBody Tax getTaxById(String taxId, HttpServletRequest request, HttpServletResponse response) throws TaxException {
-		if(StringUtils.isNotBlank(taxId)){
-			Tax taxData = taxService.getTaxById(taxId);
-			return taxData;
-		}else{
-			throw new TaxException("taxId passed cant be null or empty string");
-		}
-	}
-	
 	//For add and update tax both
-	@RequestMapping(value= "/company/addtax", method = RequestMethod.POST)
+	@RequestMapping(value= "/company/tax/add", method = RequestMethod.POST)
 	public @ResponseBody String addTax(@RequestBody Tax taxData, HttpServletRequest request, HttpServletResponse response) throws TaxException{
 		if(taxValidator.validateTax(taxData)){
 			HttpSession session = request.getSession();
         	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
-			String isTaxCreated = taxService.addTax(taxData, companyId);
+			String isTaxCreated = taxService.addTax(request, response, taxData, companyId);
 			return isTaxCreated;
 		}else{
 			throw new TaxException("Tax data passed cant be null or empty string");
 		}	
 	}
 	
-	@RequestMapping("/company/removetax/{id}")
-    public String removeTax(@PathVariable("id") String uid){
-		
-        this.taxService.removeTax(uid);
-        return "redirect:/taxs";
+	@RequestMapping(value= "/company/tax/update", method = RequestMethod.POST)
+	public @ResponseBody String updateTax(@RequestBody Tax taxData, HttpServletRequest request, HttpServletResponse response) throws TaxException{
+		if(taxValidator.validateTax(taxData)){
+			HttpSession session = request.getSession();
+        	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+			String isTaxUpdated = taxService.updateTax(request, response, taxData, companyId);
+			return isTaxUpdated;
+		}else{
+			throw new TaxException("Tax data passed cant be null or empty string");
+		}	
+	}
+	
+	@RequestMapping("/company/tax/remove/{id}")
+    public @ResponseBody String removeTax(@PathVariable("id") String taxId,  HttpServletRequest request, HttpServletResponse response) throws TaxException{
+		if(StringUtils.isNotBlank(taxId)){
+			HttpSession session = request.getSession();
+        	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+        	String isTaxRemoved = taxService.removeTax(companyId, taxId);
+    		return isTaxRemoved;
+		}else{
+			throw new TaxException("TaxId passed cant be null or empty string");
+		}
     }
- 
-    @RequestMapping("/company/edittax/{id}")
-    public String editTax(@PathVariable("id") int id, Model model){
-       
-        return "tax";
-    }
+	
+	@RequestMapping(value = "/company/getalltaxs", method = RequestMethod.GET)
+	public @ResponseBody List<Tax> getAllTaxs(HttpServletRequest request, HttpServletResponse response) throws TaxException {
+		HttpSession session = request.getSession();
+    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+    	if(StringUtils.isNotBlank(companyId)){
+			List<Tax> taxList = taxService.getAllTaxs(companyId);
+			return taxList;
+    	}else {
+			throw new TaxException("TaxId passed cant be null or empty string");
+    	}
+	}
+	
+	@RequestMapping(value = "/company/gettax/{id}", method = RequestMethod.GET)
+	public @ResponseBody Tax getTaxById(@PathVariable("id") String taxId, HttpServletRequest request, HttpServletResponse response) throws TaxException {
+		HttpSession session = request.getSession();
+    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+    	if(StringUtils.isNotBlank(taxId) && StringUtils.isNotBlank(companyId)){
+			Tax tax = taxService.getTaxById(companyId, taxId);
+			return tax;
+    	}else {
+			throw new TaxException("TaxId passed cant be null or empty string");
+    	}
+	}
 	
 }

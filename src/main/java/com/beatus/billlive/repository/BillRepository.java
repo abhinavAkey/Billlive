@@ -51,16 +51,14 @@ public class BillRepository {
 			    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 			        if (databaseError != null) {
 			            System.out.println("Data could not be saved " + databaseError.getMessage() + " " + billData.getUid());
-			            isAdded = "N";
 			        } else {
 			        	logger.info("Bill saved successfully, Bill Details="+billData.getUid());
-			        	isAdded = "Y";
-					}
+			        }
 			    }
 			});
-			return isAdded;
+			return billData.getBillNumber();
 		} catch (Exception e) {
-			return isAdded;	
+			throw e;	
 		}
 	}
 
@@ -76,7 +74,7 @@ public class BillRepository {
 			            System.out.println("Data could not be updated " + databaseError.getMessage() + " " + billData.getUid());
 			            isUpdated = "N";
 			        } else {
-			        	logger.info("Bill updated successfully, Bill Details="+billData.getUid());
+			        	logger.info("Bill updated successfully, Bill Details = "+billData.getUid());
 			        	isUpdated = "Y";
 					}
 			    }
@@ -204,6 +202,25 @@ public class BillRepository {
 	public List<BillData> getAllBillsInADay(String companyId, String year, String month, String day) {
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).orderByChild("day").equalTo(day).addValueEventListener(new ValueEventListener() {
+		    public void onDataChange(DataSnapshot billSnapshot) {
+		    	billsList.clear();
+		        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {
+		            BillData billData = billPostSnapshot.getValue(BillData.class);
+		            billsList.add(billData);
+		        }
+		    }
+		    
+			@Override
+			public void onCancelled(DatabaseError error) {
+				
+			}
+		});
+		return billsList;
+	}
+	
+	public List<BillData> getAllBills(String companyId) {
+		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
+		billDataRef.orderByChild("companyId").equalTo(companyId).addValueEventListener(new ValueEventListener() {
 		    public void onDataChange(DataSnapshot billSnapshot) {
 		    	billsList.clear();
 		        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {

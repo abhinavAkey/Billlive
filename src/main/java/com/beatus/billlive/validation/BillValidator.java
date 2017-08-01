@@ -14,12 +14,12 @@ public class BillValidator {
 		if(bill == null || StringUtils.isBlank(bill.getUid())){
 			throw new BillDataException("Bill data is null");
 		}
-		if(StringUtils.isBlank(bill.getBillFrom())){
+		/*if(StringUtils.isBlank(bill.getBillFrom())){
 			throw new BillDataException("Bill data the From field is not available " + bill.getUid());
 		}
 		if(StringUtils.isBlank(bill.getBillTo())){
 			throw new BillDataException("Bill data the To field is not available " + bill.getUid());
-		}
+		}*/
 		if(StringUtils.isBlank(bill.getDateOfBill())){
 			throw new BillDataException("Bill data the date field is not available " + bill.getUid());
 		}
@@ -34,12 +34,12 @@ public class BillValidator {
 				if(StringUtils.isBlank(item.getIsTaxeble())){
 					throw new BillDataException("Is taxeble can't be null " + item.getItemId());
 				}
-				if(StringUtils.isBlank(item.getProductValue())){
+				/*if(StringUtils.isBlank(item.getProductValue())){
 					throw new BillDataException("Product Value can't be null " + item.getItemId());
 				}
 				if(StringUtils.isBlank(item.getTotalAmount())){
 					throw new BillDataException("Product Value can't be null " + item.getItemId());
-				}
+				}*/
 				if(StringUtils.isBlank(item.getTaxId())){
 					throw new BillDataException("Tax Id can't be null " + item.getItemId());
 				}
@@ -48,5 +48,10 @@ public class BillValidator {
 			throw new BillDataException("In Bill the items data is not available");
 		}		
 		return true;
+	}
+
+	public boolean validateBill(BillDTO billDTO) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 }

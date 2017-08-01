@@ -6,22 +6,30 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
+import com.beatus.billlive.config.ApplicationConfiguration;
 import com.beatus.billlive.domain.model.Inventory;
 import com.beatus.billlive.domain.model.ItemData;
 import com.beatus.billlive.repository.ItemRepository;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.ItemValidator;
+import com.beatus.billlive.validation.exception.BillDataException;
 import com.beatus.billlive.validation.exception.ItemDataException;
 
 @Service
 @Component("itemService")
 public class ItemService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ItemService.class);
 	
 	@Resource(name = "itemValidator")
 	private ItemValidator itemValidator;
@@ -29,9 +37,13 @@ public class ItemService {
 	@Resource(name = "itemRepository")
 	private ItemRepository itemRepository;
 
-	public String addItem(ItemData item) throws ItemDataException {
+	public String addItem(HttpServletRequest request, HttpServletResponse response,ItemData item, String companyId) throws ItemDataException {
+		if(item == null){
+			throw new ItemDataException("Item data cant be null");
+		}
 		try {
-			if(itemValidator.validateItemData(item)){
+			boolean isValidated = itemValidator.validateItemData(item);
+			if(isValidated){
 				if(StringUtils.isNotBlank(item.getItemId()) && StringUtils.isNotBlank(item.getCompanyId())){
 					ItemData existingItem = itemRepository.getItemById(item.getCompanyId(), item.getItemId());
 					if(existingItem != null){

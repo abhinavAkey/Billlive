@@ -38,7 +38,7 @@ public class TaxRepository {
 	
 	public String addTax(Tax tax) {
 		try {
-			DatabaseReference taxsRef = databaseReference.child("taxs").child(tax.getTaxId());
+			DatabaseReference taxsRef = databaseReference.child("taxs").child(tax.getCompanyId());
 			Map<String, Tax> taxs = new HashMap<String, Tax>();
 			// Generate a reference to a new location and add some data using push()
 			DatabaseReference taxsPostRef = taxsRef.push();
@@ -55,15 +55,15 @@ public class TaxRepository {
 					}
 			    }
 			});
-			return isAdded;
+			return tax.getTaxId();
 		} catch (Exception e) {
-			return isAdded;	
+			throw e;
 		}
 	}
 
 	public String updateTax(Tax tax) {
 		try {
-			DatabaseReference taxsRef = databaseReference.child("taxs").child(tax.getTaxId());
+			DatabaseReference taxsRef = databaseReference.child("taxs").child(tax.getCompanyId());
 			Map<String, Object> taxUpdates = new HashMap<String, Object>();
 			taxUpdates.put(tax.getTaxId(), tax);
 			taxsRef.updateChildren(taxUpdates, new DatabaseReference.CompletionListener() {
@@ -73,7 +73,7 @@ public class TaxRepository {
 			            System.out.println("Data could not be updated " + databaseError.getMessage() + " " + tax.getTaxId());
 			            isUpdated = "N";
 			        } else {
-			        	logger.info("Tax updated successfully, Tax Details="+tax.getTaxId());
+			        	logger.info("Tax updated successfully, Tax Details = "+tax.getTaxId());
 			        	isUpdated = "Y";
 					}
 			    }
@@ -84,9 +84,9 @@ public class TaxRepository {
 		}
 	}
 	
-	public String removeTax(String taxId) {
+	public String removeTax(String taxId, String companyId) {
 		try {
-			DatabaseReference taxsRef = databaseReference.child("taxs").child(taxId);
+			DatabaseReference taxsRef = databaseReference.child("taxs").child(companyId);
 			Map<String, Object> taxUpdates = new HashMap<String, Object>();
 			taxUpdates.put(taxId, null);
 			taxsRef.updateChildren(taxUpdates, new DatabaseReference.CompletionListener() {
@@ -147,8 +147,7 @@ public class TaxRepository {
 		    public void onDataChange(DataSnapshot taxSnapshot) {
 		    	taxsList.clear();
 		        for (DataSnapshot taxPostSnapshot: taxSnapshot.getChildren()) {
-		            Tax tax = taxPostSnapshot.getValue(Tax.class)
-		            		;
+		            Tax tax = taxPostSnapshot.getValue(Tax.class);
 		            taxsList.add(tax);
 		        }
 		    }

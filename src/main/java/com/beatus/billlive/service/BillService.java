@@ -32,7 +32,7 @@ import com.beatus.billlive.validation.exception.BillDataException;
 @Component("billService")
 public class BillService {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(ApplicationConfiguration.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(BillService.class);
 
 	@Resource(name = "billRepository")
 	private BillRepository billRepository;
@@ -127,6 +127,17 @@ public class BillService {
 		}else {
 			return null;
 		}
+	}
+	
+	public List<BillDTO> getAllBills(String companyId) {
+		List<BillData> bills = billRepository.getAllBills(companyId);
+		List<BillDTO> billsNotRemoved = new ArrayList<BillDTO>();
+		for(BillData bill : bills){
+			if(!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())){
+				billsNotRemoved.add(populateBillDTO(bill));
+			}
+		}
+		return billsNotRemoved;
 	}
 	
 	public List<BillDTO> getAllBillsInAMonth(String companyId, String year, String month) {

@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.beatus.billlive.domain.model.BillDTO;
 import com.beatus.billlive.service.BillService;
 import com.beatus.billlive.utils.Constants;
+import com.beatus.billlive.validation.BillValidator;
 import com.beatus.billlive.validation.exception.BillDataException;
 
 @Controller
@@ -28,21 +29,32 @@ public class BillController {
 	@Resource(name = "billService")
 	private BillService billService;
 	
+	@Resource(name = "billValidator")
+	private BillValidator billValidator;
+	
 	//For add and update bill both
 	@RequestMapping(value= "/company/bill/add", method = RequestMethod.POST)
 	public @ResponseBody String addBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
-		HttpSession session = request.getSession();
-    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
-		String isBillCreated = billService.addBill(request, response, billDTO, companyId);
-		return isBillCreated;
+		if(billValidator.validateBill(billDTO)){
+			HttpSession session = request.getSession();
+			String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+			String isBillCreated = billService.addBill(request, response, billDTO, companyId);
+			return isBillCreated;
+		}else{
+			throw new BillDataException("Bill data passed cant be null or empty string");
+		}
 	}
 	
 	@RequestMapping(value= "/company/bill/update", method = RequestMethod.POST)
     public @ResponseBody String editBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
+		if(billValidator.validateBill(billDTO)){
 		HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
 		String isBillUpdated = billService.updateBill(request, response, billDTO, companyId);
 		return isBillUpdated;
+		}else{
+			throw new BillDataException("Bill data passed cant be null or empty string");
+		}
     }
     
     @RequestMapping("/company/bill/remove/{id}")
