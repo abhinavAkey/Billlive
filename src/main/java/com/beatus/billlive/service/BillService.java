@@ -164,11 +164,43 @@ public class BillService {
 	
 	private BillDTO populateBillDTO(BillData bill) {
 		BillDTO billDTO = new BillDTO();
+		List<ItemDTO> listItems = new ArrayList<ItemDTO>();
 		billDTO.setBillNumber(bill.getBillNumber());
 		billDTO.setBillFromContactId(bill.getBillFromContactId());
 		billDTO.setBillToContactId(bill.getBillToContactId());
-		//billDTO.set
-		return null;
+		billDTO.setCompanyId(bill.getCompanyId());
+		billDTO.setUid(bill.getUid());
+		billDTO.setDateOfBill(bill.getDateOfBill());
+		billDTO.setDueDate(bill.getDueDate());
+		billDTO.setTotalAmount(bill.getTotalAmount());
+		billDTO.setReferenceMobileNumber(bill.getReferenceMobileNumber());
+		billDTO.setReferenceAadharCardNumber(bill.getReferenceAadharCardNumber());
+		billDTO.setIsTaxeble(bill.getIsTaxeble());
+		for(BillItemData billItem : bill.getBillItems()){
+			ItemDTO itemDTO = new ItemDTO();
+			itemDTO.setItemId(billItem.getItemId());
+			itemDTO.setInventoryId(billItem.getInventoryId());
+			itemDTO.setIsTaxeble(billItem.getIsTaxeble());
+			itemDTO.setQuantity(billItem.getQuantity());
+			itemDTO.setProductValue(billItem.getProductValue());
+			itemDTO.setQuantityType(billItem.getQuantityType());
+			
+			//itemDTO.setActualUnitPrice(billItem.getA());
+			itemDTO.setAmountBeforeTax(billItem.getAmountBeforeTax());
+			itemDTO.setTaxAmountForItem(billItem.getTaxAmountForItem());
+			itemDTO.setAmountAfterTax(billItem.getAmountAfterTax());
+			itemDTO.setDiscount(billItem.getDiscount());
+			itemDTO.setMarginAmount(billItem.getMarginAmount());
+			itemDTO.setMarginPercentage(billItem.getMarginPercentage());
+			itemDTO.setTaxOnMargin(billItem.getTaxOnMargin());
+			itemDTO.setTaxId(billItem.getTaxId());
+			
+			listItems.add(itemDTO);
+			}
+		billDTO.setItems(listItems);
+		return billDTO;
+			
+		
 	}
 
 
@@ -178,6 +210,7 @@ public class BillService {
 		billData.setBillToContactId(billDTO.getBillToContactId());
 		if(existingBill == null  && StringUtils.isBlank(billDTO.getBillNumber())){
 			billData.setBillNumber(Utils.generateRandomKey(20));
+			billDTO.setBillNumber(Utils.generateRandomKey(20));
 		} 
 		if(existingBill != null){
 			billData.setBillNumber(billDTO.getBillNumber());
