@@ -97,7 +97,7 @@ public class BillService {
 			throw billException;
 		}
 		
-		return "Y";		
+		return "N";		
 	}
 	
 	public String removeBill(String companyId, String billNumber) {
