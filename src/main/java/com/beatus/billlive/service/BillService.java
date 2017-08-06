@@ -15,7 +15,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.beatus.billlive.config.ApplicationConfiguration;
 import com.beatus.billlive.domain.model.BillDTO;
 import com.beatus.billlive.domain.model.BillData;
 import com.beatus.billlive.domain.model.BillItemData;

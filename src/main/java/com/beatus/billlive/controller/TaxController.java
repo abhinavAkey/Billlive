@@ -37,8 +37,8 @@ public class TaxController {
 		if(taxValidator.validateTax(taxData)){
 			HttpSession session = request.getSession();
         	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
-			String isTaxCreated = taxService.addTax(request, response, taxData, companyId);
-			return isTaxCreated;
+			String taxId = taxService.addTax(request, response, taxData, companyId);
+			return taxId;
 		}else{
 			throw new TaxException("Tax data passed cant be null or empty string");
 		}	

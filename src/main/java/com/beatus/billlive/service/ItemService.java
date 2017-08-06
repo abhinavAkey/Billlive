@@ -15,14 +15,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
-import com.beatus.billlive.config.ApplicationConfiguration;
 import com.beatus.billlive.domain.model.Inventory;
 import com.beatus.billlive.domain.model.ItemData;
 import com.beatus.billlive.repository.ItemRepository;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.ItemValidator;
-import com.beatus.billlive.validation.exception.BillDataException;
 import com.beatus.billlive.validation.exception.ItemDataException;
 
 @Service
@@ -44,10 +42,13 @@ public class ItemService {
 		try {
 			boolean isValidated = itemValidator.validateItemData(item);
 			if(isValidated){
+				if(StringUtils.isBlank(companyId)){
+					companyId = item.getCompanyId();
+				}
 				if(StringUtils.isNotBlank(item.getItemId()) && StringUtils.isNotBlank(item.getCompanyId())){
 					ItemData existingItem = itemRepository.getItemById(item.getCompanyId(), item.getItemId());
 					if(existingItem != null){
-						return updateItem(item);
+						return updateItem(request, response,item,companyId);
 					}
 					return "N";
 				}else {
@@ -66,18 +67,23 @@ public class ItemService {
 				return "N";
 			}
 		} catch (ItemDataException e) {
+			LOGGER.info("Item Data validation Exception in the addItemService() {} ", e.getMessage());
 			throw e;
 		}
 	}
 
 
-	public String updateItem(ItemData item) throws ItemDataException {
+	public String updateItem(HttpServletRequest request, HttpServletResponse response,ItemData item, String companyId) throws ItemDataException {
+		if(item == null){
+			throw new ItemDataException("Item data cant be null");
+		}
 		try {
-			if(itemValidator.validateItemData(item)){
+			boolean isValidated = itemValidator.validateItemData(item);
+			if(isValidated){
 				if(StringUtils.isNotBlank(item.getItemId()) && StringUtils.isNotBlank(item.getCompanyId())){
 					ItemData existingItem = itemRepository.getItemById(item.getCompanyId(), item.getItemId());
 					if(existingItem == null){
-						return addItem(item);
+						return addItem(request, response,item, companyId);
 					}else {
 						List<Inventory> inventories = new ArrayList<Inventory>();
 						boolean isExistingInventory = false;
@@ -106,6 +112,7 @@ public class ItemService {
 				return "N";
 			}
 		} catch (ItemDataException e) {
+			LOGGER.info("Item Data validation Exception in the updateItemService() {} ", e.getMessage());
 			throw e;
 		}
 	}
@@ -139,6 +146,7 @@ public class ItemService {
 		}
 	}
 
+	
 	private void populateInventoryData(Inventory itemInventory){
 		itemInventory.setDate(String.valueOf(System.currentTimeMillis()));
 		Map<String, Double> buyPricesPerQuantity = new HashMap<String, Double>();

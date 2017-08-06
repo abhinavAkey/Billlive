@@ -29,6 +29,8 @@ public class CompanyData {
 	private String phoneNumber;
 	private String email;
 	private String typeOfUser;
+	private String isRemoved;
+	private String isDeactivated;
 	
 	
 	public List<UserData> getListUid() {
@@ -145,4 +147,17 @@ public class CompanyData {
 	public void setCompanyId(String companyId) {
 		this.companyId = companyId;
 	}
+	public String getIsRemoved() {
+		return isRemoved;
+	}
+	public void setIsRemoved(String isRemoved) {
+		this.isRemoved = isRemoved;
+	}
+	public String getIsDeactivated() {
+		return isDeactivated;
+	}
+	public void setIsDeactivated(String isDeactivated) {
+		this.isDeactivated = isDeactivated;
+	}
+	
 }

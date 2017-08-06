@@ -1,7 +1,5 @@
 package com.beatus.billlive.domain.model;
 
-import java.util.List;
-
 /**
  * Entity bean with JPA annotations
  * Hibernate provides JPA implementations

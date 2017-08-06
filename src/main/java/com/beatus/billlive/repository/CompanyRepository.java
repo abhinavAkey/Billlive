@@ -198,9 +198,9 @@ public class CompanyRepository {
 		}
 	}
 	
-	public List<CompanyData> getAllCompanys(String companyId) {
-		DatabaseReference companyDataRef = databaseReference.child("companys").child(companyData.getCompanyId());
-		companyDataRef.orderByChild("companyId").equalTo(companyId).addValueEventListener(new ValueEventListener() {
+	public List<CompanyData> getAllCompanies() {
+		DatabaseReference companyDataRef = databaseReference.child("companys");
+		companyDataRef.orderByChild("companyId").addValueEventListener(new ValueEventListener() {
 		    public void onDataChange(DataSnapshot companySnapshot) {
 		    	companysList.clear();
 		        for (DataSnapshot companyPostSnapshot: companySnapshot.getChildren()) {
