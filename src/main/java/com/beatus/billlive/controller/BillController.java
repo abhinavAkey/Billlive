@@ -23,7 +23,6 @@ import com.beatus.billlive.validation.BillValidator;
 import com.beatus.billlive.validation.exception.BillDataException;
 
 @Controller
-//@RequestMapping("/api")
 public class BillController {
 	
 

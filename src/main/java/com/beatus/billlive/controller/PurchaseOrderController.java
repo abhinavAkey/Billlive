@@ -23,7 +23,6 @@ import com.beatus.billlive.validation.exception.ItemDataException;
 import com.beatus.billlive.validation.exception.PurchaseOrderDataException;
 
 @Controller
-@RequestMapping("/api")
 public class PurchaseOrderController {
 	
 

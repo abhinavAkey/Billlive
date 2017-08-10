@@ -23,7 +23,6 @@ import com.beatus.billlive.validation.TaxValidator;
 import com.beatus.billlive.validation.exception.TaxException;
 
 @Controller
-@RequestMapping("/api")
 public class TaxController {
 	
 	@Resource(name = "taxService")

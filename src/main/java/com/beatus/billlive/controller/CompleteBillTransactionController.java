@@ -9,8 +9,6 @@ import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -24,7 +22,6 @@ import com.beatus.billlive.validation.CompleteBillTransactionValidator;
 import com.beatus.billlive.validation.exception.CompleteBillTransactionException;
 
 @Controller
-@RequestMapping("/api")
 public class CompleteBillTransactionController {
 	
 	@Resource(name = "completeBillTransactionService")

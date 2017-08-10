@@ -11,7 +11,6 @@ import com.beatus.billlive.service.PrinterService;
 import com.beatus.billlive.utils.BillliveMediaType;
 
 @Controller
-@RequestMapping("/api")
 public class PrinterController {
 	
 	@Resource(name = "printerService")

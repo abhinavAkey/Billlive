@@ -16,7 +16,6 @@ import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 
 @Controller
-@RequestMapping("/api")
 public class UserController {
 	@Resource(name = "userService")
 	private UserService userService;

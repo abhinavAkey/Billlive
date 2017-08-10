@@ -22,7 +22,6 @@ import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.exception.CompanyDataException;
 
 @Controller
-//@RequestMapping("/api")
 public class CompanyController {
 	
 
