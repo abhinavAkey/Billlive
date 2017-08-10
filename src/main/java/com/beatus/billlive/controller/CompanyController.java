@@ -31,17 +31,20 @@ public class CompanyController {
 	//For add and update company both
 	@RequestMapping(value= "/company/company/add", method = RequestMethod.POST)
 	public @ResponseBody String addCompany(@RequestBody CompanyData companyData, HttpServletRequest request, HttpServletResponse response) throws CompanyDataException{
-		String companyId = companyService.addCompany(companyData);
 		HttpSession session = request.getSession();
-    	session.setAttribute(Constants.COMPANY_ID, companyId);
+		String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+		companyId = companyService.addCompany(request, response, companyData, companyId);
+		session.setAttribute(Constants.COMPANY_ID, companyId);
 		return companyId;
 	}
 	
 	@RequestMapping(value= "/company/company/update", method = RequestMethod.POST)
     public @ResponseBody String editCompany(@RequestBody CompanyData companyData, HttpServletRequest request, HttpServletResponse response) throws CompanyDataException{
-    	String companyId = companyService.updateCompany(companyData);
-    	HttpSession session = request.getSession();
-    	session.setAttribute(Constants.COMPANY_ID, companyId);
+    	
+		HttpSession session = request.getSession();
+		String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+		companyId = companyService.updateCompany(request, response, companyData, companyId);
+      	session.setAttribute(Constants.COMPANY_ID, companyId);
 		return companyId;
     }
     
@@ -73,7 +76,7 @@ public class CompanyController {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
     	if(StringUtils.isNotBlank(companyId)){
-        	List<CompanyData> companyList = companyService.getAllCompanys(companyId);
+        	List<CompanyData> companyList = companyService.getAllCompanies();
 			return companyList;
 		}else{
 			throw new CompanyDataException("companyId passed cant be null or empty string");

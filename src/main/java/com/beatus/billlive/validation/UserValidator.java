@@ -16,7 +16,7 @@ public class UserValidator {
 		if(StringUtils.isBlank(userData.getUid())){
 			throw new UserDataException("UId is not available " );
 		}
-		if(StringUtils.isBlank(userData.getFirstName())){
+		/*if(StringUtils.isBlank(userData.getFirstName())){
 			throw new UserDataException("User First Name is not available " + userData.getUid());
 		}
 		if(StringUtils.isBlank(userData.getLastName())){
@@ -42,7 +42,7 @@ public class UserValidator {
 		}
 		if(StringUtils.isBlank(userData.getEmail())){
 			throw new UserDataException("Email is not available " + userData.getUid());
-		}
+		}*/
 		return true;
 		
 	}
