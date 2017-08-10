@@ -64,4 +64,7 @@ public class Constants {
 	public static final String COMPANY_ID = "companyId";
 	public static final Double DEFAULT_DOUBLE_VALUE = 0.00;
 	public static final int MAX_INTERVAL = -1;
+	public static final String BILLLIVE = "billlive";
+	public static final String AUTH_TOKEN = "authToken";
+	public static final String SESSION_MODEL = "sessionModel";
 }

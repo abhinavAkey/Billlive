@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 import com.beatus.billlive.domain.model.CompleteBillTransaction;
 import com.beatus.billlive.validation.exception.CompleteBillTransactionException;
 
-@Component("companyValidator")
+@Component("completeBillTransactionValidator")
 public class CompleteBillTransactionValidator {
 	
 	public boolean validateCompleteBillTransaction(CompleteBillTransaction company) throws CompleteBillTransactionException{

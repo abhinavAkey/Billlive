@@ -35,7 +35,7 @@ public class ItemService {
 	@Resource(name = "itemRepository")
 	private ItemRepository itemRepository;
 
-	public String addItem(HttpServletRequest request, HttpServletResponse response,ItemData item, String companyId) throws ItemDataException {
+	public ItemData addItem(ItemData item, String companyId) throws ItemDataException {
 		if(item == null){
 			throw new ItemDataException("Item data cant be null");
 		}
@@ -45,13 +45,12 @@ public class ItemService {
 				if(StringUtils.isBlank(companyId)){
 					companyId = item.getCompanyId();
 				}
+				ItemData existingItem = itemRepository.getItemById(item.getCompanyId(), item.getItemId());
 				if(StringUtils.isNotBlank(item.getItemId()) && StringUtils.isNotBlank(item.getCompanyId())){
-					ItemData existingItem = itemRepository.getItemById(item.getCompanyId(), item.getItemId());
 					if(existingItem != null){
-						return updateItem(request, response,item,companyId);
+						return updateItem(item,companyId);
 					}
-					return "N";
-				}else {
+				}else if(StringUtils.isBlank(item.getItemId()) || existingItem == null){
 					item.setItemId(Utils.generateRandomKey(20));
 					List<Inventory> inventories = new ArrayList<Inventory>();
 					for(Inventory inv : item.getInventories()){
@@ -61,19 +60,25 @@ public class ItemService {
 						inventories.add(inv);
 					}
 					item.setInventories(inventories);
-					return itemRepository.addItem(item);
+					String isAdded = itemRepository.addItem(item);
+					if(Constants.YES.equalsIgnoreCase(isAdded)){
+						return itemRepository.getItemById(item.getCompanyId(), item.getItemId());
+					}else {
+						return null;
+					}
 				}
 			}else {
-				return "N";
+				return null;
 			}
 		} catch (ItemDataException e) {
 			LOGGER.info("Item Data validation Exception in the addItemService() {} ", e.getMessage());
 			throw e;
 		}
+		return null;
 	}
 
 
-	public String updateItem(HttpServletRequest request, HttpServletResponse response,ItemData item, String companyId) throws ItemDataException {
+	public ItemData updateItem(ItemData item, String companyId) throws ItemDataException {
 		if(item == null){
 			throw new ItemDataException("Item data cant be null");
 		}
@@ -83,7 +88,7 @@ public class ItemService {
 				if(StringUtils.isNotBlank(item.getItemId()) && StringUtils.isNotBlank(item.getCompanyId())){
 					ItemData existingItem = itemRepository.getItemById(item.getCompanyId(), item.getItemId());
 					if(existingItem == null){
-						return addItem(request, response,item, companyId);
+						return addItem(item, companyId);
 					}else {
 						List<Inventory> inventories = new ArrayList<Inventory>();
 						boolean isExistingInventory = false;
@@ -95,21 +100,26 @@ public class ItemService {
 									}
 									inventories.add(inv);
 									isExistingInventory = true;
-									break;
 								}
 							}
 							if(!isExistingInventory){
 								inv.setInventoryId(Utils.generateRandomKey(20));
 								populateInventoryData(inv);
+								inv.setRemainingQuantity(inv.getActualQuantity());
 								inventories.add(inv);
 							}
 						}
 						item.setInventories(inventories);
 					}
 				}
-				return itemRepository.updateItem(item);
+				String isUpdated = itemRepository.updateItem(item);
+				if(Constants.YES.equalsIgnoreCase(isUpdated)){
+					return itemRepository.getItemById(item.getCompanyId(), item.getItemId());
+				}else {
+					return null;
+				}
 			}else {
-				return "N";
+				return null;
 			}
 		} catch (ItemDataException e) {
 			LOGGER.info("Item Data validation Exception in the updateItemService() {} ", e.getMessage());

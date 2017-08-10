@@ -18,7 +18,7 @@ import org.springframework.stereotype.Service;
 import com.beatus.billlive.domain.model.BillDTO;
 import com.beatus.billlive.domain.model.BillData;
 import com.beatus.billlive.domain.model.BillItemData;
-import com.beatus.billlive.domain.model.ItemDTO;
+import com.beatus.billlive.domain.model.BillItemDTO;
 import com.beatus.billlive.domain.model.ItemData;
 import com.beatus.billlive.domain.model.Tax;
 import com.beatus.billlive.repository.BillRepository;
@@ -174,7 +174,7 @@ public class BillService {
 	
 	private BillDTO populateBillDTO(BillData bill) {
 		BillDTO billDTO = new BillDTO();
-		List<ItemDTO> listItems = new ArrayList<ItemDTO>();
+		List<BillItemDTO> listItems = new ArrayList<BillItemDTO>();
 		billDTO.setBillNumber(bill.getBillNumber());
 		billDTO.setBillFromContactId(bill.getBillFromContactId());
 		billDTO.setBillToContactId(bill.getBillToContactId());
@@ -186,8 +186,13 @@ public class BillService {
 		billDTO.setReferenceMobileNumber(bill.getReferenceMobileNumber());
 		billDTO.setReferenceAadharCardNumber(bill.getReferenceAadharCardNumber());
 		billDTO.setIsTaxeble(bill.getIsTaxeble());
+		billDTO.setTotalTax(bill.getTotalTax());
+		billDTO.setTotalCGST(bill.getTotalCGST());
+		billDTO.setTotalSGST(bill.getTotalSGST());
+		billDTO.setTotalIGST(bill.getTotalIGST());
+
 		for(BillItemData billItem : bill.getBillItems()){
-			ItemDTO itemDTO = new ItemDTO();
+			BillItemDTO itemDTO = new BillItemDTO();
 			itemDTO.setItemId(billItem.getItemId());
 			itemDTO.setInventoryId(billItem.getInventoryId());
 			itemDTO.setIsTaxeble(billItem.getIsTaxeble());
@@ -198,10 +203,12 @@ public class BillService {
 			//itemDTO.setActualUnitPrice(billItem.getA());
 			itemDTO.setAmountBeforeTax(billItem.getAmountBeforeTax());
 			itemDTO.setTaxAmountForItem(billItem.getTaxAmountForItem());
+			itemDTO.setTotalCGST(billItem.getTotalCGST());
+			itemDTO.setTotalSGST(billItem.getTotalSGST());
+			itemDTO.setTotalIGST(billItem.getTotalIGST());
 			itemDTO.setAmountAfterTax(billItem.getAmountAfterTax());
 			itemDTO.setDiscount(billItem.getDiscount());
 			itemDTO.setMarginAmount(billItem.getMarginAmount());
-			itemDTO.setMarginPercentage(billItem.getMarginPercentage());
 			itemDTO.setTaxOnMargin(billItem.getTaxOnMargin());
 			itemDTO.setTaxId(billItem.getTaxId());
 			
@@ -241,8 +248,12 @@ public class BillService {
 		billData.setCompanyId(billDTO.getCompanyId());
 		billData.setReferenceAadharCardNumber(billDTO.getReferenceAadharCardNumber());
 		billData.setReferenceMobileNumber(billDTO.getReferenceMobileNumber());
+		billData.setTotalTax(billDTO.getTotalTax());
+		billData.setTotalCGST(billDTO.getTotalCGST());
+		billData.setTotalSGST(billDTO.getTotalSGST());
+		billData.setTotalIGST(billDTO.getTotalIGST());
 		List<BillItemData> billItems = new ArrayList<BillItemData>();
-		for(ItemDTO itemDTO : billDTO.getItems()){
+		for(BillItemDTO itemDTO : billDTO.getItems()){
 			BillItemData billItem = new BillItemData();
 			if(Constants.YES.equalsIgnoreCase(itemDTO.getIsAdded()) || Constants.YES.equalsIgnoreCase(itemDTO.getIsUpdated())){		
 				//Get Item Details
@@ -254,6 +265,9 @@ public class BillService {
 				billItem.setQuantity(itemDTO.getQuantity());
 				billItem.setProductValue(itemDTO.getProductValue());
 				billItem.setQuantityType(itemDTO.getQuantityType());
+				billItem.setTotalCGST(itemDTO.getTotalCGST());
+				billItem.setTotalSGST(itemDTO.getTotalSGST());
+				billItem.setTotalIGST(itemDTO.getTotalIGST());
 				Double amountBeforeTax = itemDTO.getProductValue()*itemDTO.getQuantity();
 				if(itemDTO.getAmountBeforeTax() == null){
 					billItem.setAmountBeforeTax(amountBeforeTax);

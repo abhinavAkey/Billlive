@@ -12,10 +12,12 @@ public class BillItemData {
 	private Double productValue;
 	private Double amountBeforeTax;
 	private Double taxAmountForItem;
+	private Double totalCGST;
+	private Double totalSGST;
+	private Double totalIGST;
 	private Double amountAfterTax;
 	private Double discount;
 	private Double marginAmount;
-	private Double marginPercentage;
 	private Double taxOnMargin;
 	private String taxId;
 	private String isRemoved;
@@ -86,12 +88,6 @@ public class BillItemData {
 	public void setMarginAmount(Double marginAmount) {
 		this.marginAmount = marginAmount;
 	}
-	public Double getMarginPercentage() {
-		return marginPercentage;
-	}
-	public void setMarginPercentage(Double marginPercentage) {
-		this.marginPercentage = marginPercentage;
-	}
 	public Double getTaxOnMargin() {
 		return taxOnMargin;
 	}
@@ -121,5 +117,23 @@ public class BillItemData {
 	}
 	public void setIsRemoved(String isRemoved) {
 		this.isRemoved = isRemoved;
+	}
+	public Double getTotalCGST() {
+		return totalCGST;
+	}
+	public void setTotalCGST(Double totalCGST) {
+		this.totalCGST = totalCGST;
+	}
+	public Double getTotalSGST() {
+		return totalSGST;
+	}
+	public void setTotalSGST(Double totalSGST) {
+		this.totalSGST = totalSGST;
+	}
+	public Double getTotalIGST() {
+		return totalIGST;
+	}
+	public void setTotalIGST(Double totalIGST) {
+		this.totalIGST = totalIGST;
 	}
 }

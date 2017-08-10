@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.BillDTO;
 import com.beatus.billlive.service.BillService;
+import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.BillValidator;
 import com.beatus.billlive.validation.exception.BillDataException;
@@ -33,7 +34,7 @@ public class BillController {
 	private BillValidator billValidator;
 	
 	//For add and update bill both
-	@RequestMapping(value= "/company/bill/add", method = RequestMethod.POST)
+	@RequestMapping(value= "/company/bill/add", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody String addBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
 		if(billValidator.validateBill(billDTO)){
 			HttpSession session = request.getSession();
@@ -45,7 +46,7 @@ public class BillController {
 		}
 	}
 	
-	@RequestMapping(value= "/company/bill/update", method = RequestMethod.POST)
+	@RequestMapping(value= "/company/bill/update", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
     public @ResponseBody String editBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
 		if(billValidator.validateBill(billDTO)){
 		HttpSession session = request.getSession();
@@ -57,7 +58,7 @@ public class BillController {
 		}
     }
     
-    @RequestMapping("/company/bill/remove/{id}")
+    @RequestMapping(value = "/company/bill/remove/{id}", method = RequestMethod.DELETE, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
     public @ResponseBody String removeBill(@PathVariable("id") String billNumber, HttpServletRequest request, HttpServletResponse response) throws BillDataException{	
     	if(StringUtils.isNotBlank(billNumber)){
     		HttpSession session = request.getSession();
@@ -70,7 +71,7 @@ public class BillController {
     }
  
     
-    @RequestMapping(value = "/company/getbill/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/company/getbill/{id}", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody BillDTO getBillById(@PathVariable("id") String billNumber, HttpServletRequest request, HttpServletResponse response) throws BillDataException {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
@@ -83,7 +84,7 @@ public class BillController {
 		
 	}
     
-    @RequestMapping(value = "/company/getallbills", method = RequestMethod.GET)
+    @RequestMapping(value = "/company/getallbills", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody List<BillDTO> getAllBills(HttpServletRequest request, HttpServletResponse response) throws BillDataException {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
@@ -95,7 +96,7 @@ public class BillController {
 		}
 	}
     
-    @RequestMapping(value = "/company/getallbills/year/{year}/month/{month}", method = RequestMethod.GET)
+    @RequestMapping(value = "/company/getallbills/year/{year}/month/{month}", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody List<BillDTO> getAllBillsInAMonth(@PathVariable("year") String year, @PathVariable("month") String month, HttpServletRequest request, HttpServletResponse response) throws BillDataException {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
@@ -107,7 +108,7 @@ public class BillController {
 		}
 	}
     
-    @RequestMapping(value = "/company/getallbills/year/{year}", method = RequestMethod.GET)
+    @RequestMapping(value = "/company/getallbills/year/{year}", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody List<BillDTO> getAllBillsInAMonth(@PathVariable("year") String year, HttpServletRequest request, HttpServletResponse response) throws BillDataException {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);

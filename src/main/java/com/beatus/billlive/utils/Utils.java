@@ -1,12 +1,11 @@
 package com.beatus.billlive.utils;
 
-import java.security.SecureRandom;
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
 
+import com.beatus.billlive.domain.model.BillItemDTO;
 import com.beatus.billlive.domain.model.Inventory;
-import com.beatus.billlive.domain.model.ItemDTO;
 import com.beatus.billlive.domain.model.ItemData;
 
 public class Utils {
@@ -21,7 +20,7 @@ public class Utils {
 		return taxAmount;
 	}
 	
-	public static Double calculateMarginAmount(ItemData itemDataFromDatabase, ItemDTO billItemToBeSaved) {
+	public static Double calculateMarginAmount(ItemData itemDataFromDatabase, BillItemDTO billItemToBeSaved) {
 		List<Inventory> inventories = itemDataFromDatabase.getInventories();
 		Double marginAmount = Constants.DEFAULT_DOUBLE_VALUE;
 		if(inventories != null){
@@ -41,5 +40,34 @@ public class Utils {
 		double taxAmount = (marginAmount * taxPercentage)/100;
 		return taxAmount;
 	}
+
+    public static byte[] concat(byte[]...arrays)
+    {
+        // Determine the length of the result array
+        int totalLength = 0;
+        for (int i = 0; i < arrays.length; i++)
+        {
+            if (arrays[i] != null)
+            {
+                totalLength += arrays[i].length;
+            }
+        }
+
+        // create the result array
+        byte[] result = new byte[totalLength];
+
+        // copy the source arrays into the result array
+        int currentIndex = 0;
+        for (int i = 0; i < arrays.length; i++)
+        {
+            if (arrays[i] != null)
+            {
+                System.arraycopy(arrays[i], 0, result, currentIndex, arrays[i].length);
+                currentIndex += arrays[i].length;
+            }
+        }
+
+        return result;
+    }
 
 }

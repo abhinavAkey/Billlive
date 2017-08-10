@@ -21,11 +21,13 @@ public class SessionConfiguration {
     public static final String 
     	DELETE_USER_SESSION = "deleteUserSession",
     	VERIFIER_PARAMETER_NAME = "v",
+        COMPANY_ID_PARAMETER_NAME = "companyId",
+        UID_PARAMETER_NAME = "uid",
     	MDC_SESSION_ID = "session.id",
     	SESSION_ID = "sessionId",
     	REQUEST_SESSION_ID = "reqSesId",
-    	SESSION_OWNER = "account",
-    	COOKIE_NAME = "AM_SS",
+    	SESSION_OWNER = "billlive",
+    	COOKIE_NAME = "BL_SC",
     	COOKIE_KEY_NAME = "x";
     
     public static final int 
@@ -36,7 +38,13 @@ public class SessionConfiguration {
     private String sessionOwner = SESSION_OWNER;
 	
 	@Value("${param.name:" + VERIFIER_PARAMETER_NAME + "}") 
-    private String paramName = VERIFIER_PARAMETER_NAME;
+    private String verifierParamName = VERIFIER_PARAMETER_NAME;
+	
+	@Value("${param.name:" + COMPANY_ID_PARAMETER_NAME + "}") 
+    private String companyIdParamName = COMPANY_ID_PARAMETER_NAME;
+	
+	@Value("${param.name:" + UID_PARAMETER_NAME + "}") 
+    private String uidParamName = UID_PARAMETER_NAME;
 	
 	@Value("${cookie.name:" + COOKIE_NAME + "}") 
     private String cookieName = COOKIE_NAME;
@@ -49,51 +57,13 @@ public class SessionConfiguration {
 	
 	@Value("${page.ttl:" + PAGE_TTL_SECONDS + "}") 
     private Integer pageTimeToLive = PAGE_TTL_SECONDS;
-	
-    /*@Resource(name="redirectRequestMapping")
-    private String redirectRequestMapping = "";
-    
-    @Resource(name="ajaxRedirectRequestMapping")
-    private String ajaxRedirectRequestMapping = "";
-    
-    @Resource(name="ignoredRequestMappingList")
-    private List<String> ignoredRequestMapping = new ArrayList<String>();
-    
-    @Resource(name="ajaxRequestMappingList")
-    private List<String> ajaxRequestMappingList = new ArrayList<String>();
-    
-    @Resource(name="modelAttributeMap")
-    private Map<String, String> modelAttribute = new HashMap<String, String>();
-    
-	@PostConstruct
-	public void init() {
-    	if(isBlank(redirectRequestMapping)) {
-            redirectRequestMapping = "/account/error";
-    	}
-    	if(isBlank(ajaxRedirectRequestMapping)) {
-    		ajaxRedirectRequestMapping = "/account/ajaxerror";
-    	}
-    	if(ignoredRequestMapping == null || ignoredRequestMapping.isEmpty()) {
-    		ignoredRequestMapping = Arrays.asList(new String[] {
-                "/account/totp/return", "/account/error"
-        	});
-    	}
-    	if(ajaxRequestMappingList == null || ajaxRequestMappingList.isEmpty()) {
-    		ajaxRequestMappingList = Arrays.asList(new String[] {
-    	    		"/account/totp/setup/resendcode"
-        	});
-    	}
-    	if(modelAttribute == null || modelAttribute.isEmpty()) {
-    		modelAttribute = new LinkedHashMap<String, String>();
-    	}
-	}*/
 
 	public String getSessionOwner() {
 		return sessionOwner;
 	}
 
-	public String getParamName() {
-		return paramName;
+	public String getVerifierParamName() {
+		return verifierParamName;
 	}
 
 	public String getCookieName() {
@@ -111,25 +81,12 @@ public class SessionConfiguration {
 	public Integer getPageTimeToLive() {
 		return pageTimeToLive;
 	}
-/*
-	public String getRedirectRequestMapping() {
-		return redirectRequestMapping;
+	public String getCompanyIdParamName() {
+		return companyIdParamName;
 	}
 
-	public String getAjaxRedirectRequestMapping() {
-		return ajaxRedirectRequestMapping;
+	public String getUidParamName() {
+		return uidParamName;
 	}
-
-	public List<String> getIgnoredRequestMapping() {
-		return ignoredRequestMapping;
-	}
-
-	public List<String> getAjaxRequestMappingList() {
-		return ajaxRequestMappingList;
-	}
-	
-	public Map<String, String> getModelAttribute() {
-		return modelAttribute;
-	}*/
 	
 }

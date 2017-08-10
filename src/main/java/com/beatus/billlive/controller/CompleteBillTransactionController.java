@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.CompleteBillTransaction;
 import com.beatus.billlive.service.CompleteBillTransactionService;
+import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.CompleteBillTransactionValidator;
 import com.beatus.billlive.validation.exception.CompleteBillTransactionException;
@@ -32,7 +33,7 @@ public class CompleteBillTransactionController {
 	@Resource(name = "completeBillTransactionValidator")
 	private CompleteBillTransactionValidator completeBillTransactionValidator;
 	
-	@RequestMapping(value = "/company/getallcompleteBillTransactions", method = RequestMethod.GET)
+	@RequestMapping(value = "/company/getallcompleteBillTransactions", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody List<CompleteBillTransaction> getAllCompleteBillTransactions(@RequestBody HttpServletRequest request, HttpServletResponse response) {
 		HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
@@ -40,7 +41,7 @@ public class CompleteBillTransactionController {
 		return completeBillTransactionList;
 	}
 	
-	@RequestMapping(value = "/company/getcompleteBillTransaction", method = RequestMethod.GET)
+	@RequestMapping(value = "/company/getcompleteBillTransaction", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody CompleteBillTransaction getCompleteBillTransactionById(@RequestBody String billNumber, HttpServletRequest request, HttpServletResponse response) throws CompleteBillTransactionException {
 		if(StringUtils.isNotBlank(billNumber)){
 			HttpSession session = request.getSession();
@@ -52,7 +53,7 @@ public class CompleteBillTransactionController {
 		}
 	}
 	
-	@RequestMapping(value= "/company/addcompleteBillTransaction", method = RequestMethod.POST)
+	@RequestMapping(value= "/company/addcompleteBillTransaction", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody String addCompleteBillTransaction(@RequestBody CompleteBillTransaction completeBillTransaction, HttpServletRequest request, HttpServletResponse response) throws CompleteBillTransactionException{
 		if(completeBillTransactionValidator.validateCompleteBillTransaction(completeBillTransaction)){
 			HttpSession session = request.getSession();
@@ -65,7 +66,7 @@ public class CompleteBillTransactionController {
 	}
 	
 
-	@RequestMapping(value= "/company/updatecompleteBillTransaction", method = RequestMethod.POST)
+	@RequestMapping(value= "/company/updatecompleteBillTransaction", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody String updateCompleteBillTransaction(@RequestBody CompleteBillTransaction completeBillTransaction, HttpServletRequest request, HttpServletResponse response) throws CompleteBillTransactionException{
 		if(completeBillTransactionValidator.validateCompleteBillTransaction(completeBillTransaction)){
 			HttpSession session = request.getSession();

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.ItemData;
 import com.beatus.billlive.service.ItemService;
+import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.ItemValidator;
 import com.beatus.billlive.validation.exception.ItemDataException;
@@ -33,34 +34,33 @@ public class ItemController {
 	private ItemValidator itemValidator;
 	
 	//For add and update item both
-	@RequestMapping(value= "/company/item/add", method = RequestMethod.POST)
-	public @ResponseBody String addItem(@RequestBody ItemData itemData, HttpServletRequest request, HttpServletResponse response) throws ItemDataException{
+	@RequestMapping(value= "/company/item/add", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
+	public @ResponseBody ItemData addItem(@RequestBody ItemData itemData, HttpServletRequest request, HttpServletResponse response) throws ItemDataException{
 		if(itemValidator.validateItemData(itemData)){
 			HttpSession session = request.getSession();
         	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
 			
-		String itemId = itemService.addItem(request,response,itemData,companyId);
-		return itemId;
+		ItemData itemDataAdded = itemService.addItem(itemData,companyId);
+		return itemDataAdded;
 		}else{
 			throw new ItemDataException("Item data passed cant be null or empty string");
 		}
 	}
 	
-	@RequestMapping(value= "/company/item/update", method = RequestMethod.POST)
-	public @ResponseBody String updateItem(@RequestBody ItemData itemData, HttpServletRequest request, HttpServletResponse response) throws ItemDataException{
+	@RequestMapping(value= "/company/item/update", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
+	public @ResponseBody ItemData updateItem(@RequestBody ItemData itemData, HttpServletRequest request, HttpServletResponse response) throws ItemDataException{
 		if(itemValidator.validateItemData(itemData)){
 			HttpSession session = request.getSession();
         	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
 			
-		String isItemUpdated = itemService.addItem(request,response,itemData,companyId);
+        	ItemData isItemUpdated = itemService.updateItem(itemData,companyId);
 		return isItemUpdated;
 		}else{
 			throw new ItemDataException("Item data passed cant be null or empty string");
 		}
 	}
-	
-  
-    @RequestMapping("/company/item/remove/{id}")
+
+    @RequestMapping(value ="/company/item/remove/{id}", method = RequestMethod.DELETE, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
     public @ResponseBody String removeItem(@PathVariable("id") String itemId, HttpServletRequest request, HttpServletResponse response) throws ItemDataException{	
     	if(StringUtils.isNotBlank(itemId)){
     		HttpSession session = request.getSession();
@@ -73,7 +73,7 @@ public class ItemController {
     }
  
     
-    @RequestMapping(value = "/company/getitem/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/company/getitem/{id}", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody ItemData getItemById(@PathVariable("id") String itemId, HttpServletRequest request, HttpServletResponse response) throws ItemDataException {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
@@ -86,7 +86,7 @@ public class ItemController {
 		
 	}
     
-    @RequestMapping(value = "/company/getallitems", method = RequestMethod.GET)
+    @RequestMapping(value = "/company/getallitems", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody List<ItemData> getAllItems(HttpServletRequest request, HttpServletResponse response) throws ItemDataException {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);

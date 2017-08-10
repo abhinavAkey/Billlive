@@ -2,9 +2,9 @@ package com.beatus.billlive.domain.model;
 
 import java.util.List;
 
-public class PurchaseOrderDTO {
+public class PurchaseOrderDTO extends BaseData{
 	
-	private String purchaseId;
+	private String purchaseOrderNumber;
 	private String purchaseFromContactId;
 	private String purchaseToContactId;
 	private String purchaseDate;
@@ -12,23 +12,29 @@ public class PurchaseOrderDTO {
 	private String dueDate;
 	private String uid;
 	private String postId;
-	private String totalAmount;
-	private List<ItemDTO> itemsInPurchaseOrder;
+	private List<PurchaseOrderItemDTO> itemsInPurchaseOrder;
+	private String referenceMobileNumber;
+	private String referenceAadharCardNumber;
 	private String isRemoved;
 	private String year;	
 	private String month;
 	private String day;
+	private String isTaxeble;
+	private String totalAmount;
+	private Double totalTax;
+	private Double totalCGST;
+	private Double totalSGST;
+	private Double totalIGST;
 	private String isAdded;
 	private String isUpdated;
 	private String isDeleted;
 	
-	public String getPurchaseId() {
-		return purchaseId;
+	public String getPurchaseOrderNumber() {
+		return purchaseOrderNumber;
 	}
-	public void setPurchaseId(String purchaseId) {
-		this.purchaseId = purchaseId;
+	public void setPurchaseOrderNumber(String purchaseOrderNumber) {
+		this.purchaseOrderNumber = purchaseOrderNumber;
 	}
-	
 	public String getPurchaseFromContactId() {
 		return purchaseFromContactId;
 	}
@@ -47,10 +53,10 @@ public class PurchaseOrderDTO {
 	public void setPurchaseDate(String purchaseDate) {
 		this.purchaseDate = purchaseDate;
 	}
-	public List<ItemDTO> getItemsInPurchaseOrder() {
+	public List<PurchaseOrderItemDTO> getItemsInPurchaseOrder() {
 		return itemsInPurchaseOrder;
 	}
-	public void setItemsInPurchaseOrder(List<ItemDTO> itemsInPurchaseOrder) {
+	public void setItemsInPurchaseOrder(List<PurchaseOrderItemDTO> itemsInPurchaseOrder) {
 		this.itemsInPurchaseOrder = itemsInPurchaseOrder;
 	}
 	public String getIsAdded() {
@@ -124,5 +130,47 @@ public class PurchaseOrderDTO {
 	}
 	public void setDay(String day) {
 		this.day = day;
+	}
+	public String getReferenceMobileNumber() {
+		return referenceMobileNumber;
+	}
+	public void setReferenceMobileNumber(String referenceMobileNumber) {
+		this.referenceMobileNumber = referenceMobileNumber;
+	}
+	public String getReferenceAadharCardNumber() {
+		return referenceAadharCardNumber;
+	}
+	public void setReferenceAadharCardNumber(String referenceAadharCardNumber) {
+		this.referenceAadharCardNumber = referenceAadharCardNumber;
+	}
+	public String getIsTaxeble() {
+		return isTaxeble;
+	}
+	public void setIsTaxeble(String isTaxeble) {
+		this.isTaxeble = isTaxeble;
+	}
+	public Double getTotalTax() {
+		return totalTax;
+	}
+	public void setTotalTax(Double totalTax) {
+		this.totalTax = totalTax;
+	}
+	public Double getTotalCGST() {
+		return totalCGST;
+	}
+	public void setTotalCGST(Double totalCGST) {
+		this.totalCGST = totalCGST;
+	}
+	public Double getTotalSGST() {
+		return totalSGST;
+	}
+	public void setTotalSGST(Double totalSGST) {
+		this.totalSGST = totalSGST;
+	}
+	public Double getTotalIGST() {
+		return totalIGST;
+	}
+	public void setTotalIGST(Double totalIGST) {
+		this.totalIGST = totalIGST;
 	}
 }

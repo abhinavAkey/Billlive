@@ -16,6 +16,10 @@ public class BillData extends BaseData{
 	private String isTaxeble;
 	private List<BillItemData> billItems;
 	private Double totalAmount;
+	private Double totalTax;
+	private Double totalCGST;
+	private Double totalSGST;
+	private Double totalIGST;
 	private String isRemoved;
 	private String year;
 	private String month;
@@ -116,5 +120,29 @@ public class BillData extends BaseData{
 	}
 	public void setReferenceAadharCardNumber(String referenceAadharCardNumber) {
 		this.referenceAadharCardNumber = referenceAadharCardNumber;
+	}
+	public Double getTotalTax() {
+		return totalTax;
+	}
+	public void setTotalTax(Double totalTax) {
+		this.totalTax = totalTax;
+	}
+	public Double getTotalCGST() {
+		return totalCGST;
+	}
+	public void setTotalCGST(Double totalCGST) {
+		this.totalCGST = totalCGST;
+	}
+	public Double getTotalSGST() {
+		return totalSGST;
+	}
+	public void setTotalSGST(Double totalSGST) {
+		this.totalSGST = totalSGST;
+	}
+	public Double getTotalIGST() {
+		return totalIGST;
+	}
+	public void setTotalIGST(Double totalIGST) {
+		this.totalIGST = totalIGST;
 	}
 }

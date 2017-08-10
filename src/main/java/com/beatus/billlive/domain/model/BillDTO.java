@@ -9,15 +9,22 @@ public class BillDTO {
 	private String billToContactId;
 	private String companyId;
 	private String uid;
-	private List<ItemDTO> items;
+	private List<BillItemDTO> items;
 	private String dateOfBill;
 	private String dueDate;
 	private Double totalAmount;
+	private Double totalTax;
+	private Double totalCGST;
+	private Double totalSGST;
+	private Double totalIGST;
 	private String referenceMobileNumber;
 	private String referenceAadharCardNumber;
 	private String isTaxeble;
 	private String isUpdated;
 	private String isDeleted;
+	private String year;
+	private String month;
+	private String day;
 	
 	public String getBillNumber() {
 		return billNumber;
@@ -55,10 +62,10 @@ public class BillDTO {
 	public void setDueDate(String dueDate) {
 		this.dueDate = dueDate;
 	}
-	public List<ItemDTO> getItems() {
+	public List<BillItemDTO> getItems() {
 		return items;
 	}
-	public void setItems(List<ItemDTO> items) {
+	public void setItems(List<BillItemDTO> items) {
 		this.items = items;
 	}
 	public String getIsUpdated() {
@@ -102,5 +109,47 @@ public class BillDTO {
 	}
 	public void setReferenceAadharCardNumber(String referenceAadharCardNumber) {
 		this.referenceAadharCardNumber = referenceAadharCardNumber;
+	}
+	public Double getTotalTax() {
+		return totalTax;
+	}
+	public void setTotalTax(Double totalTax) {
+		this.totalTax = totalTax;
+	}
+	public Double getTotalCGST() {
+		return totalCGST;
+	}
+	public void setTotalCGST(Double totalCGST) {
+		this.totalCGST = totalCGST;
+	}
+	public Double getTotalSGST() {
+		return totalSGST;
+	}
+	public void setTotalSGST(Double totalSGST) {
+		this.totalSGST = totalSGST;
+	}
+	public Double getTotalIGST() {
+		return totalIGST;
+	}
+	public void setTotalIGST(Double totalIGST) {
+		this.totalIGST = totalIGST;
+	}
+	public String getYear() {
+		return year;
+	}
+	public void setYear(String year) {
+		this.year = year;
+	}
+	public String getMonth() {
+		return month;
+	}
+	public void setMonth(String month) {
+		this.month = month;
+	}
+	public String getDay() {
+		return day;
+	}
+	public void setDay(String day) {
+		this.day = day;
 	}
 }

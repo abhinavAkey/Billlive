@@ -75,7 +75,7 @@ public class UserService {
 		return userRepository.getUserById(companyId, userId);
 	}*/
 
-	public String isRegistered(HttpServletRequest request, HttpServletResponse response, String uid) {
+	public String isRegistered(String uid) {
 		String companyId = userRepository.isRegistered(uid);
 		return companyId;
 	}

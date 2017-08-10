@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.service.UserService;
+import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 
 @Controller
@@ -71,9 +72,9 @@ public class UserController {
 			throw new UserDataException("userId passed cant be null or empty string");
 		}
 	}*/
-	@RequestMapping(value= "/company/user/isRegistered", method = RequestMethod.GET)
+	@RequestMapping(value= "/company/user/isRegistered", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody String isRegistered(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid){
-		String companyId = userService.isRegistered(request, response, uid);
+		String companyId = userService.isRegistered(uid);
 		HttpSession session = request.getSession();
 		session.setAttribute(Constants.COMPANY_ID, companyId);
 		session.setMaxInactiveInterval(Constants.MAX_INTERVAL);

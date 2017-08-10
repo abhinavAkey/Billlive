@@ -11,12 +11,9 @@ import javax.persistence.Table;
  * @author Abhinav Akey
  *
  */
-@Entity
-@Table(name="Contact_Info")
-public class ContactInfo {
 
-	@Id
-	@Column(name="contact_id")
+public class ContactInfo {
+	
 	private String contactId;
 	private String postId;
 	private String companyName;

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.CompanyData;
 import com.beatus.billlive.service.CompanyService;
+import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.exception.CompanyDataException;
 
@@ -29,7 +30,7 @@ public class CompanyController {
 	private CompanyService companyService;
 	
 	//For add and update company both
-	@RequestMapping(value= "/company/company/add", method = RequestMethod.POST)
+	@RequestMapping(value= "/company/company/add", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody String addCompany(@RequestBody CompanyData companyData, HttpServletRequest request, HttpServletResponse response) throws CompanyDataException{
 		HttpSession session = request.getSession();
 		String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
@@ -38,7 +39,7 @@ public class CompanyController {
 		return companyId;
 	}
 	
-	@RequestMapping(value= "/company/company/update", method = RequestMethod.POST)
+	@RequestMapping(value= "/company/company/update", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
     public @ResponseBody String editCompany(@RequestBody CompanyData companyData, HttpServletRequest request, HttpServletResponse response) throws CompanyDataException{
     	
 		HttpSession session = request.getSession();
@@ -48,7 +49,7 @@ public class CompanyController {
 		return companyId;
     }
     
-    @RequestMapping("/company/company/remove/{id}")
+    @RequestMapping(value ="/company/company/remove/{id}", method = RequestMethod.DELETE, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
     public @ResponseBody String removeCompany(@PathVariable("id") String companyId, HttpServletRequest request, HttpServletResponse response) throws CompanyDataException{	
     	if(StringUtils.isNotBlank(companyId)){
         	String isCompanyRemoved = companyService.removeCompany(companyId);
@@ -59,7 +60,7 @@ public class CompanyController {
     }
  
     
-    @RequestMapping(value = "/company/getcompany/{id}", method = RequestMethod.GET)
+    @RequestMapping(value = "/company/getcompany/{id}", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody CompanyData getCompanyById(@PathVariable("id") String companyId, HttpServletRequest request, HttpServletResponse response) throws CompanyDataException {
     	
     	if(StringUtils.isNotBlank(companyId) && StringUtils.isNotBlank(companyId)){
@@ -71,7 +72,7 @@ public class CompanyController {
 		
 	}
     
-    @RequestMapping(value = "/company/getallcompanys", method = RequestMethod.GET)
+    @RequestMapping(value = "/company/getallcompanys", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody List<CompanyData> getAllCompanys(HttpServletRequest request, HttpServletResponse response) throws CompanyDataException {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);

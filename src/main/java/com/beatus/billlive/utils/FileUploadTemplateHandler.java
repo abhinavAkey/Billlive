@@ -1,17 +1,8 @@
 package com.beatus.billlive.utils;
 
-import java.io.IOException;
-
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
-
-import com.beatus.billlive.domain.model.FileTemplate;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 @Component
-public class FileUploadTemplateHandler {
+public class FileUploadTemplateHandler {/*
 	
 	FileTemplate userfileTemplate;
 	
@@ -60,4 +51,4 @@ public class FileUploadTemplateHandler {
 	
 	
 
-}
+*/}

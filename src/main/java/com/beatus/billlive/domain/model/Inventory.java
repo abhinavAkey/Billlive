@@ -18,7 +18,7 @@ public class Inventory {
 	private Double otherSellOptionSellingPrice;
 	private Map<String, Double> buyPricesPerQuantityType;
 	private Map<String, Double> sellPricesPerQuantityType;
-	private String purchaseId;
+	private String purchaseOrderNumber;
 	private Double defaultMarginPercentage;
 	private Double defaultMarginAmount;
 	private Double minimumStockValue;
@@ -106,11 +106,11 @@ public class Inventory {
 	public void setMinimumStockValue(Double minimumStockValue) {
 		this.minimumStockValue = minimumStockValue;
 	}
-	public String getPurchaseId() {
-		return purchaseId;
+	public String getPurchaseOrderNumber() {
+		return purchaseOrderNumber;
 	}
-	public void setPurchaseId(String purchaseId) {
-		this.purchaseId = purchaseId;
+	public void setPurchaseOrderNumber(String purchaseOrderNumber) {
+		this.purchaseOrderNumber = purchaseOrderNumber;
 	}
 	public QuantityType getBuyQuantityType() {
 		return buyQuantityType;

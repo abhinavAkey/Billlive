@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.Tax;
 import com.beatus.billlive.service.TaxService;
+import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.TaxValidator;
 import com.beatus.billlive.validation.exception.TaxException;
@@ -32,7 +33,7 @@ public class TaxController {
 	private TaxValidator taxValidator;
 	
 	//For add and update tax both
-	@RequestMapping(value= "/company/tax/add", method = RequestMethod.POST)
+	@RequestMapping(value= "/company/tax/add", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody String addTax(@RequestBody Tax taxData, HttpServletRequest request, HttpServletResponse response) throws TaxException{
 		if(taxValidator.validateTax(taxData)){
 			HttpSession session = request.getSession();
@@ -44,7 +45,7 @@ public class TaxController {
 		}	
 	}
 	
-	@RequestMapping(value= "/company/tax/update", method = RequestMethod.POST)
+	@RequestMapping(value= "/company/tax/update", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody String updateTax(@RequestBody Tax taxData, HttpServletRequest request, HttpServletResponse response) throws TaxException{
 		if(taxValidator.validateTax(taxData)){
 			HttpSession session = request.getSession();
@@ -56,7 +57,7 @@ public class TaxController {
 		}	
 	}
 	
-	@RequestMapping("/company/tax/remove/{id}")
+	@RequestMapping(value ="/company/tax/remove/{id}", method = RequestMethod.DELETE, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
     public @ResponseBody String removeTax(@PathVariable("id") String taxId,  HttpServletRequest request, HttpServletResponse response) throws TaxException{
 		if(StringUtils.isNotBlank(taxId)){
 			HttpSession session = request.getSession();
@@ -68,7 +69,7 @@ public class TaxController {
 		}
     }
 	
-	@RequestMapping(value = "/company/getalltaxs", method = RequestMethod.GET)
+	@RequestMapping(value = "/company/getalltaxs", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody List<Tax> getAllTaxs(HttpServletRequest request, HttpServletResponse response) throws TaxException {
 		HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
@@ -80,7 +81,7 @@ public class TaxController {
     	}
 	}
 	
-	@RequestMapping(value = "/company/gettax/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/company/gettax/{id}", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody Tax getTaxById(@PathVariable("id") String taxId, HttpServletRequest request, HttpServletResponse response) throws TaxException {
 		HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
