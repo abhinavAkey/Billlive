@@ -1,8 +1,11 @@
 package com.beatus.billlive.validation;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.beatus.billlive.config.ApplicationConfiguration;
 import com.beatus.billlive.domain.model.BillDTO;
 import com.beatus.billlive.domain.model.BillItemDTO;
 import com.beatus.billlive.validation.exception.BillDataException;
@@ -10,8 +13,11 @@ import com.beatus.billlive.validation.exception.BillDataException;
 @Component("billValidator")
 public class BillValidator {
 	
+	private static final Logger LOGGER 
+    = LoggerFactory.getLogger(BillValidator.class);
+	
 	public boolean validateBillData(BillDTO bill) throws BillDataException{
-		if(bill == null || StringUtils.isBlank(bill.getUid())){
+		/*if(bill == null || StringUtils.isBlank(bill.getUid())){
 			throw new BillDataException("Bill data is null");
 		}
 		if(StringUtils.isBlank(bill.getDateOfBill())){
@@ -34,12 +40,12 @@ public class BillValidator {
 			}
 		}else {
 			throw new BillDataException("In Bill the items data is not available");
-		}		
+		}		*/
 		return true;
 	}
 
-	public boolean validateBill(BillDTO billDTO) {
-		// TODO Auto-generated method stub
-		return false;
+	public boolean validateBillDTO(BillDTO billDTO) {
+		LOGGER.info("billData " + billDTO);
+		return true;
 	}
 }

@@ -18,7 +18,7 @@ public class HomePageController {
 	@Resource(name ="billRepository")
 	BillRepository billRepository;
 
-	@RequestMapping(value= "/company/bill/add", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
+	@RequestMapping(value= "test/company/bill/add", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
     public String addBill(@RequestBody BillData billData){
     	billRepository.addBill(billData);
 		return "index";

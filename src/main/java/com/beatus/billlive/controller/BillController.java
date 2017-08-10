@@ -23,7 +23,7 @@ import com.beatus.billlive.validation.BillValidator;
 import com.beatus.billlive.validation.exception.BillDataException;
 
 @Controller
-@RequestMapping("/api")
+//@RequestMapping("/api")
 public class BillController {
 	
 
@@ -36,7 +36,7 @@ public class BillController {
 	//For add and update bill both
 	@RequestMapping(value= "/company/bill/add", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody String addBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
-		if(billValidator.validateBill(billDTO)){
+		if(billValidator.validateBillDTO(billDTO)){
 			HttpSession session = request.getSession();
 			String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
 			String isBillCreated = billService.addBill(request, response, billDTO, companyId);
@@ -48,7 +48,7 @@ public class BillController {
 	
 	@RequestMapping(value= "/company/bill/update", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
     public @ResponseBody String editBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
-		if(billValidator.validateBill(billDTO)){
+		if(billValidator.validateBillDTO(billDTO)){
 		HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
 		String isBillUpdated = billService.updateBill(request, response, billDTO, companyId);
