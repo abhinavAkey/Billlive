@@ -28,7 +28,7 @@ import com.beatus.billlive.utils.FileUploadTemplateHandler;
 
 
 
-public class ExcelService {
+public class ExcelService {/*
 	public static final String VARCHAR = "VARCHAR";
 	public static final String DECIMAL = "DECIMAL";
 	public static final String TIMESTAMP = "TIMESTAMP";
@@ -93,10 +93,10 @@ public class ExcelService {
 					continue; // just skip the row if row number 0  if header row is true
 				}
 				
-				/*
+				
 				 * Dynamically calculate positions based on Column Name 
 				 * and Bean Name if needed to not use static pos from conf
-				 * */
+				 * 
 				for (Integer pos : fileTemplate.getColumnTemplatesMap()
 							.keySet()) {
 						column = fileTemplate.getColumnTemplateByPos(pos);
@@ -238,4 +238,4 @@ public class ExcelService {
     
 
     	
-}
+*/}

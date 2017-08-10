@@ -7,10 +7,10 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class FileTemplate implements Serializable{
-
-	/**
+/*
+	*//**
 	 * 
-	 */
+	 *//*
 	private static final long serialVersionUID = 3810715254328582921L;
 
 	private long templateId;
@@ -101,6 +101,6 @@ public class FileTemplate implements Serializable{
 			}
 		}
 	}
-	
+	*/
 
 }

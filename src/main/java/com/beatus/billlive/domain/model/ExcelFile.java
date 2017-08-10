@@ -9,7 +9,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.springframework.validation.Validator;
 
 public class ExcelFile {
-
+/*
 	Sheet sheet;
 	
 	boolean hasHeader;
@@ -69,7 +69,7 @@ public class ExcelFile {
 				+ rowsPerThread + ", sheetThreads=]";
 	}
 
-	
+	*/
 }
 
 

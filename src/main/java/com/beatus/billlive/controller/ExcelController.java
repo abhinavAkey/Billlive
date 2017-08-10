@@ -14,14 +14,14 @@ import com.beatus.billlive.service.ExcelService;
 
 public class ExcelController {
 	
-	@Resource(name = "excelService")
+	/*@Resource(name = "excelService")
 	private ExcelService excelService;
 	
-	/*@RequestMapping(value = "/loadExcel", method = RequestMethod.GET)
+	@RequestMapping(value = "/loadExcel", method = RequestMethod.GET)
 	public String LoadExcel(Receipt receipt) {
 		excelService.LoadExcel(receipt);
 		return "Y";
-	}*/
+	}
 	@RequestMapping(value="/loadexcel", method=RequestMethod.POST)
     public  @ResponseBody String LoadExcel(@RequestParam("file") MultipartFile file){
         if (!file.isEmpty()) {
@@ -36,5 +36,5 @@ public class ExcelController {
             return "Failed to load data, because the file was empty.";
         }
 		return null;
-    }
+    }*/
 }
