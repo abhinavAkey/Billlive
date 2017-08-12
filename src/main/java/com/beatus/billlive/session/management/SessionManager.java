@@ -45,7 +45,7 @@ public class SessionManager {
 	private UserService userService;
 	
     public SessionModel initSessionModel(HttpServletRequest request, HttpServletResponse response) {
-	    SessionModel reqSessionModel = (SessionModel)request.getAttribute(SessionModel.SESSION_MODEL_NAME);
+	    SessionModel reqSessionModel = (SessionModel)request.getAttribute(Constants.SESSION_MODEL);
 	    if(reqSessionModel != null) {
 	    	return reqSessionModel;
 	    }

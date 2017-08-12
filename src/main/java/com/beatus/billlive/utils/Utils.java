@@ -1,14 +1,25 @@
 package com.beatus.billlive.utils;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.commons.lang3.RandomStringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.beatus.billlive.domain.model.BillItemDTO;
 import com.beatus.billlive.domain.model.Inventory;
 import com.beatus.billlive.domain.model.ItemData;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 public class Utils {
+	
+    private static final Logger LOG = LoggerFactory.getLogger(Utils.class);
 	
 	public static String generateRandomKey(final int numberOfCharacters) {
     	String	randomNumber = RandomStringUtils.randomAlphanumeric(numberOfCharacters);
@@ -68,6 +79,47 @@ public class Utils {
         }
 
         return result;
+    }
+    
+    private static final ObjectMapper serializeMapper = new ObjectMapper();
+    private static final ObjectMapper deserializeMapper = new ObjectMapper();
+	static{
+	    synchronized (serializeMapper) {
+	    	// Map only non null values
+	    	serializeMapper.setSerializationInclusion(Include.NON_EMPTY);
+	    	serializeMapper.setSerializationInclusion(Include.NON_NULL);
+	    	serializeMapper.setSerializationInclusion(Include.NON_DEFAULT);
+	    	serializeMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+	    }
+	    synchronized (deserializeMapper) {
+			deserializeMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        }
+	}
+	
+    /**
+     * Takes java Object and converts it into Json String
+     * @param data
+     * @return String
+     */
+    public static String convertJavaToJson(Object data) {
+    	// Map only non null values
+    	serializeMapper.setSerializationInclusion(Include.NON_EMPTY);
+    	serializeMapper.setSerializationInclusion(Include.NON_NULL);
+    	serializeMapper.setSerializationInclusion(Include.NON_DEFAULT);
+    	serializeMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+    	String json = null;
+    	try {
+    		LOG.debug("FromJava: {}", data.toString());
+    		json = serializeMapper.writeValueAsString(data);
+    	} catch (JsonGenerationException jge) {
+    		LOG.error("JsonGenerationException: {}", jge);
+    	} catch (JsonMappingException jme) {
+    		LOG.error("JsonMappingException: {}", jme);
+    	} catch (IOException ioe) {
+    		LOG.error("IOException: {}", ioe);
+    	}
+    	LOG.debug("ToJson: {}", json);
+    	return json;
     }
 
 }

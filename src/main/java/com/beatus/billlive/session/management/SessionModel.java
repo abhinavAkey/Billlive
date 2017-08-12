@@ -7,15 +7,12 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 public class SessionModel implements Cloneable {
-	
-    public static final String 
-		SESSION_MODEL_NAME = "sessionModel";
     
     private Map<String, String> parameters = Maps.newHashMap(), 
     		cookieContent = Maps.newHashMap();
     private boolean secureRequest = false;
     private String verifier = "", contextPath = "",
-    		requestMethod = "", servletPath = "", companyId = "", uid = "", authToken = "";
+    		requestMethod = "", servletPath = "", companyId = "", uid = "", authToken = "", locale="";
     
 	public String getUid() {
 		return uid;
@@ -120,5 +117,13 @@ public class SessionModel implements Cloneable {
 	public void setAuthToken(String authToken) {
 		this.authToken = authToken;
 	}
-	
+
+	public String getLocale() {
+		return locale;
+	}
+
+	public void setLocale(String locale) {
+		this.locale = locale;
+	}
+
 }

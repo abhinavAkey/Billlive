@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "billlive-webapp",
+  "private_key_id": "265d48bf3656083e4aad5285c916e73152430871",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQC76o50MQWTzeB6\n2BxSl1d+qNeLQrl90R6xgaIrCYbmu2E61O25THPf5TPyvS41dB+iPSm8s9cv+Su/\nLxcEFRtAbGiqsaGP7rC8NTeIIwmzqmnWJJErs+9mOMvCm5CWlhdadRNuUa3kDxzl\n4h02u6NLDboW3Tpa6T2f+ENRJFi9OnDfSI1Qp86N/C8JOAXuhxeOWFZt1n4ma90M\nhQfDDens41WCo38hHKcyT31Qn3s8U88WsTHMVOae99+TuO7AxbvsKD5gyU/11+uK\nRfSIL4zvqtf99C99WedrsGuBos6TV7cvjCQDTMB/yQXk4vxukxj68A16ijdJ9do3\njixXN2/tAgMBAAECggEALHjoWcs4PLCejbQTj+BNTqZ6zHRwHbyd/Phm/rR0fqqd\n6iR2VkInsjc2Qh5Pj0r6KZU8CXKuXKYlmkt0sPylxGtjofIEAGJG5WPazpcsNp8A\nCTQCP0uIPrL2Vgom/9xpjnjirlsaQjzpY+ZNb6Sckqie/8Y/h0Bn2zIQDGYDslR3\nrz7XlwvVwXn0pCDCA4zGDv3Wf7u1ocG0zvjitqoX8Z8ORh2LS5GY7BpHsVrKJ90L\nXCI6U5/iZB1t4FyxyyhkeiLsnTrxqNQ47ZVKjUSHcXRCLSYtYF6kugRe1baBoc2R\naQutR9BvsN9nYMxmuHVdokzg0XWSr8z+RTK798UVKQKBgQD5kEvW0Rh8iZn7lMuw\niZW58HU0Khheok5eCr/8kNCyhA+BLf1t4cbWjpk3oYbX7Y5AKU2xDShz2NgBV9HJ\nndYTDHgIVn0J6MmIWg3mWdH7UUtfL6BbG2pUB5LFpfONDYnTRj2loiWcqYfS7zdz\nq3no3+hhS7/josxlcZ9GmB2dGwKBgQDAwz450VZlcF4BtLSXm/WIEp2fBSaDpapP\nwcysqQhBvyJ2l9ytXvHqbQ8bqsOLMux1QiJ2tsCZ7MiFcB3oXaBoCBITghodhG0A\nOYZBkeih3D2K8FKqYjMZG4okDsNvu6AVhEZvATpLZT129XnC+q/6/xggaKbvxata\nZO4vWkSflwKBgQDTPnMTiLaDZC41KEQqUKuuUn3DBAbQw+416D+OWD5vfR1qqTUl\nt8EJiHblAhMT339TjCK5RXwCY4Cj0mQ/lxzHzvwjgqIgqy07/45Yd5soci2sirHf\nrJsaObbhGpHHybfqYEB6XYAc1dukjtyPSozMtAsNoILy+rCtBbpelRAsFQKBgEG1\nTEzhMxY5C5KBSt4zZ6sOzXQbiVlu63NsmJxyskHXKaRLeAoRR12l93Ry7V1R6pC+\nDolxGo5dzKzP3yIKaFeOCLtlqglNzuo4sa9AUZB7Ru9JpKQ3/TsdzCUmczBvQM6U\n3H2SaZCx3hXi77KrSbnBozPI+L7bHuIdbaPunV3ZAoGBAK8BxE42a9gjQP8kc9u1\ntSHzTbgwhGvJdbLPCeItxKkTNhGUO4nkP3L7YIAcmSXXpbMSikcL8HCjkucPnBr0\nR67qsDlv3fu5U7Uqg5a9zp9KqR5baUmAMow4yOJJcMQ0iGdYoa0SdtNStkdOsQqU\nytYdpzdb7KBgaOqhWogV5Yn6\n-----END PRIVATE KEY-----\n",
+  "client_email": "billlive@billlive-webapp.iam.gserviceaccount.com",
+  "client_id": "107675267293751088170",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://accounts.google.com/o/oauth2/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/billlive%40billlive-webapp.iam.gserviceaccount.com"
+}

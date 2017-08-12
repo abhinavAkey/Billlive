@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.BillDTO;
 import com.beatus.billlive.service.BillService;
+import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.BillValidator;
 import com.beatus.billlive.validation.exception.BillDataException;
 
 @Controller
-public class BillController {
+public class BillController extends BaseController {
 	
 
 	@Resource(name = "billService")
@@ -36,8 +37,11 @@ public class BillController {
 	@RequestMapping(value= "/company/bill/add", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody String addBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
 		if(billValidator.validateBillDTO(billDTO)){
-			HttpSession session = request.getSession();
-			String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+			SessionModel sessionModel = initSessionModel(request);
+	    	String companyId = sessionModel.getCompanyId();
+	    	String uid = sessionModel.getUid();
+	    	billDTO.setCompanyId(companyId);
+	    	billDTO.setUid(uid);
 			String isBillCreated = billService.addBill(request, response, billDTO, companyId);
 			return isBillCreated;
 		}else{
@@ -48,10 +52,13 @@ public class BillController {
 	@RequestMapping(value= "/company/bill/update", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
     public @ResponseBody String editBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
 		if(billValidator.validateBillDTO(billDTO)){
-		HttpSession session = request.getSession();
-    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
-		String isBillUpdated = billService.updateBill(request, response, billDTO, companyId);
-		return isBillUpdated;
+	    	SessionModel sessionModel = initSessionModel(request);
+	    	String companyId = sessionModel.getCompanyId();
+	    	String uid = sessionModel.getUid();
+	    	billDTO.setCompanyId(companyId);
+	    	billDTO.setUid(uid);
+			String isBillUpdated = billService.updateBill(request, response, billDTO, companyId);
+			return isBillUpdated;
 		}else{
 			throw new BillDataException("Bill data passed cant be null or empty string");
 		}
