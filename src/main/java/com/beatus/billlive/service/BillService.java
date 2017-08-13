@@ -25,7 +25,7 @@ import com.beatus.billlive.repository.BillRepository;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.BillValidator;
-import com.beatus.billlive.validation.exception.BillDataException;
+import com.beatus.billlive.validation.exception.BillValidationException;
 
 @Service
 @Component("billService")
@@ -46,10 +46,10 @@ public class BillService {
 	private ItemService itemService;
 
 
-	public String addBill(HttpServletRequest request, HttpServletResponse response, BillDTO billDTO, String companyId) throws BillDataException{
+	public String addBill(HttpServletRequest request, HttpServletResponse response, BillDTO billDTO, String companyId) throws BillValidationException{
 		
 		if(billDTO == null){
-			throw new BillDataException("Bill data cant be null");
+			throw new BillValidationException("Bill data cant be null");
 		}
 		try {
 			//Revisit validator
@@ -66,17 +66,17 @@ public class BillService {
 				BillData billData = populateBillData(billDTO, existingBill, companyId);				
 				return billRepository.addBill(billData);
 			}
-		} catch (BillDataException billException) {
+		} catch (BillValidationException billException) {
 			LOGGER.info("Bill validation Exception in the addBillService() {} ", billException.getMessage());
 			throw billException;
 		}	
 		return "N";		
 	}
 
-	public String updateBill(HttpServletRequest request, HttpServletResponse response, BillDTO billDTO, String companyId) throws BillDataException{
+	public String updateBill(HttpServletRequest request, HttpServletResponse response, BillDTO billDTO, String companyId) throws BillValidationException{
 		
 		if(billDTO == null){
-			throw new BillDataException("Bill data cant be null");
+			throw new BillValidationException("Bill data cant be null");
 		}
 		try {
 			//Revisit validator
@@ -91,7 +91,7 @@ public class BillService {
 				BillData billData = populateBillData(billDTO, existingBill, companyId);			
 				return billRepository.updateBill(billData);
 			}
-		} catch (BillDataException billException) {
+		} catch (BillValidationException billException) {
 			LOGGER.info("Bill validation Exception in the addBillService() {} ", billException.getMessage());
 			throw billException;
 		}
