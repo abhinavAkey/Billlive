@@ -24,6 +24,7 @@ import com.beatus.billlive.repository.PurchaseOrderRepository;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.PurchaseOrderValidator;
+import com.beatus.billlive.validation.exception.InventoryValidationException;
 import com.beatus.billlive.validation.exception.ItemDataException;
 import com.beatus.billlive.validation.exception.PurchaseOrderDataException;
 
@@ -46,7 +47,7 @@ public class PurchaseOrderService {
 	private ItemService itemService;
 
 
-	public String addPurchaseOrder(HttpServletRequest request, HttpServletResponse response, PurchaseOrderDTO purchaseOrderDTO, String companyId) throws PurchaseOrderDataException, ItemDataException{
+	public String addPurchaseOrder(HttpServletRequest request, HttpServletResponse response, PurchaseOrderDTO purchaseOrderDTO, String companyId) throws PurchaseOrderDataException, ItemDataException, InventoryValidationException{
 		
 		if(purchaseOrderDTO == null){
 			throw new PurchaseOrderDataException("PurchaseOrder data cant be null");
@@ -73,7 +74,7 @@ public class PurchaseOrderService {
 		return null;		
 	}
 
-	public String updatePurchaseOrder(HttpServletRequest request, HttpServletResponse response, PurchaseOrderDTO purchaseOrderDTO, String companyId) throws PurchaseOrderDataException, ItemDataException{
+	public String updatePurchaseOrder(HttpServletRequest request, HttpServletResponse response, PurchaseOrderDTO purchaseOrderDTO, String companyId) throws PurchaseOrderDataException, ItemDataException, InventoryValidationException{
 		
 		if(purchaseOrderDTO == null){
 			throw new PurchaseOrderDataException("PurchaseOrder data cant be null");
@@ -184,7 +185,7 @@ public class PurchaseOrderService {
 	}
 
 
-	private PurchaseOrderData populatePurchaseOrderData(PurchaseOrderDTO purchaseOrderDTO, PurchaseOrderData existingPurchaseOrder, String companyId) throws ItemDataException {
+	private PurchaseOrderData populatePurchaseOrderData(PurchaseOrderDTO purchaseOrderDTO, PurchaseOrderData existingPurchaseOrder, String companyId) throws ItemDataException, InventoryValidationException {
 		PurchaseOrderData purchaseOrderData = new PurchaseOrderData();
 		purchaseOrderData.setPurchaseFromContactId(purchaseOrderDTO.getPurchaseFromContactId());
 		purchaseOrderData.setPurchaseToContactId(purchaseOrderDTO.getPurchaseToContactId());

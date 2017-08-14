@@ -5,7 +5,6 @@ import java.util.List;
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
@@ -17,12 +16,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.CompanyData;
 import com.beatus.billlive.service.CompanyService;
+import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
-import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.exception.CompanyDataException;
 
 @Controller
-public class CompanyController {
+public class CompanyController extends BaseController  {
 	
 
 	@Resource(name = "companyService")
@@ -31,20 +30,20 @@ public class CompanyController {
 	//For add and update company both
 	@RequestMapping(value= "/company/add", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody String addCompany(@RequestBody CompanyData companyData, HttpServletRequest request, HttpServletResponse response) throws CompanyDataException{
-		HttpSession session = request.getSession();
-		String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+		SessionModel sessionModel = initSessionModel(request);
+		String companyId =  sessionModel.getCompanyId();
 		companyId = companyService.addCompany(request, response, companyData, companyId);
-		session.setAttribute(Constants.COMPANY_ID, companyId);
+		sessionModel.setCompanyId(companyId);
 		return companyId;
 	}
 	
 	@RequestMapping(value= "/company/update", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
     public @ResponseBody String editCompany(@RequestBody CompanyData companyData, HttpServletRequest request, HttpServletResponse response) throws CompanyDataException{
     	
-		HttpSession session = request.getSession();
-		String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+		SessionModel sessionModel = initSessionModel(request);
+		String companyId = sessionModel.getCompanyId();
 		companyId = companyService.updateCompany(request, response, companyData, companyId);
-      	session.setAttribute(Constants.COMPANY_ID, companyId);
+      	sessionModel.setCompanyId(companyId);
 		return companyId;
     }
     
@@ -73,14 +72,9 @@ public class CompanyController {
     
     @RequestMapping(value = "/company/getallcompanys", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody List<CompanyData> getAllCompanys(HttpServletRequest request, HttpServletResponse response) throws CompanyDataException {
-    	HttpSession session = request.getSession();
-    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
-    	if(StringUtils.isNotBlank(companyId)){
-        	List<CompanyData> companyList = companyService.getAllCompanies();
+    	List<CompanyData> companyList = companyService.getAllCompanies();
 			return companyList;
-		}else{
-			throw new CompanyDataException("companyId passed cant be null or empty string");
-		}
+		
 	}
 
 }

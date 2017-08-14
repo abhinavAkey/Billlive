@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.PurchaseOrderDTO;
 import com.beatus.billlive.service.PurchaseOrderService;
+import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.exception.ItemDataException;
 import com.beatus.billlive.validation.exception.PurchaseOrderDataException;
 
 @Controller
-public class PurchaseOrderController {
+public class PurchaseOrderController extends BaseController{
 	
 
 	@Resource(name = "purchaseOrderService")
@@ -32,9 +33,9 @@ public class PurchaseOrderController {
 	//For add and update purchaseOrder both
 	@RequestMapping(value= "/company/purchaseOrder/add", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody String addPurchaseOrder(@RequestBody PurchaseOrderDTO purchaseOrderDTO, HttpServletRequest request, HttpServletResponse response) throws PurchaseOrderDataException, ItemDataException{
-		HttpSession session = request.getSession();
-    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
-		String purchaseOrderId = purchaseOrderService.addPurchaseOrder(request, response, purchaseOrderDTO, companyId);
+		SessionModel sessionModel = initSessionModel(request);
+    	String companyId = sessionModel.getCompanyId();
+    	String purchaseOrderId = purchaseOrderService.addPurchaseOrder(request, response, purchaseOrderDTO, companyId);
 		return purchaseOrderId;
 	}
 	

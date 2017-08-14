@@ -21,7 +21,7 @@ import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.BillValidator;
-import com.beatus.billlive.validation.exception.BillDataException;
+import com.beatus.billlive.validation.exception.BillValidationException;
 
 @Controller
 public class BillController extends BaseController {
@@ -35,7 +35,7 @@ public class BillController extends BaseController {
 	
 	//For add and update bill both
 	@RequestMapping(value= "/company/bill/add", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
-	public @ResponseBody String addBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
+	public @ResponseBody String addBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillValidationException{
 		if(billValidator.validateBillDTO(billDTO)){
 			SessionModel sessionModel = initSessionModel(request);
 	    	String companyId = sessionModel.getCompanyId();
@@ -45,12 +45,12 @@ public class BillController extends BaseController {
 			String isBillCreated = billService.addBill(request, response, billDTO, companyId);
 			return isBillCreated;
 		}else{
-			throw new BillDataException("Bill data passed cant be null or empty string");
+			throw new BillValidationException("Bill data passed cant be null or empty string");
 		}
 	}
 	
 	@RequestMapping(value= "/company/bill/update", method = RequestMethod.POST, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
-    public @ResponseBody String editBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillDataException{
+    public @ResponseBody String editBill(@RequestBody BillDTO billDTO, HttpServletRequest request, HttpServletResponse response) throws BillValidationException{
 		if(billValidator.validateBillDTO(billDTO)){
 	    	SessionModel sessionModel = initSessionModel(request);
 	    	String companyId = sessionModel.getCompanyId();
@@ -60,69 +60,69 @@ public class BillController extends BaseController {
 			String isBillUpdated = billService.updateBill(request, response, billDTO, companyId);
 			return isBillUpdated;
 		}else{
-			throw new BillDataException("Bill data passed cant be null or empty string");
+			throw new BillValidationException("Bill data passed cant be null or empty string");
 		}
     }
     
     @RequestMapping(value = "/company/bill/remove/{id}", method = RequestMethod.DELETE, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
-    public @ResponseBody String removeBill(@PathVariable("id") String billNumber, HttpServletRequest request, HttpServletResponse response) throws BillDataException{	
+    public @ResponseBody String removeBill(@PathVariable("id") String billNumber, HttpServletRequest request, HttpServletResponse response) throws BillValidationException{	
     	if(StringUtils.isNotBlank(billNumber)){
     		HttpSession session = request.getSession();
         	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
         	String isBillRemoved = billService.removeBill(companyId, billNumber);
     		return isBillRemoved;
 		}else{
-			throw new BillDataException("billId passed cant be null or empty string");
+			throw new BillValidationException("billId passed cant be null or empty string");
 		}
     }
  
     
     @RequestMapping(value = "/company/getbill/{id}", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
-	public @ResponseBody BillDTO getBillById(@PathVariable("id") String billNumber, HttpServletRequest request, HttpServletResponse response) throws BillDataException {
+	public @ResponseBody BillDTO getBillById(@PathVariable("id") String billNumber, HttpServletRequest request, HttpServletResponse response) throws BillValidationException {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
     	if(StringUtils.isNotBlank(billNumber) && StringUtils.isNotBlank(companyId)){
     		BillDTO billDTO = billService.getBillByBillNumber(companyId, billNumber);
 			return billDTO;
 		}else{
-			throw new BillDataException("billId passed cant be null or empty string");
+			throw new BillValidationException("billId passed cant be null or empty string");
 		}
 		
 	}
     
     @RequestMapping(value = "/company/getallbills", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
-	public @ResponseBody List<BillDTO> getAllBills(HttpServletRequest request, HttpServletResponse response) throws BillDataException {
+	public @ResponseBody List<BillDTO> getAllBills(HttpServletRequest request, HttpServletResponse response) throws BillValidationException {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
     	if(StringUtils.isNotBlank(companyId)){
         	List<BillDTO> billList = billService.getAllBillsBasedOnCompanyId(companyId);
 			return billList;
 		}else{
-			throw new BillDataException("billId passed cant be null or empty string");
+			throw new BillValidationException("billId passed cant be null or empty string");
 		}
 	}
     
     @RequestMapping(value = "/company/getallbills/year/{year}/month/{month}", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
-	public @ResponseBody List<BillDTO> getAllBillsInAMonth(@PathVariable("year") String year, @PathVariable("month") String month, HttpServletRequest request, HttpServletResponse response) throws BillDataException {
+	public @ResponseBody List<BillDTO> getAllBillsInAMonth(@PathVariable("year") String year, @PathVariable("month") String month, HttpServletRequest request, HttpServletResponse response) throws BillValidationException {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
     	if(StringUtils.isNotBlank(companyId)){
         	List<BillDTO> billList = billService.getAllBillsInAMonth(companyId, year, month);
 			return billList;
 		}else{
-			throw new BillDataException("billId passed cant be null or empty string");
+			throw new BillValidationException("billId passed cant be null or empty string");
 		}
 	}
     
     @RequestMapping(value = "/company/getallbills/year/{year}", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
-	public @ResponseBody List<BillDTO> getAllBillsInAMonth(@PathVariable("year") String year, HttpServletRequest request, HttpServletResponse response) throws BillDataException {
+	public @ResponseBody List<BillDTO> getAllBillsInAMonth(@PathVariable("year") String year, HttpServletRequest request, HttpServletResponse response) throws BillValidationException {
     	HttpSession session = request.getSession();
     	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
     	if(StringUtils.isNotBlank(companyId)){
         	List<BillDTO> billList = billService.getAllBillsInAnYear(companyId, year);
 			return billList;
 		}else{
-			throw new BillDataException("CompanyId passed cant be null or empty string");
+			throw new BillValidationException("CompanyId passed cant be null or empty string");
 		}
 	}
 

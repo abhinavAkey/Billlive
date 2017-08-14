@@ -21,6 +21,7 @@ import com.beatus.billlive.repository.ItemRepository;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.ItemValidator;
+import com.beatus.billlive.validation.exception.InventoryValidationException;
 import com.beatus.billlive.validation.exception.ItemDataException;
 
 @Service
@@ -35,7 +36,7 @@ public class ItemService {
 	@Resource(name = "itemRepository")
 	private ItemRepository itemRepository;
 
-	public ItemData addItem(ItemData item, String companyId) throws ItemDataException {
+	public ItemData addItem(ItemData item, String companyId) throws ItemDataException, InventoryValidationException {
 		if(item == null){
 			throw new ItemDataException("Item data cant be null");
 		}
@@ -78,7 +79,7 @@ public class ItemService {
 	}
 
 
-	public ItemData updateItem(ItemData item, String companyId) throws ItemDataException {
+	public ItemData updateItem(ItemData item, String companyId) throws ItemDataException, InventoryValidationException {
 		if(item == null){
 			throw new ItemDataException("Item data cant be null");
 		}
