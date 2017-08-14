@@ -1,4 +1,4 @@
-package com.beatus.billlive.exception;
+package com.beatus.billlive.service.exception;
 
 public class BillliveServiceException extends Exception {
 	

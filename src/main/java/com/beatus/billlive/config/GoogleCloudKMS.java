@@ -13,7 +13,7 @@ import org.springframework.stereotype.Component;
 import com.beatus.billlive.encryption.EncryptionKeyGenerator;
 import com.beatus.billlive.encryption.HmacKeyGenerator;
 import com.beatus.billlive.encryption.KeyGenerator;
-import com.beatus.billlive.exception.BillliveServiceException;
+import com.beatus.billlive.service.exception.BillliveServiceException;
 import com.beatus.billlive.utils.Constants;
 import com.google.api.services.cloudkms.v1.CloudKMS;
 import com.google.api.services.cloudkms.v1.model.DecryptRequest;

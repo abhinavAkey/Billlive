@@ -8,7 +8,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import com.beatus.billlive.exception.BillliveServiceException;
+import com.beatus.billlive.service.exception.BillliveServiceException;
 import com.beatus.billlive.utils.Constants;
 import com.google.api.services.cloudkms.v1.CloudKMS;
 import com.google.api.services.cloudkms.v1.CloudKMS.Projects.Locations.KeyRings.CryptoKeys.Get;

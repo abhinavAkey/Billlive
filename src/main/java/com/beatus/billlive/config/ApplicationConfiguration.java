@@ -20,7 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
-import com.beatus.billlive.exception.BillliveServiceException;
+import com.beatus.billlive.service.exception.BillliveServiceException;
 import com.beatus.billlive.utils.Constants;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;

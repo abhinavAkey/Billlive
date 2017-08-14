@@ -2,7 +2,7 @@ package com.beatus.billlive.encryption;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import com.beatus.billlive.exception.BillliveServiceException;
+import com.beatus.billlive.service.exception.BillliveServiceException;
 
 /**
  * 
