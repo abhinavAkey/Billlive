@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.CompanyData;
-import com.beatus.billlive.validation.exception.CompanyDataException;
+import com.beatus.billlive.exception.CompanyDataException;
 
 @Component("companyValidator")
 public class CompanyValidator {

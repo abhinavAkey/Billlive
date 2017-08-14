@@ -6,8 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
@@ -17,12 +15,13 @@ import org.springframework.stereotype.Service;
 
 import com.beatus.billlive.domain.model.Inventory;
 import com.beatus.billlive.domain.model.ItemData;
+import com.beatus.billlive.exception.InventoryValidationException;
+import com.beatus.billlive.exception.ItemDataException;
 import com.beatus.billlive.repository.ItemRepository;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.ItemValidator;
-import com.beatus.billlive.validation.exception.InventoryValidationException;
-import com.beatus.billlive.validation.exception.ItemDataException;
+
 
 @Service
 @Component("itemService")

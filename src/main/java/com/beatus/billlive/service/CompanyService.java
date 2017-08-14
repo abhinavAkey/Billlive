@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.beatus.billlive.domain.model.CompanyData;
+import com.beatus.billlive.exception.CompanyDataException;
 import com.beatus.billlive.repository.CompanyRepository;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.CompanyValidator;
-import com.beatus.billlive.validation.exception.CompanyDataException;
 
 @Service
 @Component("companyService")

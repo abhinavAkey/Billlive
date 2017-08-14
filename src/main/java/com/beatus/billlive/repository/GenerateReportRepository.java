@@ -19,7 +19,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
 
 
-@Component("billRepository")
+@Component("generateReportRepository")
 public class GenerateReportRepository {/*
 	
 	private static final Logger logger = LoggerFactory.getLogger(GenerateReportRepository.class);

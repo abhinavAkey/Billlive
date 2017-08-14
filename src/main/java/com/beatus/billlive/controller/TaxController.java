@@ -16,11 +16,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.Tax;
+import com.beatus.billlive.exception.TaxException;
 import com.beatus.billlive.service.TaxService;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.TaxValidator;
-import com.beatus.billlive.validation.exception.TaxException;
 
 @Controller
 public class TaxController {

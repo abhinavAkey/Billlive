@@ -1,4 +1,4 @@
-package com.beatus.billlive.validation.exception;
+package com.beatus.billlive.exception;
 
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;

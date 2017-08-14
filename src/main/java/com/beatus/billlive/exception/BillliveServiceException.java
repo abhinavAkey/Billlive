@@ -1,19 +1,19 @@
-package com.beatus.billlive.validation.exception;
+package com.beatus.billlive.exception;
 
-public class UserDataException extends Exception {
-
+public class BillliveServiceException extends Exception {
+	
 	/**
 	 * @author vakey15
 	 * This is a exception that is thrown when there is a bad data in the request parameters
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public UserDataException(String message) {
+	public BillliveServiceException(String message) {
         super(message);
     }
 
-    public UserDataException(String message, Throwable cause) {
+    public BillliveServiceException(String message, Throwable cause) {
         super(message, cause);
     }
-    
+
 }

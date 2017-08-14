@@ -8,6 +8,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +28,7 @@ import com.beatus.billlive.validation.exception.BillValidationException;
 @Controller
 public class BillController extends BaseController {
 	
+    private static final Logger LOG = LoggerFactory.getLogger(BillController.class);
 
 	@Resource(name = "billService")
 	private BillService billService;

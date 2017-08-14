@@ -4,14 +4,14 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.ContactInfo;
-import com.beatus.billlive.validation.exception.ContactInfoException;
+import com.beatus.billlive.exception.ContactInfoException;
 
 @Component("contactValidator")
 public class ContactValidator {
 	
 	public boolean validateContactInfo(ContactInfo contactData) throws ContactInfoException{
 		if(contactData == null || StringUtils.isBlank(contactData.getContactId())){
-			throw new com.beatus.billlive.validation.exception.ContactInfoException("ContactInfo data is null");
+			throw new com.beatus.billlive.exception.ContactInfoException("ContactInfo data is null");
 		}
 		if(StringUtils.isBlank(contactData.getContactId())){
 			throw new ContactInfoException("UId is not available " );

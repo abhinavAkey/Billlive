@@ -1,6 +1,6 @@
-package com.beatus.billlive.validation.exception;
+package com.beatus.billlive.exception;
 
-public class TaxException extends Exception {
+public class CompanyDataException extends Exception {
 
 	/**
 	 * @author vakey15
@@ -8,11 +8,11 @@ public class TaxException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public TaxException(String message) {
+	public CompanyDataException(String message) {
         super(message);
     }
 
-    public TaxException(String message, Throwable cause) {
+    public CompanyDataException(String message, Throwable cause) {
         super(message, cause);
     }
     

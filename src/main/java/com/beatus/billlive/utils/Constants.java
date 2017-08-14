@@ -67,4 +67,7 @@ public class Constants {
 	public static final String BILLLIVE = "billlive";
 	public static final String AUTH_TOKEN = "authToken";
 	public static final String SESSION_MODEL = "sessionModel";
+	public static final String AES = "AES";
+	public static final String HMACSHA256 = "HmacSHA256";
+	public static final String CHAR_SET = "UTF-8";
 }

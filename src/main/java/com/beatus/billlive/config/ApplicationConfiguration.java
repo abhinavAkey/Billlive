@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collections;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.stereotype.Service;
 
+import com.beatus.billlive.exception.BillliveServiceException;
 import com.beatus.billlive.utils.Constants;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
 import com.google.api.client.http.HttpTransport;
@@ -35,7 +37,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.database.ValueEventListener;;
 
 /**
  * Root class for the application's Spring configuration. This class is
@@ -69,6 +71,8 @@ public class ApplicationConfiguration {
     private static final Logger LOGGER 
             = LoggerFactory.getLogger(ApplicationConfiguration.class);
 	private static final String FIREBASE_RESOURCE = "billlive-2ebb8.json";
+	private static final String GOOGLE_SERVICE_ACCOUNT_RESOURCE = "billlive-265d48bf3656.json";
+	private static final String GOOGLE_SERVICE_ACCOUNT_APPLICATION_NAME = "billlive";
 	private static final String FIREBASE_DATABASE_URL = "https://billlive-2ebb8.firebaseio.com";
     // ******************************************************************//
     // Properities Configuration
@@ -199,23 +203,32 @@ public class ApplicationConfiguration {
     }
     
 	@Bean
-	public CloudKMS createAuthorizedClient() throws IOException {
-	    // Create the credential
-	    HttpTransport transport = new NetHttpTransport();
-	    JsonFactory jsonFactory = new JacksonFactory();
-	    // Authorize the client using Application Default Credentials
-	    // @see https://g.co/dv/identity/protocols/application-default-credentials
-	    GoogleCredential credential = GoogleCredential.getApplicationDefault(transport, jsonFactory);
-
-	    // Depending on the environment that provides the default credentials (e.g. Compute Engine, App
-	    // Engine), the credentials may require us to specify the scopes we need explicitly.
-	    // Check for this case, and inject the scope if required.
-	    if (credential.createScopedRequired()) {
-	      credential = credential.createScoped(CloudKMSScopes.all());
-	    }
-
-	    return new CloudKMS.Builder(transport, jsonFactory, credential)
-	        .setApplicationName("billlive")
-	        .build();
+	public static CloudKMS cloudKMS() throws BillliveServiceException {
+		try {
+		    // Create the credential
+		    HttpTransport transport = new NetHttpTransport();
+		    JsonFactory jsonFactory = new JacksonFactory();
+		    // Authorize the client using Application Default Credentials
+		    // @see https://g.co/dv/identity/protocols/application-default-credentials
+		    
+		    ClassLoader loader = Thread.currentThread().getContextClassLoader();
+			URL resource = loader.getResource(GOOGLE_SERVICE_ACCOUNT_RESOURCE);
+			File billliveFile = new File(resource.toURI());
+		    GoogleCredential credential = GoogleCredential.fromStream(new FileInputStream(billliveFile))
+		    	    .createScoped(Collections.singleton(CloudKMSScopes.CLOUD_PLATFORM));
+		    
+		    // Depending on the environment that provides the default credentials (e.g. Compute Engine, App
+		    // Engine), the credentials may require us to specify the scopes we need explicitly.
+		    // Check for this case, and inject the scope if required.
+		    if (credential.createScopedRequired()) {
+		      credential = credential.createScoped(CloudKMSScopes.all());
+		    }
+		    
+		    return new CloudKMS.Builder(transport, jsonFactory, credential)
+		        .setApplicationName(GOOGLE_SERVICE_ACCOUNT_APPLICATION_NAME)
+		        .build();
+		} catch (URISyntaxException | IOException e) {
+			throw new BillliveServiceException(e.getMessage());
+		}
 	  }
 }

@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.Tax;
-import com.beatus.billlive.validation.exception.TaxException;
+import com.beatus.billlive.exception.TaxException;
 
 @Component("taxValidator")
 public class TaxValidator {

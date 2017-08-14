@@ -1,6 +1,6 @@
-package com.beatus.billlive.validation.exception;
+package com.beatus.billlive.exception;
 
-public class ItemDataException extends Exception {
+public class CategoryValidationException extends Exception {
 
 	/**
 	 * @author vakey15
@@ -8,11 +8,11 @@ public class ItemDataException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ItemDataException(String message) {
+	public CategoryValidationException(String message) {
         super(message);
     }
 
-    public ItemDataException(String message, Throwable cause) {
+    public CategoryValidationException(String message, Throwable cause) {
         super(message, cause);
     }
     

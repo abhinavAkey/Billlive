@@ -4,7 +4,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.UserData;
-import com.beatus.billlive.validation.exception.UserDataException;
+import com.beatus.billlive.exception.UserDataException;
 
 @Component("userValidator")
 public class UserValidator {

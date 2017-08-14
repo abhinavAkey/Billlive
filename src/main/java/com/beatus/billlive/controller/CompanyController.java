@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.CompanyData;
+import com.beatus.billlive.exception.CompanyDataException;
 import com.beatus.billlive.service.CompanyService;
 import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
-import com.beatus.billlive.validation.exception.CompanyDataException;
 
 @Controller
 public class CompanyController extends BaseController  {

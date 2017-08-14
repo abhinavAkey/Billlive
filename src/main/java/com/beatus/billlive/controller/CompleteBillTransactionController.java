@@ -14,11 +14,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.CompleteBillTransaction;
+import com.beatus.billlive.exception.CompleteBillTransactionException;
 import com.beatus.billlive.service.CompleteBillTransactionService;
 import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.validation.CompleteBillTransactionValidator;
-import com.beatus.billlive.validation.exception.CompleteBillTransactionException;
 
 @Controller
 public class CompleteBillTransactionController extends BaseController{

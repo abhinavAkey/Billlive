@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.Inventory;
-import com.beatus.billlive.validation.exception.InventoryValidationException;
+import com.beatus.billlive.exception.InventoryValidationException;
 
 @Component("inventoryValidator")
 public class InventoryValidator {

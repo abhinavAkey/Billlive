@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.ContactInfo;
+import com.beatus.billlive.exception.ContactInfoException;
 import com.beatus.billlive.service.ContactService;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.validation.ContactValidator;
-import com.beatus.billlive.validation.exception.ContactInfoException;
 
 @Controller
 public class ContactController {

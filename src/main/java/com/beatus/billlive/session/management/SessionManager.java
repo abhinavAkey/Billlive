@@ -20,11 +20,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.bind.ServletRequestUtils;
 
 import com.beatus.billlive.auth.FirebaseUserConnection;
+import com.beatus.billlive.exception.ParameterValidationException;
 import com.beatus.billlive.service.UserService;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.CookieManager;
 import com.beatus.billlive.utils.Utils;
-import com.beatus.billlive.validation.exception.ParameterValidationException;
 import com.google.common.collect.Maps;
 
 @Component(value="sessionManager")

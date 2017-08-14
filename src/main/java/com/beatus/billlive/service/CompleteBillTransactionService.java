@@ -10,11 +10,11 @@ import org.springframework.stereotype.Service;
 
 import com.beatus.billlive.domain.model.CompleteBillTransaction;
 import com.beatus.billlive.domain.model.PaymentTransaction;
+import com.beatus.billlive.exception.CompleteBillTransactionException;
 import com.beatus.billlive.repository.CompleteBillTransactionRepository;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.CompleteBillTransactionValidator;
-import com.beatus.billlive.validation.exception.CompleteBillTransactionException;
 
 @Service
 @Component("completeBillTransactionService")

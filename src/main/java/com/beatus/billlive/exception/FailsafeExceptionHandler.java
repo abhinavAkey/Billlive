@@ -1,9 +1,7 @@
-package com.beatus.billlive.validation.exception;
+package com.beatus.billlive.exception;
 
 import java.util.HashMap;
 import java.util.Map;
-
-import com.beatus.billlive.validation.exception.ExceptionHandlerUtils;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -16,6 +14,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
+
+import com.beatus.billlive.exception.ExceptionHandlerUtils;
 
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)

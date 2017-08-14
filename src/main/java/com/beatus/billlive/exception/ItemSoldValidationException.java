@@ -1,6 +1,6 @@
-package com.beatus.billlive.validation.exception;
+package com.beatus.billlive.exception;
 
-public class ContactInfoException extends Exception {
+public class ItemSoldValidationException extends Exception {
 
 	/**
 	 * @author vakey15
@@ -8,11 +8,11 @@ public class ContactInfoException extends Exception {
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public ContactInfoException(String message) {
+	public ItemSoldValidationException(String message) {
         super(message);
     }
 
-    public ContactInfoException(String message, Throwable cause) {
+    public ItemSoldValidationException(String message, Throwable cause) {
         super(message, cause);
     }
     

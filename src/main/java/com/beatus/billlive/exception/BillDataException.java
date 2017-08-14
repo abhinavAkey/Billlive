@@ -1,6 +1,6 @@
-package com.beatus.billlive.validation.exception;
+package com.beatus.billlive.exception;
 
-public class PurchaseOrderDataException extends Exception{
+public class BillDataException extends Exception {
 
 	/**
 	 * @author vakey15
@@ -8,11 +8,11 @@ public class PurchaseOrderDataException extends Exception{
 	 */
 	private static final long serialVersionUID = 1L;
 
-	public PurchaseOrderDataException(String message) {
+	public BillDataException(String message) {
         super(message);
     }
 
-    public PurchaseOrderDataException(String message, Throwable cause) {
+    public BillDataException(String message, Throwable cause) {
         super(message, cause);
     }
     

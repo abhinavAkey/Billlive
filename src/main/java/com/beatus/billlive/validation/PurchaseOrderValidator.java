@@ -8,9 +8,9 @@ import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.PurchaseOrderDTO;
 import com.beatus.billlive.domain.model.PurchaseOrderItemDTO;
-import com.beatus.billlive.validation.exception.PurchaseOrderDataException;
-import com.beatus.billlive.validation.exception.InventoryValidationException;
-import com.beatus.billlive.validation.exception.ItemDataException;
+import com.beatus.billlive.exception.InventoryValidationException;
+import com.beatus.billlive.exception.ItemDataException;
+import com.beatus.billlive.exception.PurchaseOrderDataException;
 
 @Component("purchaseOrderValidator")
 public class PurchaseOrderValidator {

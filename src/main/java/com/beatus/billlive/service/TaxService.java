@@ -12,11 +12,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.beatus.billlive.domain.model.Tax;
+import com.beatus.billlive.exception.TaxException;
 import com.beatus.billlive.repository.TaxRepository;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.TaxValidator;
-import com.beatus.billlive.validation.exception.TaxException;
 
 @Service
 @Component("taxService")

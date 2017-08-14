@@ -5,6 +5,7 @@ import static org.apache.commons.lang.StringUtils.equalsIgnoreCase;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.Resource;
 import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -16,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
+import com.beatus.billlive.config.GoogleCloudKMS;
 import com.beatus.billlive.encryption.EncryptionFactory;
 import com.beatus.billlive.encryption.HashFactory;
 
@@ -34,6 +36,9 @@ public class CookieManager {
             TOKEN_VERSION = "v1",
             TOKEN_SEPARATOR = "|",
             PARSE_TOKEN_SEPARATOR = "\\|";
+    
+	@Resource(name = "googleCloudKMS")
+	private GoogleCloudKMS googleCloudKMS;
 
     public void addCookie(HttpServletResponse response, String cookieName, String cookieValue, boolean isSecure, boolean isDeleted) {
         LOG.debug("addCookie {} isSecure {} isDelete {}", cookieName, isSecure, isDeleted);
@@ -100,7 +105,7 @@ public class CookieManager {
             LOG.debug("encrypt cookie contents {}", cookieRawInput.toString());
 
             // ENC
-    		SecretKeySpec secretKey = new SecretKeySpec(secretKeyEncodedAES, "AES");
+    		SecretKeySpec secretKey = googleCloudKMS.getKey(Constants.AES);
 
         	
         	EncryptionFactory.Encryption enc = EncryptionFactory.getInstance(secretKey.getAlgorithm());
@@ -110,7 +115,7 @@ public class CookieManager {
             
             // MAC
             
-    		SecretKeySpec secretKeyMac = new SecretKeySpec(secretKeyEncodedHMac, "HmacSHA256");
+    		SecretKeySpec secretKeyMac = googleCloudKMS.getKey(Constants.HMACSHA256);
         	
         	HashFactory.Hash mac = HashFactory.getInstance(secretKeyMac.getAlgorithm());
             byte[] macBytes = mac.hash(secretKeyMac.getEncoded(), encBytes);

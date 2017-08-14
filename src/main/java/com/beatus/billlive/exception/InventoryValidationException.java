@@ -1,4 +1,4 @@
-package com.beatus.billlive.validation.exception;
+package com.beatus.billlive.exception;
 
 public class InventoryValidationException extends Exception {
 

@@ -6,8 +6,9 @@ import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.Inventory;
 import com.beatus.billlive.domain.model.ItemData;
-import com.beatus.billlive.validation.exception.InventoryValidationException;
-import com.beatus.billlive.validation.exception.ItemDataException;
+import com.beatus.billlive.exception.InventoryValidationException;
+import com.beatus.billlive.exception.ItemDataException;
+
 
 @Component("itemValidator")
 public class ItemValidator {
