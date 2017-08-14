@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.beatus.billlive.domain.model.JSendResponse;
 import com.beatus.billlive.service.UserService;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 
 @Controller
-public class UserController {
+public class UserController extends BaseController{
 	@Resource(name = "userService")
 	private UserService userService;
 	
@@ -72,12 +73,12 @@ public class UserController {
 		}
 	}*/
 	@RequestMapping(value= "/company/user/isRegistered", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
-	public @ResponseBody String isRegistered(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid){
+	public @ResponseBody JSendResponse<String> isRegistered(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid){
 		String companyId = userService.isRegistered(uid);
 		HttpSession session = request.getSession();
 		session.setAttribute(Constants.COMPANY_ID, companyId);
 		session.setMaxInactiveInterval(Constants.MAX_INTERVAL);
-		return companyId;
+		return jsend(companyId);
 	}
 
 	

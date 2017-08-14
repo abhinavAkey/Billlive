@@ -70,4 +70,6 @@ public class Constants {
 	public static final String AES = "AES";
 	public static final String HMACSHA256 = "HmacSHA256";
 	public static final String CHAR_SET = "UTF-8";
+	public static final String FAILURE = "failure";
+	public static final String SUCCESS = "success";
 }

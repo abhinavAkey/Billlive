@@ -23,7 +23,6 @@ public class ContactService {
 		return this.contactRepository.addContact(contact);
 	}
 
-
 	@Transactional
 	public void updateContact(ContactInfo contact) {
 		this.contactRepository.updateContact(contact);
@@ -40,8 +39,8 @@ public class ContactService {
 	}
 
 	@Transactional
-	public void removeContact(String uid) {
-		this.contactRepository.removeContact(uid);
+	public String removeContact(String uid) {
+		return this.contactRepository.removeContact(uid);
 	}
 
 }

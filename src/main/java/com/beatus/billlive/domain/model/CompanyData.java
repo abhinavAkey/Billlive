@@ -31,6 +31,8 @@ public class CompanyData {
 	private String typeOfUser;
 	private String isRemoved;
 	private String isDeactivated;
+	private String geoLocationLatitude;
+	private String geoLocationLongitude;
 	
 	
 	public List<UserData> getListUid() {
@@ -158,6 +160,18 @@ public class CompanyData {
 	}
 	public void setIsDeactivated(String isDeactivated) {
 		this.isDeactivated = isDeactivated;
+	}
+	public String getGeoLocationLatitude() {
+		return geoLocationLatitude;
+	}
+	public void setGeoLocationLatitude(String geoLocationLatitude) {
+		this.geoLocationLatitude = geoLocationLatitude;
+	}
+	public String getGeoLocationLongitude() {
+		return geoLocationLongitude;
+	}
+	public void setGeoLocationLongitude(String geoLocationLongitude) {
+		this.geoLocationLongitude = geoLocationLongitude;
 	}
 	
 }
