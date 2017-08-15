@@ -1,6 +1,8 @@
 package com.beatus.billlive.service.exception;
 
-public class BillliveServiceException extends Exception {
+import com.beatus.billlive.exception.ResponseEntityException;
+
+public class BillliveServiceException extends ResponseEntityException {
 	
 	/**
 	 * @author vakey15

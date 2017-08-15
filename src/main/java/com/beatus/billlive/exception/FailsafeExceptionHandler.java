@@ -35,7 +35,7 @@ public class FailsafeExceptionHandler{
     }
     
     @ExceptionHandler(BillliveClientValidationException.class)
-    public ResponseEntity<Object> handleClientValidationException(Exception ex, WebRequest request) {
+    public ResponseEntity<Object> handleClientValidationException(BillliveClientValidationException ex, WebRequest request) {
         logger.error("Handling Exception: " + ex, ex);
         return handleClientValidationExceptionInternal(ex, request);
     }
@@ -55,12 +55,12 @@ public class FailsafeExceptionHandler{
         return new ResponseEntity<Object>(body, headers, status);
     } 
     
-    public ResponseEntity<Object> handleClientValidationExceptionInternal(Exception ex, WebRequest request) {
+    public ResponseEntity<Object> handleClientValidationExceptionInternal(BillliveClientValidationException ex, WebRequest request) {
         HttpStatus status = HttpStatus.BAD_REQUEST;
         Object body = null;
         if(StringUtils.isNotBlank(ex.getMessage())){
             Map<String, String> errorMap = new HashMap<String, String>();
-            errorMap.put("errorDescription", ex.getMessage());
+            errorMap.put(ex.getField(), ex.getDescription());
             body = ExceptionHandlerUtils.error(ERROR_INVALID_REQUEST, errorMap);
         	
         }else{
