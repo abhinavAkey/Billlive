@@ -312,6 +312,7 @@ public class BillService {
 			}
 			billItems.add(billItem);
 		}
+		billData.setBillItems(billItems);
 		return billData;
 	}
 

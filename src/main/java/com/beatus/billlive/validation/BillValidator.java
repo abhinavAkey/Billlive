@@ -128,6 +128,9 @@ public class BillValidator {
 		if(billDTO.getTotalIGST() != null){
 			throw new BillValidationException("BillDTO, the totalIGST field is not available, for the bill number " + billDTO.getBillNumber());
 		}
+		for(BillItemDTO itemDTO : billDTO.getItems()){
+			validateBillItemDTO(itemDTO);
+		}
 		return true;
 	}
 }
