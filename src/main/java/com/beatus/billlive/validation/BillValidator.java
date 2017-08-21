@@ -49,37 +49,37 @@ public class BillValidator {
 		if(StringUtils.isBlank(billItemDTO.getInventoryId())){
 			throw new BillValidationException("BillItemDTO, the inventoryId field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getProductValue() != null){
+		if(billItemDTO.getProductValue() == null){
 			throw new BillValidationException("BillItemDTO, the productValue field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getQuantityType() != null){
+		if(billItemDTO.getQuantityType() == null){
 			throw new BillValidationException("BillItemDTO, the quantityType field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getQuantity() != null){
+		if(billItemDTO.getQuantity() == null){
 			throw new BillValidationException("BillItemDTO, the quantity field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getActualUnitPrice() != null){
+		if(billItemDTO.getActualUnitPrice() == null){
 			throw new BillValidationException("BillItemDTO, the actualUnitPrice field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getAmountBeforeTax() != null){
+		if(billItemDTO.getAmountBeforeTax() == null){
 			throw new BillValidationException("BillItemDTO, the amountBeforeTax field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getTaxAmountForItem() != null){
+		if(billItemDTO.getTaxAmountForItem() == null){
 			throw new BillValidationException("BillItemDTO, the taxAmountForItem field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getTotalCGST() != null){
+		if(billItemDTO.getTotalCGST() == null){
 			throw new BillValidationException("BillItemDTO, the totalCGST field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getTotalSGST() != null){
+		if(billItemDTO.getTotalSGST() == null){
 			throw new BillValidationException("BillItemDTO, the totalSGST field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getTotalIGST() != null){
+		if(billItemDTO.getTotalIGST() == null){
 			throw new BillValidationException("BillItemDTO, the totalIGST field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getAmountAfterTax() != null){
+		if(billItemDTO.getAmountAfterTax() == null){
 			throw new BillValidationException("BillItemDTO, the amountAfterTax field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getMarginAmount() != null){
+		if(billItemDTO.getMarginAmount() == null){
 			throw new BillValidationException("BillItemDTO, the marginAmount field is not available, for the bill number " + billItemDTO.getItemId());
 		}
 		if(StringUtils.isBlank(billItemDTO.getTaxId())){
@@ -113,19 +113,19 @@ public class BillValidator {
 		if(StringUtils.isBlank(billDTO.getDueDate())){
 			throw new BillValidationException("BillDTO, the dueDate field is not available, for the bill number " + billDTO.getBillNumber());
 		}
-		if(billDTO.getTotalAmount() != null){
+		if(billDTO.getTotalAmount() == null){
 			throw new BillValidationException("BillDTO, the totalAmount field is not available, for the bill number " + billDTO.getBillNumber());
 		}
-		if(billDTO.getTotalTax() != null){
+		if(billDTO.getTotalTax() == null){
 			throw new BillValidationException("BillDTO, the totalTax field is not available, for the bill number " + billDTO.getBillNumber());
 		}
-		if(billDTO.getTotalCGST() != null){
+		if(billDTO.getTotalCGST() == null){
 			throw new BillValidationException("BillDTO, the totalCGST field is not available, for the bill number " + billDTO.getBillNumber());
 		}
-		if(billDTO.getTotalSGST() != null){
+		if(billDTO.getTotalSGST() == null){
 			throw new BillValidationException("BillDTO, the totalSGST field is not available, for the bill number " + billDTO.getBillNumber());
 		}
-		if(billDTO.getTotalIGST() != null){
+		if(billDTO.getTotalIGST() == null){
 			throw new BillValidationException("BillDTO, the totalIGST field is not available, for the bill number " + billDTO.getBillNumber());
 		}
 		for(BillItemDTO itemDTO : billDTO.getItems()){
