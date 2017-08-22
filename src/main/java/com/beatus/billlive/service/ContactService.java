@@ -1,46 +1,114 @@
 package com.beatus.billlive.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.beatus.billlive.domain.model.ContactInfo;
+import com.beatus.billlive.exception.ContactInfoException;
 import com.beatus.billlive.repository.ContactRepository;
+import com.beatus.billlive.service.exception.BillliveServiceException;
+import com.beatus.billlive.utils.Constants;
+import com.beatus.billlive.validation.ContactValidator;
+import com.beatus.billlive.validation.exception.BillValidationException;
 
 @Service
 @Component("contactService")
 public class ContactService {
 	
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(BillService.class);
+	
 	@Resource(name = "contactRepository")
 	private ContactRepository contactRepository;
+	
+	@Resource(name = "contactValidator")
+	private ContactValidator contactValidator;
 
-	@Transactional
-	public String addContact(ContactInfo contact) {
-		return this.contactRepository.addContact(contact);
+	public String addContact(HttpServletRequest request, HttpServletResponse response,ContactInfo contact, String companyId) throws BillValidationException, BillliveServiceException, ContactInfoException{
+		LOGGER.info("In addBill method of Bill Service");
+		//Revisit validator
+		boolean isValidated = contactValidator.validateContactInfo(contact);
+		if(isValidated){
+			if(StringUtils.isBlank(companyId)){
+				companyId = contact.getCompanyId();
+			}
+			ContactInfo existingcontact = null;
+			if(StringUtils.isNotBlank(contact.getContactId())){
+				existingcontact = contactRepository.getContactByContactId(companyId,contact.getContactId());
+				return updateContact(request, response, existingcontact, companyId);
+			}
+					
+			return contactRepository.addContact(contact);
+		}
+		return "N";
+	} 	
+
+	public String updateContact(HttpServletRequest request, HttpServletResponse response, ContactInfo contact, String companyId) throws BillValidationException, BillliveServiceException, ContactInfoException{
+		LOGGER.info("In updateContact method of Contact Service");
+		try {
+			//Revisit validator
+			boolean isValidated = contactValidator.validateContactInfo(contact);
+			if(isValidated){
+				if(StringUtils.isBlank(companyId)){
+					companyId = contact.getCompanyId();
+				}
+				ContactInfo existingcontact = null;
+				if(StringUtils.isNotBlank(contact.getContactId()))
+					existingcontact = contactRepository.getContactByContactId(companyId, contact.getContactId());
+				
+				return contactRepository.updateContact(existingcontact);
+			}
+		} catch (BillliveServiceException billException) {
+			LOGGER.error("Billlive Service Exception in the updateBillService() {} ", billException.getMessage());
+			throw billException;
+		}
+		
+		return "N";		
 	}
 
-	@Transactional
-	public void updateContact(ContactInfo contact) {
-		this.contactRepository.updateContact(contact);
+	
+	public List<ContactInfo> getAllContacts(String companyId) {
+		
+		List<ContactInfo> contacts = contactRepository.getAllContacts(companyId);
+		List<ContactInfo> contactsNotRemoved = new ArrayList<ContactInfo>();
+		for(ContactInfo contactInfo : contacts){
+			if(!Constants.YES.equalsIgnoreCase(contactInfo.getIsRemoved())){
+				contactsNotRemoved.add(contactInfo);
+			}
+		}
+		return contactsNotRemoved;
 	}
 
-	@Transactional
-	public List<ContactInfo> getAllContacts() {
-		return this.contactRepository.getAllContacts();
+
+	public ContactInfo getContactByContactId(String companyId, String contactId) {
+		if(StringUtils.isNotBlank(contactId) && StringUtils.isNotBlank(companyId)){
+			ContactInfo contactInfo = contactRepository.getContactByContactId(companyId, contactId);
+			if(!Constants.YES.equalsIgnoreCase(contactInfo.getIsRemoved())){
+				return contactInfo;
+			}else {
+				return null;
+			}
+		}
+		return null;
 	}
 
-	@Transactional
-	public ContactInfo getContactById(String contactId) {
-		return this.contactRepository.getContactById(contactId);
-	}
-
-	@Transactional
-	public String removeContact(String uid) {
-		return this.contactRepository.removeContact(uid);
+	public String removeContact(String companyId, String contactId) throws BillliveServiceException, BillValidationException {
+		if(StringUtils.isNotBlank(contactId) && StringUtils.isNotBlank(companyId)){
+			ContactInfo contactInfo = contactRepository.getContactByContactId(companyId, contactId);
+			contactInfo.setIsRemoved(Constants.YES);
+			return contactRepository.updateContact(contactInfo);
+		}
+		return "N";
 	}
 
 }

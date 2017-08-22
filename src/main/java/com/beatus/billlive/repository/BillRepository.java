@@ -12,6 +12,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.BillData;
+import com.beatus.billlive.service.exception.BillliveServiceException;
+import com.beatus.billlive.validation.exception.BillValidationException;
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -38,6 +40,7 @@ public class BillRepository {
 	
 	public String addBill(BillData billData) {
 		try {
+        	logger.info("In addBill method of BillRepository");
 			DatabaseReference billsRef = databaseReference.child("bills").child(billData.getCompanyId());
 			Map<String, BillData> bill = new HashMap<String, BillData>();
 			// Generate a reference to a new location and add some data using push()
@@ -62,8 +65,9 @@ public class BillRepository {
 		}
 	}
 
-	public String updateBill(BillData billData) {
+	public String updateBill(BillData billData) throws BillValidationException, BillliveServiceException {
 		try {
+			logger.info("In updateBill method of BillRepository");
 			DatabaseReference billsRef = databaseReference.child("bills").child(billData.getCompanyId());
 			Map<String, Object> billUpdates = new HashMap<String, Object>();
 			billUpdates.put(billData.getBillNumber(), billData);
@@ -81,12 +85,13 @@ public class BillRepository {
 			});
 			return isUpdated;
 		} catch (Exception e) {
-			return isUpdated;	
+			throw new BillliveServiceException("Billlive Service exception at UpdateBill method of BillRepository. Error message : " + e.getMessage());
 		}
 	}
 	
 	public String removeBill(String billNumber, String companyId) {
 		try {
+			logger.info("In removeBill method of BillRepository");
 			DatabaseReference billsRef = databaseReference.child("bills").child(companyId);
 			Map<String, Object> billUpdates = new HashMap<String, Object>();
 			billUpdates.put(billNumber, null);
@@ -109,6 +114,7 @@ public class BillRepository {
 	}
 	
 	public BillData getBillByBillNumber(String companyId, String billNumber) {
+		logger.info("In getBillByBillNumber method of BillRepository");
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billData = null;
 		billDataRef.orderByChild("billNumber").equalTo(billNumber).addChildEventListener(new ChildEventListener() {
@@ -162,6 +168,7 @@ public class BillRepository {
 	}
 	
 	public List<BillData> getAllBillsInAMonth(String companyId, String year, String month) {
+		logger.info("In getAllBillsInAMonth method of BillRepository");
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).addValueEventListener(new ValueEventListener() {
 		    public void onDataChange(DataSnapshot billSnapshot) {
@@ -181,6 +188,7 @@ public class BillRepository {
 	}
 	
 	public List<BillData> getAllBillsInAYear(String companyId, String year) {
+		logger.info("In getAllBillsInAYear method of BillRepository");
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billDataRef.orderByChild("year").equalTo(year).addValueEventListener(new ValueEventListener() {
 		    public void onDataChange(DataSnapshot billSnapshot) {
@@ -200,6 +208,7 @@ public class BillRepository {
 	}
 	
 	public List<BillData> getAllBillsInADay(String companyId, String year, String month, String day) {
+		logger.info("In getAllBillsInADay method of BillRepository");
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).orderByChild("day").equalTo(day).addValueEventListener(new ValueEventListener() {
 		    public void onDataChange(DataSnapshot billSnapshot) {
@@ -219,6 +228,7 @@ public class BillRepository {
 	}
 	
 	public List<BillData> getAllBills(String companyId) {
+		logger.info("In getAllBills method of BillRepository");
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billDataRef.orderByChild("companyId").equalTo(companyId).addValueEventListener(new ValueEventListener() {
 		    public void onDataChange(DataSnapshot billSnapshot) {

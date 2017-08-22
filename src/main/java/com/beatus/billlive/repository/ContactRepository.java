@@ -110,10 +110,10 @@ public class ContactRepository {
 		}
 	}
 	
-	public ContactInfo getContactById(String uId) {
-		DatabaseReference contactInfoRef = databaseReference.child("contacts");
+	public ContactInfo getContactByContactId(String companyId, String contactId) {
+		DatabaseReference contactInfoRef = databaseReference.child("contacts").child(companyId);
 		contactInfo = null;
-		contactInfoRef.orderByChild("contactId").equalTo(uId).addChildEventListener(new ChildEventListener() {
+		contactInfoRef.orderByChild("contactId").equalTo(contactId).addChildEventListener(new ChildEventListener() {
 		    @Override
 		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
 		        contactInfo = dataSnapshot.getValue(ContactInfo.class);
@@ -144,8 +144,8 @@ public class ContactRepository {
 		return contactInfo;
 	}
 	
-	public List<ContactInfo> getAllContacts() {
-		DatabaseReference contactInfoRef = databaseReference.child("contacts");
+	public List<ContactInfo> getAllContacts(String companyId) {
+		DatabaseReference contactInfoRef = databaseReference.child("contacts").child(companyId);
 		contactInfoRef.addValueEventListener(new ValueEventListener() {
 		    public void onDataChange(DataSnapshot contactSnapshot) {
 		    	contactsList.clear();

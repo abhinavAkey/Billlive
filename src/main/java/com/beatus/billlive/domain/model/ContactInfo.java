@@ -1,10 +1,5 @@
 package com.beatus.billlive.domain.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-
 /**
  * Entity bean with JPA annotations
  * Hibernate provides JPA implementation
@@ -12,7 +7,7 @@ import javax.persistence.Table;
  *
  */
 
-public class ContactInfo {
+public class ContactInfo extends BaseData{
 	
 	private String contactId;
 	private String postId;
