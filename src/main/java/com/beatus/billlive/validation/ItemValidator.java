@@ -16,7 +16,7 @@ public class ItemValidator {
 	private InventoryValidator inventoryValidator;
 
 	public boolean validateItemData(ItemData item) throws ItemDataException, InventoryValidationException{
-		if(item == null || StringUtils.isBlank(String.valueOf(item.getItemId()))){
+		if(item == null){
 			throw new ItemDataException("Item data is null");
 		}
 		if(StringUtils.isBlank(String.valueOf(item.getHsnCode()))){

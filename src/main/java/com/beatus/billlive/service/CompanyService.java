@@ -28,20 +28,18 @@ public class CompanyService {
 	@Resource(name = "companyRepository")
 	private CompanyRepository companyRepository;
 
-	public String addCompany(HttpServletRequest request, HttpServletResponse response,CompanyData company, String companyId) throws CompanyDataException {
+	public String addCompany(HttpServletRequest request, HttpServletResponse response,CompanyData company) throws CompanyDataException {
 		if(company == null){
 			throw new CompanyDataException("Company Data cant be null");
 		}
 		try {
 			boolean isValidated = companyValidator.validateCompanyData(company);
 			if(isValidated){
-				if(StringUtils.isBlank(companyId)){
-					companyId = company.getCompanyId();
-				}
+				String companyId = company.getCompanyId();
 				if(StringUtils.isNotBlank(company.getCompanyId())){
 					CompanyData existingCompany = companyRepository.getCompanyById(company.getCompanyId());
 					if(existingCompany != null){
-						return updateCompany(request,response,company,companyId);
+						return updateCompany(request,response,company);
 					}
 					return company.getCompanyId();
 				}else {
@@ -58,14 +56,15 @@ public class CompanyService {
 	}
 
 
-	public String updateCompany(HttpServletRequest request, HttpServletResponse response,CompanyData company, String companyId) throws CompanyDataException {
+	public String updateCompany(HttpServletRequest request, HttpServletResponse response,CompanyData company) throws CompanyDataException {
 		
 		try {
 			if(companyValidator.validateCompanyData(company)){
 				if(StringUtils.isNotBlank(company.getCompanyId())){
+					String companyId = company.getCompanyId();
 					CompanyData existingCompany = companyRepository.getCompanyById(companyId);
 					if(existingCompany == null){
-							return addCompany(request, response,company,companyId);
+							return addCompany(request, response,company);
 					}else {
 				return companyRepository.updateCompany(company);
 				}

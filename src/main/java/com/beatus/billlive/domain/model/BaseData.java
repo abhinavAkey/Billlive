@@ -2,7 +2,7 @@ package com.beatus.billlive.domain.model;
 
 public class BaseData {
 
-	private String companyId;
+	private String companyId = "";
 	private String isRemoved;
 
 	public String getCompanyId() {

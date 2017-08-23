@@ -58,7 +58,7 @@ public class CompanyController extends BaseController {
 		if (companyData != null) {
 			SessionModel sessionModel = initSessionModel(request);
 			String companyId = sessionModel.getCompanyId();
-			companyId = companyService.addCompany(request, response, companyData, companyId);
+			companyId = companyService.addCompany(request, response, companyData);
 			sessionModel.setCompanyId(companyId);
 			return jsend(companyId);
 		} else {
@@ -76,7 +76,7 @@ public class CompanyController extends BaseController {
 		if (companyData != null) {
 			SessionModel sessionModel = initSessionModel(request);
 			String companyId = sessionModel.getCompanyId();
-			companyId = companyService.updateCompany(request, response, companyData, companyId);
+			companyId = companyService.updateCompany(request, response, companyData);
 			sessionModel.setCompanyId(companyId);
 			return jsend(companyId);
 		} else {

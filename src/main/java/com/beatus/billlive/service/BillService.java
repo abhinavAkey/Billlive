@@ -46,37 +46,42 @@ public class BillService {
 	@Resource(name = "itemService")
 	private ItemService itemService;
 
-	public String addBill(HttpServletRequest request, HttpServletResponse response, BillDTO billDTO, String companyId)
-			throws BillValidationException, BillliveServiceException {
-		LOGGER.info("In addBill method of Bill Service");
-		// Revisit validator
-		boolean isValidated = billValidator.validateBillData(billDTO);
-		if (isValidated) {
-			if (StringUtils.isBlank(companyId)) {
-				companyId = billDTO.getCompanyId();
+	public String addBill(HttpServletRequest request, HttpServletResponse response, BillDTO billDTO)
+			throws BillValidationException {
+		if (billDTO == null) {
+			throw new BillValidationException("Bill data cant be null");
+		}
+		try {
+			// Revisit validator
+			boolean isValidated = billValidator.validateBillDTO(billDTO);
+			if (isValidated) {
+				String companyId = billDTO.getCompanyId();
+				BillData existingBill = null;
+				if (StringUtils.isNotBlank(billDTO.getBillNumber())) {
+					existingBill = billRepository.getBillByBillNumber(companyId, billDTO.getBillNumber());
+					return updateBill(request, response, billDTO);
+				}
+				BillData billData = populateBillData(billDTO, existingBill, companyId);
+				return billRepository.addBill(billData);
 			}
-			BillData existingBill = null;
-			if (StringUtils.isNotBlank(billDTO.getBillNumber())) {
-				existingBill = billRepository.getBillByBillNumber(companyId, billDTO.getBillNumber());
-				return updateBill(request, response, billDTO, companyId);
-			}
-			BillData billData = populateBillData(billDTO, existingBill, companyId);
-			return billRepository.addBill(billData);
+		} catch (BillliveServiceException billException) {
+			LOGGER.error("Billlive Service Exception in the updateBillService() {} ", billException.getMessage());
+			throw billException;
 		}
 		return "N";
 	}
 
-	public String updateBill(HttpServletRequest request, HttpServletResponse response, BillDTO billDTO,
-			String companyId) throws BillValidationException, BillliveServiceException {
+	public String updateBill(HttpServletRequest request, HttpServletResponse response, BillDTO billDTO)
+			throws BillValidationException {
 
-		LOGGER.info("In updateBill method of Bill Service");
+		if (billDTO == null) {
+			throw new BillValidationException("Bill data cant be null");
+		}
 		try {
 			// Revisit validator
-			boolean isValidated = billValidator.validateBillData(billDTO);
+			boolean isValidated = billValidator.validateBillDTO(billDTO);
 			if (isValidated) {
-				if (StringUtils.isBlank(companyId)) {
-					companyId = billDTO.getCompanyId();
-				}
+				String companyId = billDTO.getCompanyId();
 				BillData existingBill = null;
 				if (StringUtils.isNotBlank(billDTO.getBillNumber()))
 					existingBill = billRepository.getBillByBillNumber(companyId, billDTO.getBillNumber());
@@ -161,16 +166,16 @@ public class BillService {
 
 	public List<BillDTO> getAllBillsInAMonth(String companyId, String year, String month) {
 		LOGGER.info("In getAllBillsInAMonth method of Bill Service");
-		if(StringUtils.isNotBlank(companyId) && StringUtils.isNotBlank(year) &&  StringUtils.isNotBlank(month)){
+		if (StringUtils.isNotBlank(companyId) && StringUtils.isNotBlank(year) && StringUtils.isNotBlank(month)) {
 			List<BillData> bills = billRepository.getAllBillsInAMonth(companyId, year, month);
 			List<BillDTO> billsNotRemoved = new ArrayList<BillDTO>();
-			for(BillData bill : bills){
-				if(!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())){
+			for (BillData bill : bills) {
+				if (!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
 					billsNotRemoved.add(populateBillDTO(bill));
 				}
 			}
 			return billsNotRemoved;
-		}else {
+		} else {
 			LOGGER.error(
 					"Billlive Service Exception in the getAllBillsInAMonth() {},  CompanyId or Year or Month passed cant be null or empty string");
 			throw new BillliveServiceException("Company Id or Year or Month passed cant be null or empty string");
@@ -179,39 +184,39 @@ public class BillService {
 
 	public List<BillDTO> getAllBillsInADay(String companyId, String year, String month, String day) {
 		LOGGER.info("In getAllBillsInADay method of Bill Service");
-		if(StringUtils.isNotBlank(companyId) && StringUtils.isNotBlank(year) &&  StringUtils.isNotBlank(month) &&  StringUtils.isNotBlank(day)){
-		List<BillData> bills = billRepository.getAllBillsInADay(companyId, year, month, day);
-		List<BillDTO> billsNotRemoved = new ArrayList<BillDTO>();
-		for (BillData bill : bills) {
-			if (!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
-				billsNotRemoved.add(populateBillDTO(bill));
+		if (StringUtils.isNotBlank(companyId) && StringUtils.isNotBlank(year) && StringUtils.isNotBlank(month)
+				&& StringUtils.isNotBlank(day)) {
+			List<BillData> bills = billRepository.getAllBillsInADay(companyId, year, month, day);
+			List<BillDTO> billsNotRemoved = new ArrayList<BillDTO>();
+			for (BillData bill : bills) {
+				if (!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
+					billsNotRemoved.add(populateBillDTO(bill));
+				}
 			}
-		}
-		return billsNotRemoved;
-		}
-		else {
+			return billsNotRemoved;
+		} else {
 			LOGGER.error(
 					"Billlive Service Exception in the getAllBillsInAMonth() {},  CompanyId or Year or Month or day passed cant be null or empty string");
-			throw new BillliveServiceException("Company Id or Year or Month or day passed cant be null or empty string");
+			throw new BillliveServiceException(
+					"Company Id or Year or Month or day passed cant be null or empty string");
 		}
 	}
 
 	public List<BillDTO> getAllBillsInAnYear(String companyId, String year) {
 		LOGGER.info("In getAllBillsInAnYear method of Bill Service");
-		if(StringUtils.isNotBlank(companyId) && StringUtils.isNotBlank(year)){
-		List<BillData> bills = billRepository.getAllBillsInAYear(companyId, year);
-		List<BillDTO> billsNotRemoved = new ArrayList<BillDTO>();
-		for (BillData bill : bills) {
-			if (!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
-				billsNotRemoved.add(populateBillDTO(bill));
+		if (StringUtils.isNotBlank(companyId) && StringUtils.isNotBlank(year)) {
+			List<BillData> bills = billRepository.getAllBillsInAYear(companyId, year);
+			List<BillDTO> billsNotRemoved = new ArrayList<BillDTO>();
+			for (BillData bill : bills) {
+				if (!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
+					billsNotRemoved.add(populateBillDTO(bill));
+				}
 			}
-		}
-		return billsNotRemoved;
-		}else {
-			LOGGER.error(
-					"Billlive Service Exception in the getAllBillsInAnYear() {},  CompanyId or Year");
+			return billsNotRemoved;
+		} else {
+			LOGGER.error("Billlive Service Exception in the getAllBillsInAnYear() {},  CompanyId or Year");
 			throw new BillliveServiceException("Company Id or Year passed cant be null or empty string");
-		}	
+		}
 	}
 
 	private BillDTO populateBillDTO(BillData bill) {

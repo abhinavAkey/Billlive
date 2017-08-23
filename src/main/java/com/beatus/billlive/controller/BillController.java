@@ -30,12 +30,12 @@ import com.beatus.billlive.validation.exception.BillValidationException;
 
 @Controller
 public class BillController extends BaseController {
-	
-    private static final Logger LOG = LoggerFactory.getLogger(BillController.class);
+
+	private static final Logger LOG = LoggerFactory.getLogger(BillController.class);
 
 	@Resource(name = "billService")
 	private BillService billService;
-	
+
 	@Resource(name = "billValidator")
 	private BillValidator billValidator;
 
@@ -66,7 +66,7 @@ public class BillController extends BaseController {
 	    	String uid = sessionModel.getUid();
 	    	billDTO.setCompanyId(companyId);
 	    	billDTO.setUid(uid);
-			String isBillCreated = billService.addBill(request, response, billDTO, companyId);
+			String isBillCreated = billService.addBill(request, response, billDTO);
 			return jsend(isBillCreated);
 		}else{
 			throw new BillliveServiceException("Bill data passed cant be null or empty string");
@@ -82,7 +82,7 @@ public class BillController extends BaseController {
 	    	String uid = sessionModel.getUid();
 	    	billDTO.setCompanyId(companyId);
 	    	billDTO.setUid(uid);
-			String isBillUpdated = billService.updateBill(request, response, billDTO, companyId);
+			String isBillUpdated = billService.updateBill(request, response, billDTO);
 			return jsend(isBillUpdated);
 		}else{
 			throw new BillliveServiceException("Bill data passed cant be null or empty string");
@@ -114,7 +114,7 @@ public class BillController extends BaseController {
 		}else{
 			throw new BillliveServiceException("billNumber or CompanyId passed can't be null or empty string");
 		}
-		
+
 	}
 
 	@RequestMapping(value = "/company/getallbills", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
@@ -154,6 +154,6 @@ public class BillController extends BaseController {
 		}else{
 			throw new BillliveServiceException("CompanyId passed cant be null or empty string");
 		}
-    }
+	}
 
 }

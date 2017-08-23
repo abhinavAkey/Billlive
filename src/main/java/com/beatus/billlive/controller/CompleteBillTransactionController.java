@@ -48,7 +48,7 @@ public class CompleteBillTransactionController extends BaseController{
   	}
 	
 	@RequestMapping(value = "/company/getallcompleteBillTransactions", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
-	public @ResponseBody JSendResponse<List<CompleteBillTransaction>> getAllCompleteBillTransactions(@RequestBody HttpServletRequest request, HttpServletResponse response) {
+	public @ResponseBody JSendResponse<List<CompleteBillTransaction>> getAllCompleteBillTransactions( HttpServletRequest request, HttpServletResponse response) {
 		LOG.info("In getAllCompleteBillTransactions method of CompleteBillTransactionController");
 		SessionModel sessionModel = initSessionModel(request);
     	String companyId = sessionModel.getCompanyId();

@@ -59,8 +59,8 @@ public class Constants {
 	public static final String LITERS = "LITERS";
 	public static final String ML = "ML";
 	public static final String PIECES = "PIECES";
-	public static final String YES = "Y";
-	public static final String NO = "N";
+	public static final String YES = "Yes";
+	public static final String NO = "No";
 	public static final String COMPANY_ID = "companyId";
 	public static final Double DEFAULT_DOUBLE_VALUE = 0.00;
 	public static final int MAX_INTERVAL = -1;
@@ -72,4 +72,6 @@ public class Constants {
 	public static final String CHAR_SET = "UTF-8";
 	public static final String FAILURE = "failure";
 	public static final String SUCCESS = "success";
+	public static final String CONTACT_TYPE_USER = "User";
+	public static final String CONTACT_TYPE_COMPANY = "Company";
 }
