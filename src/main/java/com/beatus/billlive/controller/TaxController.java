@@ -87,8 +87,8 @@ public class TaxController extends BaseController{
 	
 	@RequestMapping(value = "/company/getalltaxs", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody JSendResponse<List<Tax>> getAllTaxs(HttpServletRequest request, HttpServletResponse response) throws TaxException {
-		HttpSession session = request.getSession();
-    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+		//HttpSession session = request.getSession();
+    	String companyId = (String) request.getParameter(Constants.COMPANY_ID);
     	if(StringUtils.isNotBlank(companyId)){
 			List<Tax> taxList = taxService.getAllTaxs(companyId);
 			return jsend(taxList);
@@ -99,8 +99,8 @@ public class TaxController extends BaseController{
 	
 	@RequestMapping(value = "/company/gettax/{id}", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody JSendResponse<Tax> getTaxById(@PathVariable("id") String taxId, HttpServletRequest request, HttpServletResponse response) throws TaxException {
-		HttpSession session = request.getSession();
-    	String companyId = (String) session.getAttribute(Constants.COMPANY_ID);
+		//HttpSession session = request.getSession();
+    	String companyId = (String)  request.getParameter(Constants.COMPANY_ID);
     	if(StringUtils.isNotBlank(taxId) && StringUtils.isNotBlank(companyId)){
 			Tax tax = taxService.getTaxById(companyId, taxId);
 			return jsend(tax);
