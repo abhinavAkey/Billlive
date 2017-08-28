@@ -42,8 +42,11 @@ public class TaxRepository {
 			Map<String, Tax> taxs = new HashMap<String, Tax>();
 			// Generate a reference to a new location and add some data using push()
 			DatabaseReference taxsPostRef = taxsRef.push();
+			String postId = taxsPostRef.getKey();
+			tax.setPostId(postId);
 			taxs.put(tax.getTaxId(), tax);
-			taxsPostRef.setValue(taxs, new DatabaseReference.CompletionListener() {
+			
+			taxsPostRef.setValue(tax, new DatabaseReference.CompletionListener() {
 			    @Override
 			    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 			        if (databaseError != null) {
