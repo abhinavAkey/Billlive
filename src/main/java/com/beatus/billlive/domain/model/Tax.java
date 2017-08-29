@@ -4,6 +4,7 @@ public class Tax extends BaseData{
 	
 	private String taxId;
 	private String taxDesc;
+	private String uid;
 	private String postId;
 	private Double totalTaxPercentage; 
 	private Double taxPercentageCGST;
@@ -51,5 +52,11 @@ public class Tax extends BaseData{
 	}
 	public void setPostId(String postId) {
 		this.postId = postId;
+	}
+	public String getUid() {
+		return uid;
+	}
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 }

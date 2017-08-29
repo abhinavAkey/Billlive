@@ -10,10 +10,10 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.CompanyData;
@@ -21,7 +21,6 @@ import com.beatus.billlive.domain.model.JSendResponse;
 import com.beatus.billlive.exception.CompanyDataException;
 import com.beatus.billlive.service.CompanyService;
 import com.beatus.billlive.service.exception.BillliveServiceException;
-import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 
@@ -56,10 +55,19 @@ public class CompanyController extends BaseController {
 			HttpServletRequest request, HttpServletResponse response) throws CompanyDataException {
 		LOG.info("In addCompany method of Company Controller");
 		if (companyData != null) {
-			SessionModel sessionModel = initSessionModel(request);
-			String companyId = sessionModel.getCompanyId();
-			companyId = companyService.addCompany(request, response, companyData);
-			sessionModel.setCompanyId(companyId);
+			// These comments will be removed once the auth_token is sent from
+			// UI
+			// SessionModel sessionModel = initSessionModel(request);
+			// String companyId = sessionModel.getCompanyId();
+			// String uid = sessionModel.getUid();
+			String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+			String uid = (String) request.getParameter(Constants.UID);
+			if (companyId == null) {
+				companyData.setAddedOrUpdatedOrRemovedUID(uid);
+				companyId = companyService.addCompany(request, response, companyData);
+			}
+			// sessionModel.setCompanyId(companyId);
+			request.setAttribute(Constants.COMPANY_ID, companyId);
 			return jsend(companyId);
 		} else {
 			LOG.error(
@@ -74,10 +82,17 @@ public class CompanyController extends BaseController {
 			HttpServletRequest request, HttpServletResponse response) throws CompanyDataException {
 		LOG.info("In updateCompany method of Company Controller");
 		if (companyData != null) {
-			SessionModel sessionModel = initSessionModel(request);
-			String companyId = sessionModel.getCompanyId();
-			companyId = companyService.updateCompany(request, response, companyData);
-			sessionModel.setCompanyId(companyId);
+			// These comments will be removed once the auth_token is sent from
+			// UI
+			// SessionModel sessionModel = initSessionModel(request);
+			// String companyId = sessionModel.getCompanyId();
+			// String uid = sessionModel.getUid();
+			String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+			String uid = (String) request.getParameter(Constants.UID);
+			if (StringUtils.isNotBlank(companyId) && companyId.equalsIgnoreCase(companyData.getCompanyId())) {
+				companyData.setAddedOrUpdatedOrRemovedUID(uid);
+				companyId = companyService.updateCompany(request, response, companyData);
+			}
 			return jsend(companyId);
 		} else {
 			LOG.error(
@@ -86,26 +101,38 @@ public class CompanyController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/remove/{id}", method = RequestMethod.DELETE, consumes = {
+	@RequestMapping(value = "/company/remove", method = RequestMethod.DELETE, consumes = {
 			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
-	public @ResponseBody JSendResponse<String> removeCompany(@PathVariable("id") String companyId,
+	public @ResponseBody JSendResponse<String> removeCompany(@RequestParam(Constants.COMPANY_ID) String companyId,
 			HttpServletRequest request, HttpServletResponse response) throws CompanyDataException {
 		LOG.info("In removeCompany method of Company Controller");
-		if (StringUtils.isNotBlank(companyId)) {
-			String isCompanyRemoved = companyService.removeCompany(companyId);
-			return jsend(isCompanyRemoved);
-		} else {
-			LOG.error(
-					"Billlive Service Exception in the removeCompany() {} of CompanyController,  Company Id passed cant be null or empty string");
-			throw new BillliveServiceException("Company Id passed cant be null or empty string");
+		// These comments will be removed once the auth_token is sent from UI
+		// SessionModel sessionModel = initSessionModel(request);
+		// String companyId = sessionModel.getCompanyId();
+		// String uid = sessionModel.getUid();
+		String companyIdFromSession = (String) request.getParameter(Constants.COMPANY_ID);
+		if (companyId.equalsIgnoreCase(companyIdFromSession)) {
+			String uid = (String) request.getParameter(Constants.UID);
+			if (StringUtils.isNotBlank(companyId)) {
+				String isCompanyRemoved = companyService.removeCompany(companyId, uid);
+				return jsend(isCompanyRemoved);
+			} else {
+				LOG.error(
+						"Billlive Service Exception in the removeCompany() {} of CompanyController,  Company Id passed cant be null or empty string");
+				throw new BillliveServiceException("Company Id passed cant be null or empty string");
+			}
 		}
+		return jsend(Constants.NO);
 	}
 
 	@RequestMapping(value = "/company/getcompany/{id}", method = RequestMethod.GET, consumes = {
 			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
-	public @ResponseBody JSendResponse<CompanyData> getCompanyById(@PathVariable("id") String companyId,
-			HttpServletRequest request, HttpServletResponse response) throws CompanyDataException {
+	public @ResponseBody JSendResponse<CompanyData> getCompanyById(HttpServletRequest request,
+			HttpServletResponse response) throws CompanyDataException {
 		LOG.info("In getCompanyById method of Company Controller");
+		// SessionModel sessionModel = initSessionModel(request);
+		// String companyId = sessionModel.getCompanyId();
+		String companyId = (String) request.getParameter(Constants.COMPANY_ID);
 		if (StringUtils.isNotBlank(companyId)) {
 			CompanyData companyData = companyService.getCompanyById(companyId);
 			return jsend(companyData);

@@ -3,8 +3,6 @@ package com.beatus.billlive.domain.model;
 import java.util.List;
 
 /**
- * Entity bean with JPA annotations
- * Hibernate provides JPA implementation
  * @author Abhinav Akey
  *
  */
@@ -31,6 +29,7 @@ public class CompanyData {
 	private String typeOfUser;
 	private String isRemoved;
 	private String isDeactivated;
+	private String addedOrUpdatedOrRemovedUID;
 	private String geoLocationLatitude;
 	private String geoLocationLongitude;
 	
@@ -172,6 +171,12 @@ public class CompanyData {
 	}
 	public void setGeoLocationLongitude(String geoLocationLongitude) {
 		this.geoLocationLongitude = geoLocationLongitude;
+	}
+	public String getAddedOrUpdatedOrRemovedUID() {
+		return addedOrUpdatedOrRemovedUID;
+	}
+	public void setAddedOrUpdatedOrRemovedUID(String addedOrUpdatedOrRemovedUID) {
+		this.addedOrUpdatedOrRemovedUID = addedOrUpdatedOrRemovedUID;
 	}
 	
 }

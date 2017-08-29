@@ -13,13 +13,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.CompleteBillTransaction;
 import com.beatus.billlive.domain.model.JSendResponse;
 import com.beatus.billlive.exception.CompleteBillTransactionException;
 import com.beatus.billlive.service.CompleteBillTransactionService;
-import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 
@@ -50,19 +50,23 @@ public class CompleteBillTransactionController extends BaseController{
 	@RequestMapping(value = "/company/getallcompleteBillTransactions", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
 	public @ResponseBody JSendResponse<List<CompleteBillTransaction>> getAllCompleteBillTransactions( HttpServletRequest request, HttpServletResponse response) {
 		LOG.info("In getAllCompleteBillTransactions method of CompleteBillTransactionController");
-		SessionModel sessionModel = initSessionModel(request);
-    	String companyId = sessionModel.getCompanyId();
+		//These comments will be removed once the auth_token is sent from UI
+		//SessionModel sessionModel = initSessionModel(request);
+    	//String companyId = sessionModel.getCompanyId();
+    	String companyId = (String) request.getParameter(Constants.COMPANY_ID);
     	List<CompleteBillTransaction> completeBillTransactionList = completeBillTransactionService.getAllCompleteBillTransactions(companyId);
 		return jsend(completeBillTransactionList);
 	}
 	
 	@RequestMapping(value = "/company/getcompleteBillTransaction", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
-	public @ResponseBody JSendResponse<CompleteBillTransaction> getCompleteBillTransactionById(@RequestBody String billNumber, HttpServletRequest request, HttpServletResponse response) throws CompleteBillTransactionException {
+	public @ResponseBody JSendResponse<CompleteBillTransaction> getCompleteBillTransactionById(@RequestParam(Constants.BILL_NUMBER) String billNumber, HttpServletRequest request, HttpServletResponse response) throws CompleteBillTransactionException {
 		LOG.info("In getCompleteBillTransactionById method of CompleteBillTransactionController");
 		if(StringUtils.isNotBlank(billNumber)){
-			SessionModel sessionModel = initSessionModel(request);
-	    	String companyId = sessionModel.getCompanyId();
-	    	CompleteBillTransaction completeBillTransaction = completeBillTransactionService.getCompleteBillTransactionById(billNumber, companyId);
+			//These comments will be removed once the auth_token is sent from UI
+    		//SessionModel sessionModel = initSessionModel(request);
+        	//String companyId = sessionModel.getCompanyId();
+        	String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+        	CompleteBillTransaction completeBillTransaction = completeBillTransactionService.getCompleteBillTransactionById(billNumber, companyId);
 			return jsend(completeBillTransaction);
 		}else{
 			LOG.error("Bill Number is null in getAllCompleteBillTransactions method of CompleteBillTransactionController");
@@ -74,9 +78,16 @@ public class CompleteBillTransactionController extends BaseController{
 	public @ResponseBody JSendResponse<String> addCompleteBillTransaction(@RequestBody CompleteBillTransaction completeBillTransaction, HttpServletRequest request, HttpServletResponse response) throws CompleteBillTransactionException{
 		LOG.info("In addCompleteBillTransaction method of CompleteBillTransactionController");
 		if(completeBillTransaction != null){
-			SessionModel sessionModel = initSessionModel(request);
-	    	String companyId = sessionModel.getCompanyId();
-	    	String isCompleteBillTransactionCreated = completeBillTransactionService.addCompleteBillTransaction(completeBillTransaction, companyId);
+			//These comments will be removed once the auth_token is sent from UI
+    		//SessionModel sessionModel = initSessionModel(request);
+        	//String companyId = sessionModel.getCompanyId();
+	    	//String uid = sessionModel.getUid();
+
+        	String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+			String uid = (String) request.getParameter(Constants.UID);
+            completeBillTransaction.setCompanyId(companyId);
+            completeBillTransaction.setUid(uid);
+        	String isCompleteBillTransactionCreated = completeBillTransactionService.addCompleteBillTransaction(completeBillTransaction);
 			return jsend(isCompleteBillTransactionCreated);
 		}else{
 			LOG.error("completeBillTransaction is null in addCompleteBillTransaction method of CompleteBillTransactionController");
@@ -89,9 +100,16 @@ public class CompleteBillTransactionController extends BaseController{
 	public @ResponseBody JSendResponse<String> updateCompleteBillTransaction(@RequestBody CompleteBillTransaction completeBillTransaction, HttpServletRequest request, HttpServletResponse response) throws CompleteBillTransactionException{
 		LOG.info("In updateCompleteBillTransaction method of CompleteBillTransactionController");
 		if(completeBillTransaction != null){
-			SessionModel sessionModel = initSessionModel(request);
-	    	String companyId = sessionModel.getCompanyId();
-	    	String isCompleteBillTransactionUpdated = completeBillTransactionService.updateCompleteBillTransaction(completeBillTransaction, companyId);
+			//These comments will be removed once the auth_token is sent from UI
+    		//SessionModel sessionModel = initSessionModel(request);
+        	//String companyId = sessionModel.getCompanyId();
+	    	//String uid = sessionModel.getUid();
+
+        	String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+			String uid = (String) request.getParameter(Constants.UID);
+            completeBillTransaction.setCompanyId(companyId);
+            completeBillTransaction.setUid(uid);
+        	String isCompleteBillTransactionUpdated = completeBillTransactionService.updateCompleteBillTransaction(completeBillTransaction);
 			return jsend(isCompleteBillTransactionUpdated);
 		}else{
 			LOG.error("completeBillTransaction is null in updateCompleteBillTransaction method of CompleteBillTransactionController");

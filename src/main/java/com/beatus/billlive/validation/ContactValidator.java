@@ -50,7 +50,6 @@ public class ContactValidator {
 				throw new ContactInfoException("Phone is not available " + contactData.getContactId());
 			}
 		}
-		return true;
-		
+		return true;		
 	}
 }

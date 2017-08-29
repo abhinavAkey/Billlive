@@ -74,9 +74,10 @@ public class TaxService {
 	}
 	
 	
-	public String removeTax(String companyId,String taxId) {
+	public String removeTax(String companyId, String uid, String taxId) {
 		if(StringUtils.isNotBlank(taxId) && StringUtils.isNotBlank(companyId)){
 			Tax tax = taxRepository.getTaxById(companyId, taxId);
+			tax.setUid(uid);
 			tax.setIsRemoved(Constants.YES);
 			return taxRepository.updateTax(tax);
 		}

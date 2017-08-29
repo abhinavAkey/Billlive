@@ -127,9 +127,10 @@ public class ItemService {
 		}
 	}
 	
-	public String removeItem(String companyId, String itemId) {	
+	public String removeItem(String companyId, String uid, String itemId) {	
 		if(StringUtils.isNotBlank(itemId) && StringUtils.isNotBlank(companyId)){
 			ItemData itemData = itemRepository.getItemById(companyId, itemId);
+			itemData.setUid(uid);
 			itemData.setIsRemoved(Constants.YES);
 			return itemRepository.updateItem(itemData);
 		}

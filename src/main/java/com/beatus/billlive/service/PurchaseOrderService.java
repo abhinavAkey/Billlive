@@ -96,9 +96,10 @@ public class PurchaseOrderService {
 		return null;		
 	}
 	
-	public String removePurchaseOrder(String companyId, String purchaseOrderNumber) {
+	public String removePurchaseOrder(String companyId, String uid, String purchaseOrderNumber) {
 		if(StringUtils.isNotBlank(purchaseOrderNumber) && StringUtils.isNotBlank(companyId)){
 			PurchaseOrderData purchaseOrderData = purchaseOrderRepository.getPurchaseOrderByPurchaseOrderNumber(companyId, purchaseOrderNumber);
+			purchaseOrderData.setUid(uid);
 			purchaseOrderData.setIsRemoved(Constants.YES);
 			return purchaseOrderRepository.updatePurchaseOrder(purchaseOrderData);
 		}

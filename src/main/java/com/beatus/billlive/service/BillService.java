@@ -96,11 +96,12 @@ public class BillService {
 		return "N";
 	}
 
-	public String removeBill(String companyId, String billNumber)
+	public String removeBill(String companyId, String uid, String billNumber)
 			throws BillliveServiceException, BillValidationException {
 		LOGGER.info("In removeBill method of Bill Service");
 		if (StringUtils.isNotBlank(billNumber) && StringUtils.isNotBlank(companyId)) {
 			BillData billData = billRepository.getBillByBillNumber(companyId, billNumber);
+			billData.setUid(uid);
 			billData.setIsRemoved(Constants.YES);
 			return billRepository.updateBill(billData);
 		} else {

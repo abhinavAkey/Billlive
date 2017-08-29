@@ -97,10 +97,11 @@ public class ContactService {
 		return null;
 	}
 
-	public String removeContact(String companyId, String contactId)
+	public String removeContact(String companyId, String uid, String contactId)
 			throws BillliveServiceException, BillValidationException {
 		if (StringUtils.isNotBlank(contactId) && StringUtils.isNotBlank(companyId)) {
 			ContactInfo contactInfo = contactRepository.getContactByContactId(companyId, contactId);
+			contactInfo.setUid(uid);
 			contactInfo.setIsRemoved(Constants.YES);
 			return contactRepository.updateContact(contactInfo);
 		}

@@ -1,8 +1,6 @@
 package com.beatus.billlive.domain.model;
 
 /**
- * Entity bean with JPA annotations
- * Hibernate provides JPA implementation
  * @author Abhinav Akey
  *
  */
@@ -11,7 +9,7 @@ public class ContactInfo extends BaseData{
 	
 	private String contactId;
 	private String postId;
-	private String companyId;
+	private String uid;
 	private String contactCompanyName;
 	private String firstName;
 	private String lastName;	
@@ -30,24 +28,24 @@ public class ContactInfo extends BaseData{
 	private String organizationDesc;
 	private String gstRegistrationNum;
 	private String typeOfUser;
+	
 	public String getContactId() {
 		return contactId;
 	}
 	public void setContactId(String contactId) {
 		this.contactId = contactId;
 	}
-	
 	public String getPostId() {
 		return postId;
 	}
 	public void setPostId(String postId) {
 		this.postId = postId;
 	}
-	public String getCompanyId() {
-		return companyId;
+	public String getUid() {
+		return uid;
 	}
-	public void setCompanyId(String companyId) {
-		this.companyId = companyId;
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 	public String getContactCompanyName() {
 		return contactCompanyName;
