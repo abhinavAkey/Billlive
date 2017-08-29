@@ -19,6 +19,7 @@ import com.beatus.billlive.domain.model.CompleteBillTransaction;
 import com.beatus.billlive.domain.model.JSendResponse;
 import com.beatus.billlive.exception.CompleteBillTransactionException;
 import com.beatus.billlive.service.CompleteBillTransactionService;
+import com.beatus.billlive.service.exception.BillliveServiceException;
 import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
@@ -66,7 +67,7 @@ public class CompleteBillTransactionController extends BaseController{
 			return jsend(completeBillTransaction);
 		}else{
 			LOG.error("Bill Number is null in getAllCompleteBillTransactions method of CompleteBillTransactionController");
-			throw new CompleteBillTransactionException("completeBillTransactionId passed cant be null or empty string");
+			throw new BillliveServiceException("completeBillTransactionId passed cant be null or empty string");
 		}
 	}
 	
@@ -80,7 +81,7 @@ public class CompleteBillTransactionController extends BaseController{
 			return jsend(isCompleteBillTransactionCreated);
 		}else{
 			LOG.error("completeBillTransaction is null in addCompleteBillTransaction method of CompleteBillTransactionController");
-			throw new CompleteBillTransactionException("CompleteBillTransaction data passed cant be null or empty");
+			throw new BillliveServiceException("CompleteBillTransaction data passed cant be null or empty");
 		}	
 	}
 	
@@ -95,7 +96,7 @@ public class CompleteBillTransactionController extends BaseController{
 			return jsend(isCompleteBillTransactionUpdated);
 		}else{
 			LOG.error("completeBillTransaction is null in updateCompleteBillTransaction method of CompleteBillTransactionController");
-			throw new CompleteBillTransactionException("CompleteBillTransaction data passed cant be null or empty");
+			throw new BillliveServiceException("CompleteBillTransaction data passed cant be null or empty");
 		}	
 	}
 	
