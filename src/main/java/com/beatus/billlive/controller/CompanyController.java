@@ -63,7 +63,7 @@ public class CompanyController extends BaseController {
 			return jsend(companyId);
 		} else {
 			LOG.error(
-					"Billlive Service Exception in the addCompany() {} of CompanyController,  Bill data passed cant be null or empty string");
+					"Billlive Service Exception in the addCompany() {} of CompanyController,  Company Datapassed cant be null or empty string");
 			throw new BillliveServiceException("Company Data passed cant be null or empty string");
 		}
 	}
