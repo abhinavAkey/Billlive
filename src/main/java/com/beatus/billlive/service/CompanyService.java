@@ -76,9 +76,10 @@ public class CompanyService {
 	}
 	
 	
-	public String removeCompany(String companyId) {
+	public String removeCompany(String companyId, String uid) {
 		if(StringUtils.isNotBlank(companyId)){
 			CompanyData company = companyRepository.getCompanyById(companyId);
+			company.setAddedOrUpdatedOrRemovedUID(uid);
 			company.setIsRemoved(Constants.YES);
 			return companyRepository.updateCompany(company);
 		}

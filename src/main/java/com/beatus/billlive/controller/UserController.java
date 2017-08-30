@@ -73,11 +73,9 @@ public class UserController extends BaseController{
 		}
 	}*/
 	@RequestMapping(value= "/company/user/isRegistered", method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
-	public @ResponseBody JSendResponse<String> isRegistered(HttpServletRequest request, HttpServletResponse response, @RequestParam("uid") String uid){
-		String companyId = userService.isRegistered(uid);
-		HttpSession session = request.getSession();
-		session.setAttribute(Constants.COMPANY_ID, companyId);
-		session.setMaxInactiveInterval(Constants.MAX_INTERVAL);
+	public @ResponseBody JSendResponse<String> isRegistered(HttpServletRequest request, HttpServletResponse response, @RequestParam(Constants.UID) String uid){
+		String companyId = userService.isRegistered(uid);		
+		request.setAttribute(Constants.COMPANY_ID, companyId);
 		return jsend(companyId);
 	}
 

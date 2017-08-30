@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -20,7 +19,6 @@ import com.beatus.billlive.domain.model.JSendResponse;
 import com.beatus.billlive.exception.ContactInfoException;
 import com.beatus.billlive.service.ContactService;
 import com.beatus.billlive.service.exception.BillliveServiceException;
-import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.exception.BillValidationException;
@@ -51,19 +49,24 @@ public class ContactController extends BaseController {
 			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<ContactInfo>> getAllContacts(HttpServletRequest request,
 			HttpServletResponse response) {
-		SessionModel sessionModel = initSessionModel(request);
-		String companyId = sessionModel.getCompanyId();
+		// These comments will be removed once the auth_token is sent from UI
+		// SessionModel sessionModel = initSessionModel(request);
+		// String companyId = sessionModel.getCompanyId();
+		String companyId = (String) request.getParameter(Constants.COMPANY_ID);
 		List<ContactInfo> contactList = contactService.getAllContacts(companyId);
 		return jsend(contactList);
 	}
 
 	@RequestMapping(value = "/company/getcontact", method = RequestMethod.GET, consumes = {
 			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
-	public @ResponseBody JSendResponse<ContactInfo> getContactById(@RequestParam String contactId,
+	public @ResponseBody JSendResponse<ContactInfo> getContactById(@RequestParam(Constants.CONTACT_ID) String contactId,
 			HttpServletRequest request, HttpServletResponse response) throws ContactInfoException {
 		if (StringUtils.isNotBlank(contactId)) {
-			SessionModel sessionModel = initSessionModel(request);
-			String companyId = sessionModel.getCompanyId();
+			// These comments will be removed once the auth_token is sent from
+			// UI
+			// SessionModel sessionModel = initSessionModel(request);
+			// String companyId = sessionModel.getCompanyId();
+			String companyId = (String) request.getParameter(Constants.COMPANY_ID);
 			ContactInfo contactData = contactService.getContactByContactId(companyId, contactId);
 			return jsend(contactData);
 		} else {
@@ -74,10 +77,16 @@ public class ContactController extends BaseController {
 	@RequestMapping(value = "/company/addcontact", method = RequestMethod.POST, consumes = {
 			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<String> addContact(@RequestBody ContactInfo contactData,
-			HttpServletRequest request, HttpServletResponse response) throws ContactInfoException, BillliveServiceException, BillValidationException {
-		SessionModel sessionModel = initSessionModel(request);
-		String companyId = sessionModel.getCompanyId();
+			HttpServletRequest request, HttpServletResponse response)
+			throws ContactInfoException, BillliveServiceException, BillValidationException {
+		// These comments will be removed once the auth_token is sent from UI
+		// SessionModel sessionModel = initSessionModel(request);
+		// String companyId = sessionModel.getCompanyId();
+		// String uid = sessionModel.getUid();
+		String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+		String uid = (String) request.getParameter(Constants.UID);
 		contactData.setCompanyId(companyId);
+		contactData.setUid(uid);
 		String isContactCreated = contactService.addContact(request, response, contactData);
 		return jsend(isContactCreated);
 	}
@@ -85,21 +94,31 @@ public class ContactController extends BaseController {
 	@RequestMapping(value = "/company/updatecontact", method = RequestMethod.POST, consumes = {
 			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<String> updateContact(@RequestBody ContactInfo contactData,
-			HttpServletRequest request, HttpServletResponse response) throws ContactInfoException, BillliveServiceException, BillValidationException {
-		SessionModel sessionModel = initSessionModel(request);
-		String companyId = sessionModel.getCompanyId();
+			HttpServletRequest request, HttpServletResponse response)
+			throws ContactInfoException, BillliveServiceException, BillValidationException {
+		// These comments will be removed once the auth_token is sent from UI
+		// SessionModel sessionModel = initSessionModel(request);
+		// String companyId = sessionModel.getCompanyId();
+		// String uid = sessionModel.getUid();
+		String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+		String uid = (String) request.getParameter(Constants.UID);
 		contactData.setCompanyId(companyId);
+		contactData.setUid(uid);
 		String isContactCreated = contactService.updateContact(request, response, contactData);
 		return jsend(isContactCreated);
 	}
 
-	@RequestMapping(value = "/company/removecontact/{id}", method = RequestMethod.DELETE, consumes = {
+	@RequestMapping(value = "/company/removecontact", method = RequestMethod.DELETE, consumes = {
 			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
-	public JSendResponse<String> removeContact(@PathVariable("id") String contactId, HttpServletRequest request,
+	public JSendResponse<String> removeContact(@RequestParam(Constants.CONTACT_ID) String contactId, HttpServletRequest request,
 			HttpServletResponse response) throws BillliveServiceException, BillValidationException {
-		SessionModel sessionModel = initSessionModel(request);
-		String companyId = sessionModel.getCompanyId();
-		String isContactRemoved = contactService.removeContact(companyId, contactId);
+		// These comments will be removed once the auth_token is sent from UI
+		// SessionModel sessionModel = initSessionModel(request);
+		// String companyId = sessionModel.getCompanyId();
+		// String uid = sessionModel.getUid();
+		String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+		String uid = (String) request.getParameter(Constants.UID);
+		String isContactRemoved = contactService.removeContact(companyId, uid, contactId);
 		return jsend(isContactRemoved);
 	}
 }

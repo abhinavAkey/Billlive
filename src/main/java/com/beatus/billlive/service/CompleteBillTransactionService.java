@@ -26,13 +26,14 @@ public class CompleteBillTransactionService {
 	@Resource(name = "completeBillTransactionRepository")
 	private CompleteBillTransactionRepository completeBillTransactionRepository;
 
-	public String addCompleteBillTransaction(CompleteBillTransaction completeBillTransaction, String companyId) throws CompleteBillTransactionException {
+	public String addCompleteBillTransaction(CompleteBillTransaction completeBillTransaction) throws CompleteBillTransactionException {
 		try {
 			if(completeBillTransactionValidator.validateCompleteBillTransaction(completeBillTransaction)){
+				String companyId = completeBillTransaction.getCompanyId();
 				if(StringUtils.isNotBlank(completeBillTransaction.getBillNumber())){
 					CompleteBillTransaction existingCompleteBillTransaction = completeBillTransactionRepository.getCompleteBillTransactionById(completeBillTransaction.getBillNumber(), companyId);
 					if(existingCompleteBillTransaction != null){
-						return updateCompleteBillTransaction(completeBillTransaction, companyId);
+						return updateCompleteBillTransaction(completeBillTransaction);
 					}else {
 						completeBillTransaction.setBillTransactionId(Utils.generateRandomKey(20));
 						return completeBillTransactionRepository.addCompleteBillTransaction(completeBillTransaction, companyId);
@@ -46,13 +47,14 @@ public class CompleteBillTransactionService {
 	}
 
 
-	public String updateCompleteBillTransaction(CompleteBillTransaction completeBillTransaction, String companyId) throws CompleteBillTransactionException {
+	public String updateCompleteBillTransaction(CompleteBillTransaction completeBillTransaction) throws CompleteBillTransactionException {
 		try {
 			if(completeBillTransactionValidator.validateCompleteBillTransaction(completeBillTransaction)){
+				String companyId = completeBillTransaction.getCompanyId();
 				if(StringUtils.isNotBlank(completeBillTransaction.getBillNumber())){
 					CompleteBillTransaction existingCompleteBillTransaction = completeBillTransactionRepository.getCompleteBillTransactionById(completeBillTransaction.getBillNumber(), companyId);
 					if(existingCompleteBillTransaction == null){
-						return addCompleteBillTransaction(completeBillTransaction, companyId);
+						return addCompleteBillTransaction(completeBillTransaction);
 					}else {
 						List<PaymentTransaction> paymentTransactions = existingCompleteBillTransaction.getPaymentTransactions();
 						paymentTransactions.add(completeBillTransaction.getPaymentTransactions().get(0));
@@ -79,7 +81,5 @@ public class CompleteBillTransactionService {
 
 	public CompleteBillTransaction getCompleteBillTransactionById(String billNumber, String companyId) {
 		return completeBillTransactionRepository.getCompleteBillTransactionById(billNumber,companyId);
-	}
-
-	
+	}	
 }

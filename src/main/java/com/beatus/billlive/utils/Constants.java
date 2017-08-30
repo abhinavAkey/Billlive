@@ -66,6 +66,7 @@ public class Constants {
 	public static final int MAX_INTERVAL = -1;
 	public static final String BILLLIVE = "billlive";
 	public static final String AUTH_TOKEN = "authToken";
+	public static final String AUTHORIZATION = "Authorization";
 	public static final String SESSION_MODEL = "sessionModel";
 	public static final String AES = "AES";
 	public static final String HMACSHA256 = "HmacSHA256";
@@ -74,4 +75,9 @@ public class Constants {
 	public static final String SUCCESS = "success";
 	public static final String CONTACT_TYPE_USER = "User";
 	public static final String CONTACT_TYPE_COMPANY = "Company";
+	public static final String POST = "POST";
+	public static final String GET = "GET";
+	public static final String IS_REGISTERED_URI_PATH = "/company/user/isRegistered";
+	public static final String CONTACT_ID = "contactId";
+	public static final String PURCHASE_ORDER_NUMBER = "purchaseOrderNumber";
 }
