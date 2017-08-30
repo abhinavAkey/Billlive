@@ -50,7 +50,7 @@ public class ItemRepository {
 			    @Override
 			    public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
 			        if (databaseError != null) {
-			            System.out.println("Data could not be saved " + databaseError.getMessage() + " " + itemData.getItemId());
+			        	logger.info("Data could not be saved " + databaseError.getMessage() + " " + itemData.getItemId());
 			            isAdded = "N";
 			        } else {
 			        	logger.info("Item saved successfully, Item Details="+itemData.getItemId());

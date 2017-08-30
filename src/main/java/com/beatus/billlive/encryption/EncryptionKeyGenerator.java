@@ -1,39 +1,49 @@
 package com.beatus.billlive.encryption;
 
+import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
+import org.springframework.stereotype.Component;
+
 import com.beatus.billlive.service.exception.BillliveServiceException;
+import com.google.api.services.cloudkms.v1.CloudKMS;
 
 /**
  * 
  * @author vakey
  *
  */
+@Component("encryptionKeyGenerator")
 public class EncryptionKeyGenerator extends KeyGenerator{
-	
-	/*private static final byte[] SALT = { 
-			(byte) 0x1C, (byte) 0x33, (byte) 0x18, (byte) 0x63, 
-			(byte) 0xC8, (byte) 0xA4, (byte) 0x3F, (byte) 0xD2,
-			(byte) 0x30, (byte) 0x08, (byte) 0x0F, (byte) 0xC7, 
-			(byte) 0xA4, (byte) 0xB0, (byte) 0x48, (byte) 0x26 };
-		
-	private static final String KEYGEN_ALGORITHM = "PBKDF2WithHmacSHA1";
-	
-	private static final int ITERATION_COUNT = 1000;
-	
-	private static final int KEY_LENGTH = 160;*/
 	
 	public static final String ENCRYPTION_KEY_ID = "BL-SC-Enc-Cookie-Key";
 	
+	private static final String KEYGEN_ALGORITHM = "AES";
+	
+	private static final byte[] SALT = { 
+		(byte) 0xAA, (byte) 0x0,  (byte) 0x76, (byte) 0xDE, 
+		(byte) 0xB8, (byte) 0x7A, (byte) 0x12, (byte) 0x1D,
+		(byte) 0x41, (byte) 0xe9, (byte) 0x6E, (byte) 0x2E, 
+		(byte) 0xAE, (byte) 0xBF, (byte) 0xC4, (byte) 0xFB 
+	};
+
+	private static final int ITERATION_COUNT = 1000;
+
+	private static final int ENCRYPTION_KEY_LENGTH = 256;
+	
 	@Override
-	public SecretKeySpec generateKey(String algorithm) throws BillliveServiceException {
-		return generateKey(ENCRYPTION_KEY_ID, algorithm);
+	public SecretKeySpec generateKey(String algorithm, CloudKMS cloudKMS) throws BillliveServiceException {
+		return generateKey(ENCRYPTION_KEY_ID, algorithm, cloudKMS);
+	}
+	
+	public SecretKeySpec generateKey(String keyId, String algorithm, CloudKMS cloudKMS) throws BillliveServiceException {
+		return super.generateKey(keyId, algorithm, cloudKMS);
 	}
 	
 	@Override
-	public SecretKeySpec generateKey(String keyId, String algorithm) throws BillliveServiceException {
-		return super.generateKey(keyId, algorithm);
-
+	public SecretKey generateKey(char[] password) {		
+		return generateKey(KEYGEN_ALGORITHM, password, SALT, ITERATION_COUNT,
+				ENCRYPTION_KEY_LENGTH);
 	}
 
 }

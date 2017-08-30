@@ -2,15 +2,19 @@ package com.beatus.billlive.interceptor;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.Resource;
+import javax.crypto.spec.SecretKeySpec;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
+import com.beatus.billlive.auth.FirebaseUserConnection;
+import com.beatus.billlive.config.GoogleCloudKMS;
 import com.beatus.billlive.session.management.SessionConfiguration;
 import com.beatus.billlive.session.management.SessionManager;
 import com.beatus.billlive.session.management.SessionModel;
@@ -35,6 +39,12 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
     @Resource(name="cookieManager")
 	private CookieManager cookieManager;
     
+    @Resource(name = "firebaseUserConnection")
+	private FirebaseUserConnection firebaseUserConnection;
+    
+    @Resource(name = "googleCloudKMS")
+	private GoogleCloudKMS googleCloudKMS;
+    
     @PostConstruct
     public void init() {
     	
@@ -43,20 +53,27 @@ public class SessionInterceptor extends HandlerInterceptorAdapter {
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws ServletException {
     	final String requestMethod = request.getMethod(), servletPath = request.getRequestURI();
+		SecretKeySpec secretKey = googleCloudKMS.getKey(Constants.HMACSHA256);
+		
+		LOG.info("Algorithm " + secretKey.getAlgorithm());
+		LOG.info("Algorithm " + secretKey.getEncoded());
+
     	LOG.debug(INTERCEPTOR_LOG_START, "Incoming", requestMethod, servletPath );
     	SessionModel sessionModel = sessionManager.initSessionModel(request, response);
     	LOG.debug("Init session model in interceptor pre with session model: {}", sessionModel.toString());
 		boolean isPageValid = sessionManager.isPageValid(sessionModel);
-		if("POST".equalsIgnoreCase(requestMethod) && !isPageValid) {
+		if(Constants.POST.equalsIgnoreCase(requestMethod) && !isPageValid) {
         	boolean continueExecution = cleanUpSessionAndCookies(request, response, sessionModel);
 			LOG.error("Validate page verifier failed");
 			return continueExecution;
         }
-        boolean isValid = sessionManager.isCompanyIdAndUidValid(sessionModel);
-        if (!isValid) {
-        	boolean continueExecution = cleanUpSessionAndCookies(request, response, sessionModel);
-			LOG.error("Validate CompanyId And Uid.");
-        	return continueExecution;
+		if(!(Constants.GET.equalsIgnoreCase(requestMethod) && StringUtils.isNotBlank(servletPath) && Constants.IS_REGISTERED_URI_PATH.equalsIgnoreCase(servletPath))){
+			boolean isValid = sessionManager.isCompanyIdAndUidValid(sessionModel);
+	        if (!isValid) {
+	        	boolean continueExecution = cleanUpSessionAndCookies(request, response, sessionModel);
+				LOG.error("Validate CompanyId And Uid.");
+	        	return continueExecution;
+			}
 		}
         request.setAttribute(Constants.SESSION_MODEL, sessionModel);
         LOG.debug("Exiting interceptor pre with session model: {}", sessionModel.toString());

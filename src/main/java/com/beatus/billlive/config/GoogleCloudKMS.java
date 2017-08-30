@@ -43,7 +43,7 @@ public class GoogleCloudKMS {
 	}
 	
 	public SecretKeySpec getKey(String algorithm) throws BillliveServiceException{
-		return getKeyBasedOnAlgorithm.get(algorithm).generateKey(algorithm);
+		return getKeyBasedOnAlgorithm.get(algorithm).generateKey(algorithm, cloudKMS);
 	}
 
 	/**

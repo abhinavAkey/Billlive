@@ -24,7 +24,7 @@ public class BillValidator {
 		if(StringUtils.isBlank(bill.getDueDate())){
 			throw new BillDataException("Bill data the due date field is not available " + bill.getUid());
 		}
-		if(bill.getItems() != null && bill.getItems().size() > 0){
+		if(bill.getItems() == null && bill.getItems().size() > 0){
 			for(BillItemDTO item : bill.getItems()){
 				if(StringUtils.isBlank(item.getItemId())){
 					throw new BillDataException("Item Id can't be null");
@@ -73,7 +73,7 @@ public class BillValidator {
 		if(billItemDTO.getTotalSGST() == null){
 			throw new BillValidationException("BillItemDTO, the totalSGST field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getTotalIGST() == null){
+		if(billItemDTO.getTotalIGST() != null){
 			throw new BillValidationException("BillItemDTO, the totalIGST field is not available, for the bill number " + billItemDTO.getItemId());
 		}
 		if(billItemDTO.getAmountAfterTax() == null){
@@ -113,16 +113,16 @@ public class BillValidator {
 		if(StringUtils.isBlank(billDTO.getDueDate())){
 			throw new BillValidationException("BillDTO, the dueDate field is not available, for the bill number " + billDTO.getBillNumber());
 		}
-		if(billDTO.getTotalAmount() != null){
+		if(billDTO.getTotalAmount() == null){
 			throw new BillValidationException("BillDTO, the totalAmount field is not available, for the bill number " + billDTO.getBillNumber());
 		}
-		if(billDTO.getTotalTax() != null){
+		if(billDTO.getTotalTax() == null){
 			throw new BillValidationException("BillDTO, the totalTax field is not available, for the bill number " + billDTO.getBillNumber());
 		}
-		if(billDTO.getTotalCGST() != null){
+		if(billDTO.getTotalCGST() == null){
 			throw new BillValidationException("BillDTO, the totalCGST field is not available, for the bill number " + billDTO.getBillNumber());
 		}
-		if(billDTO.getTotalSGST() != null){
+		if(billDTO.getTotalSGST() == null){
 			throw new BillValidationException("BillDTO, the totalSGST field is not available, for the bill number " + billDTO.getBillNumber());
 		}
 		if(billDTO.getTotalIGST() != null){

@@ -1,10 +1,6 @@
 package com.beatus.billlive.domain.model;
 
-import java.io.Serializable;
-
 public class ColumnTemplate {
-
-	
 	
 	private int id;
 	
@@ -80,7 +76,5 @@ public class ColumnTemplate {
 	public String toString() {
 		return "[ pos=" + pos 	+ ", ColumnName=" + templateName + ", type=" + type + "]";
 	}
-	
-	
 
 }
