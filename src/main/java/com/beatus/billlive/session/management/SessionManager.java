@@ -58,6 +58,9 @@ public class SessionManager {
     	String verifier = ServletRequestUtils.getStringParameter(request, configuration.getVerifierParamName(), "");
     	String companyId = ServletRequestUtils.getStringParameter(request, configuration.getCompanyIdParamName(), "");
     	
+    	if(StringUtils.isBlank(companyId)){
+    		companyId = (String) request.getAttribute(configuration.getCompanyIdParamName());
+    	}
     	if(isNotBlank(verifier)) {
 	    	model.setVerifier(verifier);
     	}
@@ -98,7 +101,7 @@ public class SessionManager {
 		String verifier = randomAlphanumeric(16);
 		model.setVerifier(verifier);
 		
-		String authToken = getRequestParameters(request).get(Constants.AUTH_TOKEN);
+		String authToken = request.getHeader(Constants.AUTHORIZATION);
 		if(StringUtils.isNotBlank(authToken)){
 			model.setAuthToken(authToken);
 		}
@@ -158,7 +161,7 @@ public class SessionManager {
     	try {
     		if (companyIdFromCookie.equalsIgnoreCase(companyId)) {
     			String authToken = model.getCookieContent().get(Constants.AUTH_TOKEN);
-    			if(StringUtils.isNoneBlank(authToken)){
+    			if(StringUtils.isNotBlank(authToken)){
 	    			String uid = firebaseUserConnection.verifyIdToken(authToken);
 	    			boolean isUidNotBlank = false;
 	    			if(StringUtils.isNotBlank(uid)){

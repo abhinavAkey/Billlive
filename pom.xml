@@ -23,7 +23,6 @@
         <integrationTestServerId>tomcat8x</integrationTestServerId> 
         <integrationTestServerDownloadPath>/tomcat-8/v8.0.26/bin/apache-tomcat-8.0.26.zip</integrationTestServerDownloadPath>
         <integrationTestApplicationContext>/restapi</integrationTestApplicationContext>
-    	<hibernate.version>5.2.10.Final</hibernate.version> 
     	<spring.security.version>4.0.0.RELEASE</spring.security.version>  
     </properties>
     
@@ -198,12 +197,6 @@
                 </exclusion>
             </exclusions>
         </dependency> 
-        <dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-validator</artifactId>
-		    <version>5.2.4.Final</version>
-		</dependency>
-        
         <!-- Datasources -->
         <dependency>
             <groupId>org.apache.commons</groupId>
@@ -320,18 +313,6 @@
 		    <version>2.10.4</version>
 		</dependency>
 		
-		<!-- Hibernate -->
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-core</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.hibernate</groupId>
-			<artifactId>hibernate-entitymanager</artifactId>
-			<version>${hibernate.version}</version>
-		</dependency>
-		
 		<dependency>
             <groupId>org.webjars</groupId>
             <artifactId>angularjs</artifactId>
@@ -409,6 +390,11 @@
             <artifactId>janino</artifactId>
             <version>3.0.6</version>
         </dependency>
+        <dependency>
+		    <groupId>commons-io</groupId>
+		    <artifactId>commons-io</artifactId>
+		    <version>2.4</version>
+		</dependency>
 	</dependencies>
 
  	 <build>

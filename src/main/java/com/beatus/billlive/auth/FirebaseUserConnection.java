@@ -3,6 +3,8 @@ package com.beatus.billlive.auth;
 import javax.annotation.Resource;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -21,6 +23,8 @@ import com.google.firebase.tasks.Task;
 @Component(value = "firebaseUserConnection")
 public class FirebaseUserConnection {
 
+    private static final Logger LOG = LoggerFactory.getLogger(FirebaseUserConnection.class);
+
 	public static String uid = null;
 	
 	@Resource(name="firebaseAuth")
@@ -28,19 +32,19 @@ public class FirebaseUserConnection {
 
 	public Task<UserRecord> getUserById(String uid) {
 		// [START get_user_by_id]
+		LOG.info("In method firebase auth");
 		Task<UserRecord> task = firebaseAuth.getUser(uid).addOnSuccessListener(userRecord -> {
 			// See the UserRecord reference doc for the contents of userRecord.
-			System.out.println("Successfully fetched user data: " + userRecord.getUid());
+			LOG.info("Successfully fetched user data: " + userRecord.getUid());
 		}).addOnFailureListener(e -> {
-			System.err.println("Error fetching user data: " + e.getMessage());
+			LOG.error("Error fetching user data: " + e.getMessage());
 		});
 		// [END get_user_by_id]
-
 		return task;
 	}
 
 	public String verifyIdToken(String authToken) {
-		// [START verifyIdToken]
+		// [START verifyIdToken]		
 		Task<FirebaseToken> token = firebaseAuth.verifyIdToken(authToken)
 				.addOnSuccessListener(new OnSuccessListener<FirebaseToken>() {
 					@Override
@@ -48,7 +52,7 @@ public class FirebaseUserConnection {
 						uid = decodedToken.getUid();
 					}
 				});
-		if(token.getResult() != null && StringUtils.isNotBlank(token.getResult().getUid())){
+		if(token != null && token.getResult() != null && StringUtils.isNotBlank(token.getResult().getUid())){
 			return uid;
 		}
 		return null;

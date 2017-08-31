@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.Inventory;
 import com.beatus.billlive.exception.InventoryValidationException;
+import com.beatus.billlive.utils.Constants;
 
 @Component("inventoryValidator")
 public class InventoryValidator {
@@ -18,28 +19,22 @@ public class InventoryValidator {
 		if(inventory == null){
 			throw new InventoryValidationException("Inventory data is null");
 		}
-		if(inventory.getIsUpdated().equals('Y')){
+		if(Constants.YES.equalsIgnoreCase(inventory.getIsUpdated())){
 			if(StringUtils.isBlank(inventory.getInventoryId())){
 				throw new InventoryValidationException("InventoryId is null");
 			}
 		}
-		if(inventory.getBuyQuantityType() != null){
+		if(inventory.getBuyQuantityType() == null){
 			throw new InventoryValidationException("Inventory, the buyQuantityType field is not available, for the inventory with id =  " + inventory.getInventoryId());
 		}
-		if(inventory.getActualQuantity() != null){
+		if(inventory.getActualQuantity() == null){
 			throw new InventoryValidationException("Inventory, the actualQuantity field is not available, for the inventory with id =  " + inventory.getInventoryId());
 		}
-		if(inventory.getUnitPrice() != null){
+		if(inventory.getUnitPrice() == null){
 			throw new InventoryValidationException("Inventory, the unitPrice field is not available, for the inventory with id =  " + inventory.getInventoryId());
 		}
-		if(inventory.getSellingPrice() != null){
+		if(inventory.getSellingPrice() == null){
 			throw new InventoryValidationException("Inventory, the sellingPrice field is not available, for the inventory with id =  " + inventory.getInventoryId());
-		}
-		if(StringUtils.isBlank(inventory.getPurchaseOrderNumber())){
-			throw new InventoryValidationException("Inventory, the purchaseOrderNumber field is not available, for the inventory with id =  " + inventory.getInventoryId());
-		}
-		if(StringUtils.isBlank(inventory.getTaxid())){
-			throw new InventoryValidationException("Inventory, the taxid field is not available, for the inventory with id =  " + inventory.getInventoryId());
 		}
 		return true;
 		

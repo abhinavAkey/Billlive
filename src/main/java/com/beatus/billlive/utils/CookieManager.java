@@ -15,11 +15,13 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.config.GoogleCloudKMS;
 import com.beatus.billlive.encryption.EncryptionFactory;
 import com.beatus.billlive.encryption.HashFactory;
+import com.beatus.billlive.encryption.KeyChainEntries;
 
 /**
  * Created by brucesun21 on 2/19/16.
@@ -28,9 +30,9 @@ import com.beatus.billlive.encryption.HashFactory;
 public class CookieManager {
     private static final Logger LOG = LoggerFactory.getLogger(CookieManager.class);
 
-    private static final byte[] secretKeyEncodedAES = new byte[] {65, -51, -44, 79, -122, 74, -35, -81, 97, 101, -11, -122, 36, -48, -52, -49, -25, -9, 16, 91, -122, -119, 102, -30, -99, 3, 122, -70, -88, 117, 75, -118};
-    private static final byte[] secretKeyEncodedHMac = new byte[] {59, 27, 46, -98, 81, 108, -42, -8, -29, -92, -33, 34, 93, 29, 94, 119, 87, -58, -126, 95, 111, 0, 11, 111, 48, 29, 126, 40, 87, 70, 107, -92};
-
+    @Value(value = "${keychain.file}")
+    private String keyChainFile;
+    
     private static final String
             CHAR_SET = "UTF-8",
             TOKEN_VERSION = "v1",
@@ -39,6 +41,9 @@ public class CookieManager {
     
 	@Resource(name = "googleCloudKMS")
 	private GoogleCloudKMS googleCloudKMS;
+	
+	@Resource(name = "keyChainEntries")
+	private KeyChainEntries keyChainEntries;
 
     public void addCookie(HttpServletResponse response, String cookieName, String cookieValue, boolean isSecure, boolean isDeleted) {
         LOG.debug("addCookie {} isSecure {} isDelete {}", cookieName, isSecure, isDeleted);
@@ -103,25 +108,21 @@ public class CookieManager {
                 cookieRawInput.append(entry.getKey() + "=" + entry.getValue());
             }
             LOG.debug("encrypt cookie contents {}", cookieRawInput.toString());
-
-            // ENC
-    		SecretKeySpec secretKey = googleCloudKMS.getKey(Constants.AES);
-
-        	
-        	EncryptionFactory.Encryption enc = EncryptionFactory.getInstance(secretKey.getAlgorithm());
+    		
+    		byte[] encryptionKey = keyChainEntries.getAesKeyBytes();	
+        	SecretKeySpec secretKey = new SecretKeySpec(encryptionKey, Constants.AES);
+			EncryptionFactory.Encryption enc = EncryptionFactory.getInstance(secretKey.getAlgorithm());
             byte[] encBytes = enc.encrypt(secretKey.getEncoded(), cookieRawInput.toString().getBytes(CHAR_SET));
             String encString = Base64.encodeBase64URLSafeString(encBytes);
             LOG.debug("generate cookie encString {}", encString);
             
             // MAC
-            
-    		SecretKeySpec secretKeyMac = googleCloudKMS.getKey(Constants.HMACSHA256);
-        	
+    		byte[] hashKey = keyChainEntries.getHashKeyBytes();
+    		SecretKeySpec secretKeyMac = new SecretKeySpec(hashKey, Constants.HMACSHA256);
         	HashFactory.Hash mac = HashFactory.getInstance(secretKeyMac.getAlgorithm());
             byte[] macBytes = mac.hash(secretKeyMac.getEncoded(), encBytes);
             String macString = Base64.encodeBase64URLSafeString(macBytes);
             LOG.debug("generate cookie value {}", macString);
-            
 
             StringBuilder builder = new StringBuilder();
             builder.append(TOKEN_VERSION);
@@ -155,13 +156,17 @@ public class CookieManager {
             
             byte[] encBytes = Base64.decodeBase64(part[1]);
             byte[] macBytes = Base64.decodeBase64(part[2]);
-            SecretKeySpec macKey = new SecretKeySpec(secretKeyEncodedHMac, "HmacSHA256");;
+            
+            byte[] encryptionKey = keyChainEntries.getAesKeyBytes();
+    		byte[] hashKey = keyChainEntries.getHashKeyBytes();
+    		
+            SecretKeySpec macKey = new SecretKeySpec(hashKey, Constants.HMACSHA256);
             HashFactory.Hash mac = HashFactory.getInstance(macKey.getAlgorithm());
             if (!mac.match(macKey.getEncoded(), encBytes, macBytes)) {
                 LOG.error("Validate cookie {} value: {}", cookieName, " mac mismatch");
                 return null;
             }
-            SecretKeySpec encKey = new SecretKeySpec(secretKeyEncodedAES, "AES");
+            SecretKeySpec encKey = new SecretKeySpec(encryptionKey, Constants.AES);
             EncryptionFactory.Encryption enc = EncryptionFactory.getInstance(encKey.getAlgorithm());
             byte[] idBytes = enc.decrypt(encKey.getEncoded(), encBytes);
             String cookieContent = new String(idBytes, CHAR_SET);
