@@ -1,6 +1,6 @@
 package com.beatus.billlive.domain.model;
 
-public class InvoiceData {
+public class InvoiceData extends BaseData {
 
 	private String invoiceNumber;
 	private String invoiceFrom;

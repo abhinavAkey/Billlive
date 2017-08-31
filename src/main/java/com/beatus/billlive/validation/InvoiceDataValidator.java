@@ -12,7 +12,7 @@ import com.beatus.billlive.validation.exception.InvoiceDataValidationException;
 public class InvoiceDataValidator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceDataValidator.class);
 
-	public boolean validateInvoiceDataData(InvoiceData invoiceData) throws InvoiceDataValidationException{
+	public boolean validateInvoiceData(InvoiceData invoiceData) throws InvoiceDataValidationException{
 		LOGGER.info(" Validating InvoiceData " + invoiceData);
 
 		if(invoiceData == null){

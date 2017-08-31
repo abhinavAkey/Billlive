@@ -7,7 +7,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -19,6 +22,7 @@ import com.beatus.billlive.domain.model.JSendResponse;
 import com.beatus.billlive.exception.InventoryValidationException;
 import com.beatus.billlive.exception.ItemDataException;
 import com.beatus.billlive.service.ItemService;
+import com.beatus.billlive.service.exception.BillliveServiceException;
 import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
@@ -26,7 +30,8 @@ import com.beatus.billlive.validation.ItemValidator;
 
 @Controller
 public class ItemController extends BaseController {
-
+	private static final Logger LOG = LoggerFactory.getLogger(ItemController.class);
+	
 	@Resource(name = "itemService")
 	private ItemService itemService;
 
