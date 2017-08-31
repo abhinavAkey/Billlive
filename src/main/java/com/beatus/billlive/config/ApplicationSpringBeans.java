@@ -3,6 +3,9 @@ package com.beatus.billlive.config;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
@@ -10,9 +13,11 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Stream;
 
 import javax.annotation.Resource;
+import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.io.IOUtils;
@@ -128,6 +133,7 @@ public class ApplicationSpringBeans {
 	public CloudKMS cloudKMS() {
 		try {
 			// Get the Decryption key from the hash
+			fixKeyLength();
 			byte[] decryptionKey = keyChain.generateDerivedKey(BYTES,
 					Base64.decode(googleKMSHash.getBytes(Constants.CHAR_SET)), GOOGLE_KMS_SALT);
 
@@ -344,6 +350,44 @@ public class ApplicationSpringBeans {
 				.decrypt(cryptoKeyName, request).execute();
 
 		return response.decodePlaintext();
+	}
+	
+	private void fixKeyLength() {
+	    String errorString = "Failed manually overriding key-length permissions.";
+	    int newMaxKeyLength;
+	    try {
+	        if ((newMaxKeyLength = Cipher.getMaxAllowedKeyLength("AES")) < 256) {
+	            Class c = Class.forName("javax.crypto.CryptoAllPermissionCollection");
+	            Constructor con = c.getDeclaredConstructor();
+	            con.setAccessible(true);
+	            Object allPermissionCollection = con.newInstance();
+	            Field f = c.getDeclaredField("all_allowed");
+	            f.setAccessible(true);
+	            f.setBoolean(allPermissionCollection, true);
+
+	            c = Class.forName("javax.crypto.CryptoPermissions");
+	            con = c.getDeclaredConstructor();
+	            con.setAccessible(true);
+	            Object allPermissions = con.newInstance();
+	            f = c.getDeclaredField("perms");
+	            f.setAccessible(true);
+	            ((Map) f.get(allPermissions)).put("*", allPermissionCollection);
+
+	            c = Class.forName("javax.crypto.JceSecurityManager");
+	            f = c.getDeclaredField("defaultPolicy");
+	            f.setAccessible(true);
+	            Field mf = Field.class.getDeclaredField("modifiers");
+	            mf.setAccessible(true);
+	            mf.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+	            f.set(null, allPermissions);
+
+	            newMaxKeyLength = Cipher.getMaxAllowedKeyLength("AES");
+	        }
+	    } catch (Exception e) {
+	        throw new RuntimeException(errorString, e);
+	    }
+	    if (newMaxKeyLength < 256)
+	        throw new RuntimeException(errorString); // hack failed
 	}
 
 	public FirebaseApp getFirebaseApp() {
