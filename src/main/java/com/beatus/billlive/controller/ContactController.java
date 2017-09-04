@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.ContactInfo;
 import com.beatus.billlive.domain.model.JSendResponse;
-import com.beatus.billlive.exception.CompleteBillTransactionException;
 import com.beatus.billlive.exception.ContactInfoException;
 import com.beatus.billlive.service.ContactService;
 import com.beatus.billlive.service.exception.BillliveServiceException;
@@ -134,6 +133,7 @@ public class ContactController extends BaseController {
 	public JSendResponse<String> removeContact(@RequestParam(Constants.CONTACT_ID) String contactId,
 			HttpServletRequest request, HttpServletResponse response)
 			throws BillliveServiceException, BillValidationException {
+		LOG.info("In removeContact method of ContactController");
 		if (StringUtils.isNotBlank(contactId)) {
 			// These comments will be removed once the auth_token is sent from
 			// UI
