@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.tasks.Task;
+import com.google.firebase.tasks.TaskCompletionSource;
+import com.google.firebase.tasks.Tasks;
 
 
 @Component("taxRepository")
@@ -31,9 +35,7 @@ public class TaxRepository {
 	public String isAdded = "N";
 	public String isUpdated = "N";
 	public String isDeleted = "N";
-	
-	private Tax tax = null;
-	
+		
 	List<Tax> taxsList = new ArrayList<Tax>();
 	
 	public String addTax(Tax tax) {
@@ -110,13 +112,14 @@ public class TaxRepository {
 		}
 	}
 	
-	public Tax getTaxById(String companyId, String taxId, OnGetDataListener listener) {
+	public void getTaxById(String companyId, String taxId, OnGetDataListener listener) {
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference taxRef = databaseReference.child("taxs").child(companyId);
-		tax = null;
 		taxRef.orderByChild("taxId").equalTo(taxId).addListenerForSingleValueEvent(new ValueEventListener() {
-		    @Override
+			@Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -124,16 +127,18 @@ public class TaxRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
-		logger.info("Tax loaded successfully, Tax details=" + tax);
-		return tax;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+		logger.info("Tax loaded successfully");
 	}
 	
-	public List<Tax> getAllTaxs(String companyId, OnGetDataListener listener) {
+	public void getAllTaxs(String companyId, OnGetDataListener listener) {
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference taxRef = databaseReference.child("taxs").child(companyId);
 		taxRef.orderByChild("taxId").addListenerForSingleValueEvent(new ValueEventListener() {
-		    @Override
+			@Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -141,6 +146,22 @@ public class TaxRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
-		return taxsList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+	}
+	
+	private void waitForTheTaskToCompleteAndReturn(TaskCompletionSource<DataSnapshot> waitSource, OnGetDataListener listener) {
+		Task<DataSnapshot> waitTask = waitSource.getTask();
+
+		try {
+		    Tasks.await(waitTask);
+		} catch (ExecutionException | InterruptedException e) {
+			waitTask = Tasks.forException(e);
+		}
+
+		if(waitTask.isSuccessful()) {
+			DataSnapshot result = waitTask.getResult();
+			listener.onSuccess(result);
+		}
+		
 	}
 }

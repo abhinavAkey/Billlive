@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.tasks.Task;
+import com.google.firebase.tasks.TaskCompletionSource;
+import com.google.firebase.tasks.Tasks;
 
 
 @Component("completeBillTransactionRepository")
@@ -110,13 +114,15 @@ public class CompleteBillTransactionRepository {
 		}
 	}*/
 	
-	public CompleteBillTransaction getCompleteBillTransactionById(String companyId, String completeBillTransactionId, OnGetDataListener listener) {
+	public void getCompleteBillTransactionById(String companyId, String completeBillTransactionId, OnGetDataListener listener) {
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference completeBillTransactionDataRef = databaseReference.child("completeBillTransactions").child(companyId);
 		completeBillTransactionData = null;
 		completeBillTransactionDataRef.orderByChild("completeBillTransactionId").equalTo(completeBillTransactionId).addListenerForSingleValueEvent(new ValueEventListener() {
-		    @Override
+			@Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -124,16 +130,19 @@ public class CompleteBillTransactionRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 		logger.info("CompleteBillTransaction loaded successfully, CompleteBillTransaction details=" + completeBillTransactionData);
-		return completeBillTransactionData;
 	}
 	
-	public List<CompleteBillTransaction> getAllCompleteBillTransactions(String companyId, OnGetDataListener listener) {
+	public void getAllCompleteBillTransactions(String companyId, OnGetDataListener listener) {
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference completeBillTransactionDataRef = databaseReference.child("completeBillTransactions").child(companyId);
 		completeBillTransactionDataRef.orderByChild("companyId").equalTo(companyId).addListenerForSingleValueEvent(new ValueEventListener() {
-		    @Override
+			@Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -141,6 +150,24 @@ public class CompleteBillTransactionRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
-		return completeBillTransactionsList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
+		
+	}
+	
+	private void waitForTheTaskToCompleteAndReturn(TaskCompletionSource<DataSnapshot> waitSource, OnGetDataListener listener) {
+		Task<DataSnapshot> waitTask = waitSource.getTask();
+
+		try {
+		    Tasks.await(waitTask);
+		} catch (ExecutionException | InterruptedException e) {
+			waitTask = Tasks.forException(e);
+		}
+
+		if(waitTask.isSuccessful()) {
+			DataSnapshot result = waitTask.getResult();
+			listener.onSuccess(result);
+		}
+		
 	}
 }

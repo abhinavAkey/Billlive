@@ -1,5 +1,7 @@
 package com.beatus.billlive.repository;
 
+import java.util.concurrent.ExecutionException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +13,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.tasks.Task;
+import com.google.firebase.tasks.TaskCompletionSource;
+import com.google.firebase.tasks.Tasks;
 
 
 @Component("userRepository")
@@ -24,11 +29,13 @@ public class UserRepository {
 
 	public void isRegistered(String uid, OnGetDataListener listener) {
 		logger.info("inside isRegistered method");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference companyUsersRef = databaseReference.child("companyusers");
 		companyUsersRef.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-		    @Override
+			@Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -36,6 +43,24 @@ public class UserRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
+	}
+	
+	private void waitForTheTaskToCompleteAndReturn(TaskCompletionSource<DataSnapshot> waitSource, OnGetDataListener listener) {
+		Task<DataSnapshot> waitTask = waitSource.getTask();
+
+		try {
+		    Tasks.await(waitTask);
+		} catch (ExecutionException | InterruptedException e) {
+			waitTask = Tasks.forException(e);
+		}
+
+		if(waitTask.isSuccessful()) {
+			DataSnapshot result = waitTask.getResult();
+			listener.onSuccess(result);
+		}
+		
 	}
 	
 	/*private static final Logger logger = LoggerFactory.getLogger(UserRepository.class);
@@ -185,4 +210,5 @@ public class UserRepository {
 		});
 		return usersList;
 	}*/
+	
 }

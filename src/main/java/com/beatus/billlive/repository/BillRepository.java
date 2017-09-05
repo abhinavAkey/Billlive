@@ -1,9 +1,8 @@
 package com.beatus.billlive.repository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -19,6 +18,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.tasks.Task;
+import com.google.firebase.tasks.TaskCompletionSource;
+import com.google.firebase.tasks.Tasks;
 
 
 @Component("billRepository")
@@ -33,11 +35,7 @@ public class BillRepository {
 	public String isAdded = "N";
 	public String isUpdated = "N";
 	public String isDeleted = "N";
-	
-	private BillData billData = null;
-	
-	private List<BillData> billsList = new ArrayList<BillData>();
-	
+			
 	public String addBill(BillData billData) {
 		try {
         	logger.info("In addBill method of BillRepository");
@@ -113,14 +111,15 @@ public class BillRepository {
 		}
 	}
 	
-	public BillData getBillByBillNumber(String companyId, String billNumber, OnGetDataListener listener) {
+	public void getBillByBillNumber(String companyId, String billNumber, OnGetDataListener listener) {
 		logger.info("In getBillByBillNumber method of BillRepository");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+		
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
-		billData = null;
 		billDataRef.orderByChild("billNumber").equalTo(billNumber).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -128,16 +127,20 @@ public class BillRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
-		logger.info("Bill loaded successfully, Bill details=" + billData);
-		return billData;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
+		logger.info("Bill loaded successfully");
 	}
 	
-	public List<BillData> getAllBillsBasedOnCompanyId(String companyId, OnGetDataListener listener) {
+	public void getAllBillsBasedOnCompanyId(String companyId, OnGetDataListener listener) {
+		logger.info("In getBillByBillNumber method of BillRepository");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -145,16 +148,19 @@ public class BillRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
-		return billsList;
+		
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
 	}
-	
-	public List<BillData> getAllBillsInAMonth(String companyId, String year, String month, OnGetDataListener listener) {
+
+	public void getAllBillsInAMonth(String companyId, String year, String month, OnGetDataListener listener) {
 		logger.info("In getAllBillsInAMonth method of BillRepository");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -162,16 +168,19 @@ public class BillRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
-		return billsList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 	}
 	
-	public List<BillData> getAllBillsInAYear(String companyId, String year, OnGetDataListener listener) {
+	public void getAllBillsInAYear(String companyId, String year, OnGetDataListener listener) {
 		logger.info("In getAllBillsInAYear method of BillRepository");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billDataRef.orderByChild("year").equalTo(year).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -179,16 +188,19 @@ public class BillRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
-		return billsList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 	}
 	
-	public List<BillData> getAllBillsInADay(String companyId, String year, String month, String day, OnGetDataListener listener) {
+	public void getAllBillsInADay(String companyId, String year, String month, String day, OnGetDataListener listener) {
 		logger.info("In getAllBillsInADay method of BillRepository");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).orderByChild("day").equalTo(day).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -196,16 +208,19 @@ public class BillRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
-		return billsList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 	}
 	
-	public List<BillData> getAllBills(String companyId, OnGetDataListener listener) {
+	public void getAllBills(String companyId, OnGetDataListener listener) {
 		logger.info("In getAllBills method of BillRepository");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billDataRef.orderByChild("companyId").equalTo(companyId).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -213,8 +228,23 @@ public class BillRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
-		return billsList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 	}
 
+	private void waitForTheTaskToCompleteAndReturn(TaskCompletionSource<DataSnapshot> waitSource, OnGetDataListener listener) {
+		Task<DataSnapshot> waitTask = waitSource.getTask();
 
+		try {
+		    Tasks.await(waitTask);
+		} catch (ExecutionException | InterruptedException e) {
+			waitTask = Tasks.forException(e);
+		}
+
+		if(waitTask.isSuccessful()) {
+			DataSnapshot result = waitTask.getResult();
+			listener.onSuccess(result);
+		}
+		
+	}
 }

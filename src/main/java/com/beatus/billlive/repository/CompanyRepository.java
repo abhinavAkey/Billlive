@@ -1,9 +1,8 @@
 package com.beatus.billlive.repository;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import javax.annotation.Resource;
 
@@ -23,6 +22,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.tasks.Task;
+import com.google.firebase.tasks.TaskCompletionSource;
+import com.google.firebase.tasks.Tasks;
 
 
 @Component("companyRepository")
@@ -40,10 +42,6 @@ public class CompanyRepository {
 	private String isAdded = "N";
 	private String isUpdated = "N";
 	private String isDeleted = "N";
-	
-	private CompanyData companyData = null;
-	
-	List<CompanyData> companysList = new ArrayList<CompanyData>();
 	
 	public String addCompany(CompanyData companyData) {
 		try {
@@ -161,14 +159,15 @@ public class CompanyRepository {
 		}
 	}
 	
-	public CompanyData getCompanyById(String companyId, OnGetDataListener listener) {
+	public void getCompanyById(String companyId, OnGetDataListener listener) {
 		if(StringUtils.isBlank(companyId)){
+			TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 			DatabaseReference companyDataRef = databaseReference.child("companys").child(companyId);
-			companyData = null;
 			companyDataRef.orderByChild("companyId").equalTo(companyId).addListenerForSingleValueEvent(new ValueEventListener() {
-			    @Override
+				@Override
 			    public void onDataChange(DataSnapshot dataSnapshot) {
-			    	listener.onSuccess(dataSnapshot);
+			    	waitSource.setResult(dataSnapshot);
 			    }
 
 			    @Override
@@ -176,19 +175,19 @@ public class CompanyRepository {
 			    	listener.onFailed(databaseError);
 			    }
 			});
-			logger.info("Company loaded successfully, Company details=" + companyData);
-			return companyData;
-		}else {
-			return null;
+			waitForTheTaskToCompleteAndReturn(waitSource, listener);
+			logger.info("Company loaded successfully");
 		}
 	}
 	
-	public List<CompanyData> getAllCompanies(OnGetDataListener listener) {
+	public void getAllCompanies(OnGetDataListener listener) {
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference companyDataRef = databaseReference.child("companys");
 		companyDataRef.orderByChild("companyId").addListenerForSingleValueEvent(new ValueEventListener() {
-		    @Override
+			@Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -196,6 +195,22 @@ public class CompanyRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
-		return companysList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+	}
+	
+	private void waitForTheTaskToCompleteAndReturn(TaskCompletionSource<DataSnapshot> waitSource, OnGetDataListener listener) {
+		Task<DataSnapshot> waitTask = waitSource.getTask();
+
+		try {
+		    Tasks.await(waitTask);
+		} catch (ExecutionException | InterruptedException e) {
+			waitTask = Tasks.forException(e);
+		}
+
+		if(waitTask.isSuccessful()) {
+			DataSnapshot result = waitTask.getResult();
+			listener.onSuccess(result);
+		}
+		
 	}
 }

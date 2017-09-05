@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,6 +19,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.tasks.Task;
+import com.google.firebase.tasks.TaskCompletionSource;
+import com.google.firebase.tasks.Tasks;
 
 @Component("invoiceRepository")
 public class InvoiceRepository {
@@ -124,15 +128,17 @@ public class InvoiceRepository {
 		}
 	}
 
-	public InvoiceData getInvoiceById(String companyId, String invoiceNumber, OnGetDataListener listener) {
+	public void getInvoiceById(String companyId, String invoiceNumber, OnGetDataListener listener) {
 		logger.info("In getInvoiceById method of InvoiceRepository");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
 		invoiceData = null;
 		invoiceDataRef.orderByChild("uid").equalTo(invoiceNumber)
 				.addListenerForSingleValueEvent(new ValueEventListener() {
 					@Override
 					public void onDataChange(DataSnapshot dataSnapshot) {
-						listener.onSuccess(dataSnapshot);
+						waitSource.setResult(dataSnapshot);
 					}
 
 					@Override
@@ -140,18 +146,21 @@ public class InvoiceRepository {
 						listener.onFailed(databaseError);
 					}
 				});
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 		logger.info("Invoice loaded successfully, Invoice details=" + invoiceData);
-		return invoiceData;
 	}
 
-	public List<InvoiceData> getAllInvoices(String companyId, OnGetDataListener listener) {
+	public void getAllInvoices(String companyId, OnGetDataListener listener) {
 		logger.info("In getAllInvoices method of InvoiceRepository");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
 		invoiceDataRef.orderByChild("companyId").equalTo(companyId)
 				.addListenerForSingleValueEvent(new ValueEventListener() {
 					@Override
 					public void onDataChange(DataSnapshot dataSnapshot) {
-						listener.onSuccess(dataSnapshot);
+						waitSource.setResult(dataSnapshot);
 					}
 
 					@Override
@@ -159,18 +168,21 @@ public class InvoiceRepository {
 						listener.onFailed(databaseError);
 					}
 				});
-		return invoicesList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 	}
 
-	public List<InvoiceData> getAllInvoicesInADay(String companyId, String year, String month, String day,
+	public void getAllInvoicesInADay(String companyId, String year, String month, String day,
 			OnGetDataListener listener) {
 		logger.info("In getAllInvoicesInADay method of InvoiceRepository");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
 		invoiceDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).orderByChild("day")
 				.equalTo(day).addListenerForSingleValueEvent(new ValueEventListener() {
 					@Override
 					public void onDataChange(DataSnapshot dataSnapshot) {
-						listener.onSuccess(dataSnapshot);
+						waitSource.setResult(dataSnapshot);
 					}
 
 					@Override
@@ -178,18 +190,20 @@ public class InvoiceRepository {
 						listener.onFailed(databaseError);
 					}
 				});
-		return invoicesList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 	}
 
-	public List<InvoiceData> getAllInvoicesInAMonth(String companyId, String year, String month,
-			OnGetDataListener listener) {
+	public void getAllInvoicesInAMonth(String companyId, String year, String month, OnGetDataListener listener) {
 		logger.info("In getAllInvoicesInAMonth method of InvoiceRepository");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
 		invoiceDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month)
 				.addListenerForSingleValueEvent(new ValueEventListener() {
 					@Override
 					public void onDataChange(DataSnapshot dataSnapshot) {
-						listener.onSuccess(dataSnapshot);
+						waitSource.setResult(dataSnapshot);
 					}
 
 					@Override
@@ -197,16 +211,19 @@ public class InvoiceRepository {
 						listener.onFailed(databaseError);
 					}
 				});
-		return invoicesList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 	}
 
-	public List<InvoiceData> getAllInvoicesInAYear(String companyId, String year, OnGetDataListener listener) {
+	public void getAllInvoicesInAYear(String companyId, String year, OnGetDataListener listener) {
 		logger.info("In getAllInvoicesInAYear method of InvoiceRepository");
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
 		invoiceDataRef.orderByChild("year").equalTo(year).addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
-				listener.onSuccess(dataSnapshot);
+				waitSource.setResult(dataSnapshot);
 			}
 
 			@Override
@@ -214,15 +231,18 @@ public class InvoiceRepository {
 				listener.onFailed(databaseError);
 			}
 		});
-		return invoicesList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 	}
 
-	public List<InvoiceData> getAllInvoicesBasedOnCompanyId(String companyId, OnGetDataListener listener) {
+	public void getAllInvoicesBasedOnCompanyId(String companyId, OnGetDataListener listener) {
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
 		invoiceDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
 			@Override
 			public void onDataChange(DataSnapshot dataSnapshot) {
-				listener.onSuccess(dataSnapshot);
+				waitSource.setResult(dataSnapshot);
 			}
 
 			@Override
@@ -230,6 +250,24 @@ public class InvoiceRepository {
 				listener.onFailed(databaseError);
 			}
 		});
-		return invoicesList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
+	}
+
+	private void waitForTheTaskToCompleteAndReturn(TaskCompletionSource<DataSnapshot> waitSource,
+			OnGetDataListener listener) {
+		Task<DataSnapshot> waitTask = waitSource.getTask();
+
+		try {
+			Tasks.await(waitTask);
+		} catch (ExecutionException | InterruptedException e) {
+			waitTask = Tasks.forException(e);
+		}
+
+		if (waitTask.isSuccessful()) {
+			DataSnapshot result = waitTask.getResult();
+			listener.onSuccess(result);
+		}
+
 	}
 }

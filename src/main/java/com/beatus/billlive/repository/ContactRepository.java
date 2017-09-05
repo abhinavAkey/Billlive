@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,6 +18,9 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.tasks.Task;
+import com.google.firebase.tasks.TaskCompletionSource;
+import com.google.firebase.tasks.Tasks;
 
 @Component("contactRepository")
 public class ContactRepository {
@@ -112,13 +116,15 @@ public class ContactRepository {
 		}
 	}
 
-	public ContactInfo getContactByContactId(String companyId, String contactId, OnGetDataListener listener) {
+	public void getContactByContactId(String companyId, String contactId, OnGetDataListener listener) {
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference contactInfoRef = databaseReference.child("contacts").child(companyId);
 		contactInfo = null;
 		contactInfoRef.orderByChild("contactId").equalTo(contactId).addListenerForSingleValueEvent(new ValueEventListener() {
-		    @Override
+			@Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -126,16 +132,19 @@ public class ContactRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 		logger.info("Contact loaded successfully, Contact details=" + contactInfo);
-		return contactInfo;
 	}
 
-	public List<ContactInfo> getAllContacts(String companyId, OnGetDataListener listener) {
+	public void getAllContacts(String companyId, OnGetDataListener listener) {
+		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
+
 		DatabaseReference contactInfoRef = databaseReference.child("contacts").child(companyId);
 		contactInfoRef.addListenerForSingleValueEvent(new ValueEventListener() {
-		    @Override
+			@Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
-		    	listener.onSuccess(dataSnapshot);
+		    	waitSource.setResult(dataSnapshot);
 		    }
 
 		    @Override
@@ -143,7 +152,23 @@ public class ContactRepository {
 		    	listener.onFailed(databaseError);
 		    }
 		});
-		return contactsList;
+		waitForTheTaskToCompleteAndReturn(waitSource, listener);
+
 	}
 
+	private void waitForTheTaskToCompleteAndReturn(TaskCompletionSource<DataSnapshot> waitSource, OnGetDataListener listener) {
+		Task<DataSnapshot> waitTask = waitSource.getTask();
+
+		try {
+		    Tasks.await(waitTask);
+		} catch (ExecutionException | InterruptedException e) {
+			waitTask = Tasks.forException(e);
+		}
+
+		if(waitTask.isSuccessful()) {
+			DataSnapshot result = waitTask.getResult();
+			listener.onSuccess(result);
+		}
+		
+	}
 }
