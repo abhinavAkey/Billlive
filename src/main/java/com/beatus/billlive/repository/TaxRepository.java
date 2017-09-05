@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.Tax;
-import com.google.firebase.database.ChildEventListener;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -110,55 +110,36 @@ public class TaxRepository {
 		}
 	}
 	
-	public Tax getTaxById(String companyId, String taxId) {
+	public Tax getTaxById(String companyId, String taxId, OnGetDataListener listener) {
 		DatabaseReference taxRef = databaseReference.child("taxs").child(companyId);
 		tax = null;
-		taxRef.orderByChild("taxId").equalTo(taxId).addChildEventListener(new ChildEventListener() {
+		taxRef.orderByChild("taxId").equalTo(taxId).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
-		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-		        tax = dataSnapshot.getValue(Tax.class);
-		        System.out.println(dataSnapshot.getKey() + " was " + tax.getTaxId());
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
 
-			@Override
-			public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onChildRemoved(DataSnapshot snapshot) {
-				
-			}
-
-			@Override
-			public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		logger.info("Tax loaded successfully, Tax details=" + tax);
 		return tax;
 	}
 	
-	public List<Tax> getAllTaxs(String companyId) {
+	public List<Tax> getAllTaxs(String companyId, OnGetDataListener listener) {
 		DatabaseReference taxRef = databaseReference.child("taxs").child(companyId);
-		taxRef.orderByChild("taxId").addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot taxSnapshot) {
-		    	taxsList.clear();
-		        for (DataSnapshot taxPostSnapshot: taxSnapshot.getChildren()) {
-		            Tax tax = taxPostSnapshot.getValue(Tax.class);
-		            taxsList.add(tax);
-		        }
+		taxRef.orderByChild("taxId").addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return taxsList;
 	}

@@ -11,8 +11,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import com.beatus.billlive.domain.model.BillDTO;
 import com.beatus.billlive.domain.model.BillData;
 import com.beatus.billlive.domain.model.ReportData;
+import com.beatus.billlive.service.BillService;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -28,18 +30,18 @@ public class GenerateReportRepository {
     @Qualifier(value = "databaseReference")
     private DatabaseReference databaseReference;
 	
-	@Resource(name = "billRepository")
-	private BillRepository billRepository;
+	@Resource(name = "billService")
+	private BillService billService;
 	
 	private BillData billData = null;
 	
 	List<BillData> billsList = new ArrayList<BillData>();
 	
 	public ReportData getAllBillsBasedOnCompanyId(String companyId) {
-		List<BillData> bills = billRepository.getAllBills(companyId);
+		List<BillDTO> bills = billService.getAllBills(companyId);
 		Double totalAmount = 0.0;
 		Double totalTax = 0.0;
-		for(BillData bill : bills){
+		for(BillDTO bill : bills){
 			if(bill != null){
 				totalAmount += bill.getTotalAmount();
 				totalTax += bill.getTotalTax();

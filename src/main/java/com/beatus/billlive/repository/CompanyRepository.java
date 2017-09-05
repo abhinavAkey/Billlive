@@ -16,8 +16,9 @@ import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.CompanyData;
 import com.beatus.billlive.domain.model.CompanyUsers;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
+import com.beatus.billlive.service.UserService;
 import com.beatus.billlive.utils.Constants;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,8 +34,8 @@ public class CompanyRepository {
     @Qualifier(value = "databaseReference")
     private DatabaseReference databaseReference;
 	
-	@Resource(name = "userRepository")
-	private UserRepository userRepository;
+	@Resource(name = "userService")
+	private UserService userService;
 	
 	private String isAdded = "N";
 	private String isUpdated = "N";
@@ -125,7 +126,7 @@ public class CompanyRepository {
 			    }
 			});
 			if(Constants.YES.equalsIgnoreCase(isUpdated)){
-				String companyId = userRepository.isRegistered(companyData.getListUid().get(0).getUid());
+				String companyId = userService.isRegistered(companyData.getListUid().get(0).getUid());
 				if(companyId == null){
 					addCompanyUser(companyUsersRef, companyData, companyData.getCompanyId());
 				}
@@ -160,36 +161,20 @@ public class CompanyRepository {
 		}
 	}
 	
-	public CompanyData getCompanyById(String companyId) {
+	public CompanyData getCompanyById(String companyId, OnGetDataListener listener) {
 		if(StringUtils.isBlank(companyId)){
 			DatabaseReference companyDataRef = databaseReference.child("companys").child(companyId);
 			companyData = null;
-			companyDataRef.orderByChild("companyId").equalTo(companyId).addChildEventListener(new ChildEventListener() {
+			companyDataRef.orderByChild("companyId").equalTo(companyId).addListenerForSingleValueEvent(new ValueEventListener() {
 			    @Override
-			    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-			        companyData = dataSnapshot.getValue(CompanyData.class);
-			        System.out.println(dataSnapshot.getKey() + " was " + companyData.getCompanyId());
+			    public void onDataChange(DataSnapshot dataSnapshot) {
+			    	listener.onSuccess(dataSnapshot);
 			    }
-	
-				@Override
-				public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
-					
-				}
-	
-				@Override
-				public void onChildRemoved(DataSnapshot snapshot) {
-					
-				}
-	
-				@Override
-				public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
-					
-				}
-	
-				@Override
-				public void onCancelled(DatabaseError error) {
-					
-				}
+
+			    @Override
+			    public void onCancelled(DatabaseError databaseError) {
+			    	listener.onFailed(databaseError);
+			    }
 			});
 			logger.info("Company loaded successfully, Company details=" + companyData);
 			return companyData;
@@ -198,21 +183,18 @@ public class CompanyRepository {
 		}
 	}
 	
-	public List<CompanyData> getAllCompanies() {
+	public List<CompanyData> getAllCompanies(OnGetDataListener listener) {
 		DatabaseReference companyDataRef = databaseReference.child("companys");
-		companyDataRef.orderByChild("companyId").addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot companySnapshot) {
-		    	companysList.clear();
-		        for (DataSnapshot companyPostSnapshot: companySnapshot.getChildren()) {
-		            CompanyData companyData = companyPostSnapshot.getValue(CompanyData.class);
-		            companysList.add(companyData);
-		        }
+		companyDataRef.orderByChild("companyId").addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return companysList;
 	}

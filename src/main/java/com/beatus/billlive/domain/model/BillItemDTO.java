@@ -19,6 +19,7 @@ public class BillItemDTO {
 	private Double marginAmount;
 	private Double taxOnMargin;
 	private String taxId;
+	private Double taxPercentage;
 	private String isAdded;
 	private String isUpdated;
 	private String isDeleted;
@@ -95,6 +96,12 @@ public class BillItemDTO {
 	}
 	public void setTaxId(String taxId) {
 		this.taxId = taxId;
+	}
+	public Double getTaxPercentage() {
+		return taxPercentage;
+	}
+	public void setTaxPercentage(Double taxPercentage) {
+		this.taxPercentage = taxPercentage;
 	}
 	public QuantityType getQuantityType() {
 		return quantityType;

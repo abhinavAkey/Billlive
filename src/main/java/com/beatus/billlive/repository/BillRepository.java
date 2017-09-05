@@ -12,9 +12,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.BillData;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
 import com.beatus.billlive.service.exception.BillliveServiceException;
 import com.beatus.billlive.validation.exception.BillValidationException;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -36,7 +36,7 @@ public class BillRepository {
 	
 	private BillData billData = null;
 	
-	List<BillData> billsList = new ArrayList<BillData>();
+	private List<BillData> billsList = new ArrayList<BillData>();
 	
 	public String addBill(BillData billData) {
 		try {
@@ -113,136 +113,105 @@ public class BillRepository {
 		}
 	}
 	
-	public BillData getBillByBillNumber(String companyId, String billNumber) {
+	public BillData getBillByBillNumber(String companyId, String billNumber, OnGetDataListener listener) {
 		logger.info("In getBillByBillNumber method of BillRepository");
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
 		billData = null;
-		billDataRef.orderByChild("billNumber").equalTo(billNumber).addChildEventListener(new ChildEventListener() {
+		billDataRef.orderByChild("billNumber").equalTo(billNumber).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
-		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-		        billData = dataSnapshot.getValue(BillData.class);
-		        System.out.println(dataSnapshot.getKey() + " was " + billData.getUid());
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
 
-			@Override
-			public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onChildRemoved(DataSnapshot snapshot) {
-				
-			}
-
-			@Override
-			public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		logger.info("Bill loaded successfully, Bill details=" + billData);
 		return billData;
 	}
 	
-	public List<BillData> getAllBillsBasedOnCompanyId(String companyId) {
+	public List<BillData> getAllBillsBasedOnCompanyId(String companyId, OnGetDataListener listener) {
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
-		billDataRef.addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot billSnapshot) {
-		    	billsList.clear();
-		        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {
-		            BillData billData = billPostSnapshot.getValue(BillData.class);
-		            billsList.add(billData);
-		        }
+		billDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return billsList;
 	}
 	
-	public List<BillData> getAllBillsInAMonth(String companyId, String year, String month) {
+	public List<BillData> getAllBillsInAMonth(String companyId, String year, String month, OnGetDataListener listener) {
 		logger.info("In getAllBillsInAMonth method of BillRepository");
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
-		billDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot billSnapshot) {
-		    	billsList.clear();
-		        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {
-		            BillData billData = billPostSnapshot.getValue(BillData.class);
-		            billsList.add(billData);
-		        }
+		billDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return billsList;
 	}
 	
-	public List<BillData> getAllBillsInAYear(String companyId, String year) {
+	public List<BillData> getAllBillsInAYear(String companyId, String year, OnGetDataListener listener) {
 		logger.info("In getAllBillsInAYear method of BillRepository");
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
-		billDataRef.orderByChild("year").equalTo(year).addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot billSnapshot) {
-		    	billsList.clear();
-		        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {
-		            BillData billData = billPostSnapshot.getValue(BillData.class);
-		            billsList.add(billData);
-		        }
+		billDataRef.orderByChild("year").equalTo(year).addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return billsList;
 	}
 	
-	public List<BillData> getAllBillsInADay(String companyId, String year, String month, String day) {
+	public List<BillData> getAllBillsInADay(String companyId, String year, String month, String day, OnGetDataListener listener) {
 		logger.info("In getAllBillsInADay method of BillRepository");
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
-		billDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).orderByChild("day").equalTo(day).addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot billSnapshot) {
-		    	billsList.clear();
-		        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {
-		            BillData billData = billPostSnapshot.getValue(BillData.class);
-		            billsList.add(billData);
-		        }
+		billDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).orderByChild("day").equalTo(day).addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return billsList;
 	}
 	
-	public List<BillData> getAllBills(String companyId) {
+	public List<BillData> getAllBills(String companyId, OnGetDataListener listener) {
 		logger.info("In getAllBills method of BillRepository");
 		DatabaseReference billDataRef = databaseReference.child("bills").child(companyId);
-		billDataRef.orderByChild("companyId").equalTo(companyId).addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot billSnapshot) {
-		    	billsList.clear();
-		        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {
-		            BillData billData = billPostSnapshot.getValue(BillData.class);
-		            billsList.add(billData);
-		        }
+		billDataRef.orderByChild("companyId").equalTo(companyId).addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return billsList;
 	}

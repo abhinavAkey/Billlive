@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.PurchaseOrderData;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
 import com.beatus.billlive.utils.Constants;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -115,112 +115,84 @@ public class PurchaseOrderRepository {
 		}
 	}
 	
-	public PurchaseOrderData getPurchaseOrderByPurchaseOrderNumber(String companyId, String purchaseOrderNumber) {
+	public PurchaseOrderData getPurchaseOrderByPurchaseOrderNumber(String companyId, String purchaseOrderNumber, OnGetDataListener listener) {
 		DatabaseReference purchaseOrderDataRef = databaseReference.child("purchaseOrders").child(companyId);
 		purchaseOrderData = null;
-		purchaseOrderDataRef.orderByChild("purchaseOrderNumber").equalTo(purchaseOrderNumber).addChildEventListener(new ChildEventListener() {
+		purchaseOrderDataRef.orderByChild("purchaseOrderNumber").equalTo(purchaseOrderNumber).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
-		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-		        purchaseOrderData = dataSnapshot.getValue(PurchaseOrderData.class);
-		        System.out.println(dataSnapshot.getKey() + " was " + purchaseOrderData.getUid());
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
 
-			@Override
-			public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onChildRemoved(DataSnapshot snapshot) {
-				
-			}
-
-			@Override
-			public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		logger.info("PurchaseOrder loaded successfully, PurchaseOrder details=" + purchaseOrderData);
 		return purchaseOrderData;
 	}
 	
-	public List<PurchaseOrderData> getAllPurchaseOrdersBasedOnCompanyId(String companyId) {
+	public List<PurchaseOrderData> getAllPurchaseOrdersBasedOnCompanyId(String companyId, OnGetDataListener listener) {
 		DatabaseReference purchaseOrderDataRef = databaseReference.child("purchaseOrders").child(companyId);
-		purchaseOrderDataRef.addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot purchaseOrderSnapshot) {
-		    	purchaseOrdersList.clear();
-		        for (DataSnapshot purchaseOrderPostSnapshot: purchaseOrderSnapshot.getChildren()) {
-		            PurchaseOrderData purchaseOrderData = purchaseOrderPostSnapshot.getValue(PurchaseOrderData.class);
-		            purchaseOrdersList.add(purchaseOrderData);
-		        }
+		purchaseOrderDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return purchaseOrdersList;
 	}
 	
-	public List<PurchaseOrderData> getAllPurchaseOrdersInAMonth(String companyId, String year, String month) {
+	public List<PurchaseOrderData> getAllPurchaseOrdersInAMonth(String companyId, String year, String month, OnGetDataListener listener) {
 		DatabaseReference purchaseOrderDataRef = databaseReference.child("purchaseOrders").child(companyId);
-		purchaseOrderDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot purchaseOrderSnapshot) {
-		    	purchaseOrdersList.clear();
-		        for (DataSnapshot purchaseOrderPostSnapshot: purchaseOrderSnapshot.getChildren()) {
-		            PurchaseOrderData purchaseOrderData = purchaseOrderPostSnapshot.getValue(PurchaseOrderData.class);
-		            purchaseOrdersList.add(purchaseOrderData);
-		        }
+		purchaseOrderDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return purchaseOrdersList;
 	}
 	
-	public List<PurchaseOrderData> getAllPurchaseOrdersInAYear(String companyId, String year) {
+	public List<PurchaseOrderData> getAllPurchaseOrdersInAYear(String companyId, String year, OnGetDataListener listener) {
 		DatabaseReference purchaseOrderDataRef = databaseReference.child("purchaseOrders").child(companyId);
-		purchaseOrderDataRef.orderByChild("year").equalTo(year).addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot purchaseOrderSnapshot) {
-		    	purchaseOrdersList.clear();
-		        for (DataSnapshot purchaseOrderPostSnapshot: purchaseOrderSnapshot.getChildren()) {
-		            PurchaseOrderData purchaseOrderData = purchaseOrderPostSnapshot.getValue(PurchaseOrderData.class);
-		            purchaseOrdersList.add(purchaseOrderData);
-		        }
+		purchaseOrderDataRef.orderByChild("year").equalTo(year).addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return purchaseOrdersList;
 	}
 	
-	public List<PurchaseOrderData> getAllPurchaseOrdersInADay(String companyId, String year, String month, String day) {
+	public List<PurchaseOrderData> getAllPurchaseOrdersInADay(String companyId, String year, String month, String day, OnGetDataListener listener) {
 		DatabaseReference purchaseOrderDataRef = databaseReference.child("purchaseOrders").child(companyId);
-		purchaseOrderDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).orderByChild("day").equalTo(day).addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot purchaseOrderSnapshot) {
-		    	purchaseOrdersList.clear();
-		        for (DataSnapshot purchaseOrderPostSnapshot: purchaseOrderSnapshot.getChildren()) {
-		            PurchaseOrderData purchaseOrderData = purchaseOrderPostSnapshot.getValue(PurchaseOrderData.class);
-		            purchaseOrdersList.add(purchaseOrderData);
-		        }
+		purchaseOrderDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).orderByChild("day").equalTo(day).addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return purchaseOrdersList;
 	}

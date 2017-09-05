@@ -22,11 +22,14 @@ import com.beatus.billlive.domain.model.BillItemData;
 import com.beatus.billlive.domain.model.ItemData;
 import com.beatus.billlive.domain.model.Tax;
 import com.beatus.billlive.repository.BillRepository;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
 import com.beatus.billlive.service.exception.BillliveServiceException;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.BillValidator;
 import com.beatus.billlive.validation.exception.BillValidationException;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 @Service
 @Component("billService")
@@ -45,6 +48,10 @@ public class BillService {
 
 	@Resource(name = "itemService")
 	private ItemService itemService;
+	
+	private BillData billData = null;
+	
+	private List<BillData> billsList = new ArrayList<BillData>();
 
 	public String addBill(HttpServletRequest request, HttpServletResponse response, BillDTO billDTO)
 			throws BillValidationException {
@@ -56,9 +63,9 @@ public class BillService {
 			boolean isValidated = billValidator.validateBillDTO(billDTO);
 			if (isValidated) {
 				String companyId = billDTO.getCompanyId();
-				BillData existingBill = null;
+				BillDTO existingBill = null;
 				if (StringUtils.isNotBlank(billDTO.getBillNumber())) {
-					existingBill = billRepository.getBillByBillNumber(companyId, billDTO.getBillNumber());
+					existingBill = getBillByBillNumber(companyId, billDTO.getBillNumber());
 					return updateBill(request, response, billDTO);
 				}
 				BillData billData = populateBillData(billDTO, existingBill, companyId);
@@ -82,9 +89,9 @@ public class BillService {
 			boolean isValidated = billValidator.validateBillDTO(billDTO);
 			if (isValidated) {
 				String companyId = billDTO.getCompanyId();
-				BillData existingBill = null;
+				BillDTO existingBill = null;
 				if (StringUtils.isNotBlank(billDTO.getBillNumber()))
-					existingBill = billRepository.getBillByBillNumber(companyId, billDTO.getBillNumber());
+					existingBill = getBillByBillNumber(companyId, billDTO.getBillNumber());
 				BillData billData = populateBillData(billDTO, existingBill, companyId);
 				return billRepository.updateBill(billData);
 			}
@@ -100,7 +107,8 @@ public class BillService {
 			throws BillliveServiceException, BillValidationException {
 		LOGGER.info("In removeBill method of Bill Service");
 		if (StringUtils.isNotBlank(billNumber) && StringUtils.isNotBlank(companyId)) {
-			BillData billData = billRepository.getBillByBillNumber(companyId, billNumber);
+			BillDTO billDTO = getBillByBillNumber(companyId, billNumber);
+			BillData billData = populateBillData(billDTO, billDTO, companyId);
 			billData.setUid(uid);
 			billData.setIsRemoved(Constants.YES);
 			return billRepository.updateBill(billData);
@@ -114,10 +122,31 @@ public class BillService {
 	public List<BillDTO> getAllBillsBasedOnCompanyId(String companyId) {
 		LOGGER.info("In getAllBillsBasedOnCompanyId method of Bill Service");
 		if (StringUtils.isNotBlank(companyId)) {
-			List<BillData> bills = billRepository.getAllBillsBasedOnCompanyId(companyId);
+			billRepository.getAllBillsBasedOnCompanyId(companyId, new OnGetDataListener() {
+
+				@Override
+		        public void onStart() {
+		        }
+
+		        @Override
+		        public void onSuccess(DataSnapshot billSnapshot) {
+		        	billsList.clear();
+			        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {
+			            BillData billData = billPostSnapshot.getValue(BillData.class);
+			            billsList.add(billData);
+			        } 
+		        	LOGGER.info(" The bill Snapshot Key is " + billSnapshot.getKey());
+		        }
+
+		        @Override
+		        public void onFailed(DatabaseError databaseError) {
+		           LOGGER.info("Error retrieving data");
+		           throw new BillliveServiceException(databaseError.getMessage());
+		        }
+		    });
 			List<BillDTO> billsNotRemoved = new ArrayList<BillDTO>();
-			for (BillData bill : bills) {
-				if (!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
+			for (BillData bill : billsList) {
+				if (bill!= null && !Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
 					billsNotRemoved.add(populateBillDTO(bill));
 				}
 			}
@@ -133,8 +162,26 @@ public class BillService {
 		LOGGER.info("In getBillByBillNumber method of Bill Service");
 		if (StringUtils.isNotBlank(billNumber) && StringUtils.isNotBlank(companyId)) {
 
-			BillData billData = billRepository.getBillByBillNumber(companyId, billNumber);
-			if (!Constants.YES.equalsIgnoreCase(billData.getIsRemoved())) {
+			billRepository.getBillByBillNumber(companyId, billNumber, new OnGetDataListener() {
+
+				@Override
+		        public void onStart() {
+		        }
+
+		        @Override
+		        public void onSuccess(DataSnapshot billSnapshot) {
+		            BillData billData = billSnapshot.getValue(BillData.class);
+		            billsList.add(billData);
+		        	LOGGER.info(" The bill Snapshot Key is " + billSnapshot.getKey());
+		        }
+
+		        @Override
+		        public void onFailed(DatabaseError databaseError) {
+		           LOGGER.info("Error retrieving data");
+		           throw new BillliveServiceException(databaseError.getMessage());
+		        }
+		    });
+			if (billData != null && !Constants.YES.equalsIgnoreCase(billData.getIsRemoved())) {
 				return populateBillDTO(billData);
 			} else {
 				return null;
@@ -150,10 +197,31 @@ public class BillService {
 		LOGGER.info("In getAllBills method of Bill Service");
 		if (StringUtils.isNotBlank(companyId)) {
 
-			List<BillData> bills = billRepository.getAllBills(companyId);
+			billRepository.getAllBills(companyId, new OnGetDataListener() {
+
+				@Override
+		        public void onStart() {
+		        }
+
+		        @Override
+		        public void onSuccess(DataSnapshot billSnapshot) {
+		        	billsList.clear();
+			        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {
+			            BillData billData = billPostSnapshot.getValue(BillData.class);
+			            billsList.add(billData);
+			        } 
+		        	LOGGER.info(" The bill Snapshot Key is " + billSnapshot.getKey());
+		        }
+
+		        @Override
+		        public void onFailed(DatabaseError databaseError) {
+		           LOGGER.info("Error retrieving data");
+		           throw new BillliveServiceException(databaseError.getMessage());
+		        }
+		    });
 			List<BillDTO> billsNotRemoved = new ArrayList<BillDTO>();
-			for (BillData bill : bills) {
-				if (!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
+			for (BillData bill : billsList) {
+				if (bill!= null && !Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
 					billsNotRemoved.add(populateBillDTO(bill));
 				}
 			}
@@ -168,10 +236,31 @@ public class BillService {
 	public List<BillDTO> getAllBillsInAMonth(String companyId, String year, String month) {
 		LOGGER.info("In getAllBillsInAMonth method of Bill Service");
 		if (StringUtils.isNotBlank(companyId) && StringUtils.isNotBlank(year) && StringUtils.isNotBlank(month)) {
-			List<BillData> bills = billRepository.getAllBillsInAMonth(companyId, year, month);
+			billRepository.getAllBillsInAMonth(companyId, year, month, new OnGetDataListener() {
+
+				@Override
+		        public void onStart() {
+		        }
+
+		        @Override
+		        public void onSuccess(DataSnapshot billSnapshot) {
+		        	billsList.clear();
+			        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {
+			            BillData billData = billPostSnapshot.getValue(BillData.class);
+			            billsList.add(billData);
+			        } 
+		        	LOGGER.info(" The bill Snapshot Key is " + billSnapshot.getKey());
+		        }
+
+		        @Override
+		        public void onFailed(DatabaseError databaseError) {
+		           LOGGER.info("Error retrieving data");
+		           throw new BillliveServiceException(databaseError.getMessage());
+		        }
+		    });
 			List<BillDTO> billsNotRemoved = new ArrayList<BillDTO>();
-			for (BillData bill : bills) {
-				if (!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
+			for (BillData bill : billsList) {
+				if (bill!= null && !Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
 					billsNotRemoved.add(populateBillDTO(bill));
 				}
 			}
@@ -187,10 +276,31 @@ public class BillService {
 		LOGGER.info("In getAllBillsInADay method of Bill Service");
 		if (StringUtils.isNotBlank(companyId) && StringUtils.isNotBlank(year) && StringUtils.isNotBlank(month)
 				&& StringUtils.isNotBlank(day)) {
-			List<BillData> bills = billRepository.getAllBillsInADay(companyId, year, month, day);
+			billRepository.getAllBillsInADay(companyId, year, month, day, new OnGetDataListener() {
+
+				@Override
+		        public void onStart() {
+		        }
+
+		        @Override
+		        public void onSuccess(DataSnapshot billSnapshot) {
+		        	billsList.clear();
+			        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {
+			            BillData billData = billPostSnapshot.getValue(BillData.class);
+			            billsList.add(billData);
+			        } 
+		        	LOGGER.info(" The bill Snapshot Key is " + billSnapshot.getKey());
+		        }
+
+		        @Override
+		        public void onFailed(DatabaseError databaseError) {
+		           LOGGER.info("Error retrieving data");
+		           throw new BillliveServiceException(databaseError.getMessage());
+		        }
+		    });
 			List<BillDTO> billsNotRemoved = new ArrayList<BillDTO>();
-			for (BillData bill : bills) {
-				if (!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
+			for (BillData bill : billsList) {
+				if (bill!= null && !Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
 					billsNotRemoved.add(populateBillDTO(bill));
 				}
 			}
@@ -206,10 +316,31 @@ public class BillService {
 	public List<BillDTO> getAllBillsInAnYear(String companyId, String year) {
 		LOGGER.info("In getAllBillsInAnYear method of Bill Service");
 		if (StringUtils.isNotBlank(companyId) && StringUtils.isNotBlank(year)) {
-			List<BillData> bills = billRepository.getAllBillsInAYear(companyId, year);
+			billRepository.getAllBillsInAYear(companyId, year, new OnGetDataListener() {
+
+				@Override
+		        public void onStart() {
+		        }
+
+		        @Override
+		        public void onSuccess(DataSnapshot billSnapshot) {
+		        	billsList.clear();
+			        for (DataSnapshot billPostSnapshot: billSnapshot.getChildren()) {
+			            BillData billData = billPostSnapshot.getValue(BillData.class);
+			            billsList.add(billData);
+			        } 
+		        	LOGGER.info(" The bill Snapshot Key is " + billSnapshot.getKey());
+		        }
+
+		        @Override
+		        public void onFailed(DatabaseError databaseError) {
+		           LOGGER.info("Error retrieving data");
+		           throw new BillliveServiceException(databaseError.getMessage());
+		        }
+		    });
 			List<BillDTO> billsNotRemoved = new ArrayList<BillDTO>();
-			for (BillData bill : bills) {
-				if (!Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
+			for (BillData bill : billsList) {
+				if (bill!= null && !Constants.YES.equalsIgnoreCase(bill.getIsRemoved())) {
 					billsNotRemoved.add(populateBillDTO(bill));
 				}
 			}
@@ -267,7 +398,7 @@ public class BillService {
 
 	}
 
-	private BillData populateBillData(BillDTO billDTO, BillData existingBill, String companyId) {
+	private BillData populateBillData(BillDTO billDTO, BillDTO existingBill, String companyId) {
 		BillData billData = new BillData();
 		billData.setBillFromContactId(billDTO.getBillFromContactId());
 		billData.setBillToContactId(billDTO.getBillToContactId());
@@ -305,7 +436,6 @@ public class BillService {
 					|| Constants.YES.equalsIgnoreCase(itemDTO.getIsUpdated())) {
 				// Get Item Details
 				ItemData existingItem = itemService.getItemById(companyId, itemDTO.getItemId());
-
 				billItem.setItemId(itemDTO.getItemId());
 				billItem.setInventoryId(itemDTO.getInventoryId());
 				billItem.setIsTaxeble(itemDTO.getIsTaxeble());
@@ -322,8 +452,14 @@ public class BillService {
 					billItem.setAmountBeforeTax(itemDTO.getAmountBeforeTax());
 				}
 				Double taxAmountForItem = null;
-				Tax tax = taxService.getTaxById(companyId, itemDTO.getTaxId());
-				Double taxPercentage = tax.getTotalTaxPercentage();
+				Double taxPercentage = 0.0;
+				if(itemDTO.getTaxPercentage() == null){
+					Tax tax = taxService.getTaxById(companyId, itemDTO.getTaxId());
+					if(tax != null)
+						taxPercentage = tax.getTotalTaxPercentage();
+				}else {
+					taxPercentage = itemDTO.getTaxPercentage();
+				}
 				if (Constants.YES.equalsIgnoreCase(itemDTO.getIsTaxeble())) {
 					if (itemDTO.getTaxAmountForItem() == null) {
 						taxAmountForItem = Utils.calculateTaxAmount(amountBeforeTax, taxPercentage);

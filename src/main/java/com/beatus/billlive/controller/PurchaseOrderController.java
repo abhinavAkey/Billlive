@@ -108,7 +108,7 @@ public class PurchaseOrderController extends BaseController {
 			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<String> removePurchaseOrder(
 			@RequestParam(Constants.PURCHASE_ORDER_NUMBER) String purchaseOrderNumber, HttpServletRequest request,
-			HttpServletResponse response) throws PurchaseOrderDataException {
+			HttpServletResponse response) throws PurchaseOrderDataException, ItemDataException, InventoryValidationException {
 		LOG.info("In removePurchaseOrder method of PurchaseOrderController");
 		if (StringUtils.isNotBlank(purchaseOrderNumber)) {
 			// These comments will be removed once the auth_token is sent from

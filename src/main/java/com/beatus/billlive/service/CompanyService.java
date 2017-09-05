@@ -8,25 +8,37 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import com.beatus.billlive.domain.model.CompanyData;
 import com.beatus.billlive.exception.CompanyDataException;
 import com.beatus.billlive.repository.CompanyRepository;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
+import com.beatus.billlive.service.exception.BillliveServiceException;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.CompanyValidator;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 @Service
 @Component("companyService")
 public class CompanyService {
+	
+	private static final Logger LOGGER = LoggerFactory.getLogger(ItemService.class);
 	
 	@Resource(name = "companyValidator")
 	private CompanyValidator companyValidator;
 	
 	@Resource(name = "companyRepository")
 	private CompanyRepository companyRepository;
+	
+	private CompanyData companyData = null;
+	
+	List<CompanyData> companysList = new ArrayList<CompanyData>();
 
 	public String addCompany(HttpServletRequest request, HttpServletResponse response,CompanyData company) throws CompanyDataException {
 		if(company == null){
@@ -37,7 +49,7 @@ public class CompanyService {
 			if(isValidated){
 				String companyId = company.getCompanyId();
 				if(StringUtils.isNotBlank(company.getCompanyId())){
-					CompanyData existingCompany = companyRepository.getCompanyById(company.getCompanyId());
+					CompanyData existingCompany = getCompanyById(company.getCompanyId());
 					if(existingCompany != null){
 						return updateCompany(request,response,company);
 					}
@@ -62,7 +74,7 @@ public class CompanyService {
 			if(companyValidator.validateCompanyData(company)){
 				if(StringUtils.isNotBlank(company.getCompanyId())){
 					String companyId = company.getCompanyId();
-					CompanyData existingCompany = companyRepository.getCompanyById(companyId);
+					CompanyData existingCompany = getCompanyById(companyId);
 					if(existingCompany == null){
 							return addCompany(request, response,company);
 					}else {
@@ -78,7 +90,7 @@ public class CompanyService {
 	
 	public String removeCompany(String companyId, String uid) {
 		if(StringUtils.isNotBlank(companyId)){
-			CompanyData company = companyRepository.getCompanyById(companyId);
+			CompanyData company = getCompanyById(companyId);
 			company.setAddedOrUpdatedOrRemovedUID(uid);
 			company.setIsRemoved(Constants.YES);
 			return companyRepository.updateCompany(company);
@@ -87,10 +99,31 @@ public class CompanyService {
 	}
 
 	public List<CompanyData> getAllCompanies() {
-		List<CompanyData> companies = companyRepository.getAllCompanies();
+		companyRepository.getAllCompanies(new OnGetDataListener() {
+
+			@Override
+	        public void onStart() {
+	        }
+
+	        @Override
+	        public void onSuccess(DataSnapshot companySnapshot) {
+	        	companysList.clear();
+		        for (DataSnapshot companyPostSnapshot: companySnapshot.getChildren()) {
+		            CompanyData companyData = companyPostSnapshot.getValue(CompanyData.class);
+		            companysList.add(companyData);
+		        } 
+	        	LOGGER.info(" The bill Snapshot Key is " + companySnapshot.getKey());
+	        }
+
+	        @Override
+	        public void onFailed(DatabaseError databaseError) {
+	           LOGGER.info("Error retrieving data");
+	           throw new BillliveServiceException(databaseError.getMessage());
+	        }
+	    });
 		List<CompanyData> companiesNotRemoved = new ArrayList<CompanyData>();
-		for(CompanyData company : companies){
-			if(!Constants.YES.equalsIgnoreCase(company.getIsRemoved())){
+		for(CompanyData company : companysList){
+			if(company != null && !Constants.YES.equalsIgnoreCase(company.getIsRemoved())){
 				companiesNotRemoved.add(company);
 			}
 		}
@@ -99,9 +132,26 @@ public class CompanyService {
 
 	public CompanyData getCompanyById(String companyId) {
 		if(StringUtils.isNotBlank(companyId)){
-			CompanyData company = companyRepository.getCompanyById(companyId);
-			if(!Constants.YES.equalsIgnoreCase(company.getIsRemoved())){
-				return company;
+			companyRepository.getCompanyById(companyId, new OnGetDataListener() {
+
+				@Override
+		        public void onStart() {
+		        }
+
+		        @Override
+		        public void onSuccess(DataSnapshot companySnapshot) {
+		        	companyData = companySnapshot.getValue(CompanyData.class);
+		        	LOGGER.info(" The bill Snapshot Key is " + companySnapshot.getKey());
+		        }
+
+		        @Override
+		        public void onFailed(DatabaseError databaseError) {
+		           LOGGER.info("Error retrieving data");
+		           throw new BillliveServiceException(databaseError.getMessage());
+		        }
+		    });
+			if(companyData != null && !Constants.YES.equalsIgnoreCase(companyData.getIsRemoved())){
+				return companyData;
 			}
 		}
 		return null;

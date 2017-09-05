@@ -24,9 +24,13 @@ import com.beatus.billlive.exception.InventoryValidationException;
 import com.beatus.billlive.exception.ItemDataException;
 import com.beatus.billlive.exception.PurchaseOrderDataException;
 import com.beatus.billlive.repository.PurchaseOrderRepository;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
+import com.beatus.billlive.service.exception.BillliveServiceException;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.PurchaseOrderValidator;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 
 @Service
@@ -46,6 +50,10 @@ public class PurchaseOrderService {
 	
 	@Resource(name = "itemService")
 	private ItemService itemService;
+	
+	private PurchaseOrderData purchaseOrderData = null;
+	
+	List<PurchaseOrderData> purchaseOrdersList = new ArrayList<PurchaseOrderData>();
 
 
 	public String addPurchaseOrder(HttpServletRequest request, HttpServletResponse response, PurchaseOrderDTO purchaseOrderDTO, String companyId) throws PurchaseOrderDataException, ItemDataException, InventoryValidationException{
@@ -60,9 +68,9 @@ public class PurchaseOrderService {
 				if(StringUtils.isBlank(companyId)){
 					companyId = purchaseOrderDTO.getCompanyId();
 				}
-				PurchaseOrderData existingPurchaseOrder = null;
+				PurchaseOrderDTO existingPurchaseOrder = null;
 				if(StringUtils.isNotBlank(purchaseOrderDTO.getPurchaseOrderNumber())){
-					existingPurchaseOrder = purchaseOrderRepository.getPurchaseOrderByPurchaseOrderNumber(companyId, purchaseOrderDTO.getPurchaseOrderNumber());
+					existingPurchaseOrder = getPurchaseOrderByPurchaseOrderNumber(companyId, purchaseOrderDTO.getPurchaseOrderNumber());
 					return updatePurchaseOrder(request, response, purchaseOrderDTO, companyId);
 				}
 				PurchaseOrderData purchaseOrderData = populatePurchaseOrderData(purchaseOrderDTO, existingPurchaseOrder, companyId);				
@@ -86,9 +94,9 @@ public class PurchaseOrderService {
 			if(StringUtils.isBlank(companyId)){
 				companyId = purchaseOrderDTO.getCompanyId();
 			}
-			PurchaseOrderData existingPurchaseOrder = null;
+			PurchaseOrderDTO existingPurchaseOrder = null;
 			if(StringUtils.isNotBlank(purchaseOrderDTO.getPurchaseOrderNumber()))
-				existingPurchaseOrder = purchaseOrderRepository.getPurchaseOrderByPurchaseOrderNumber(companyId, purchaseOrderDTO.getPurchaseOrderNumber());
+				existingPurchaseOrder = getPurchaseOrderByPurchaseOrderNumber(companyId, purchaseOrderDTO.getPurchaseOrderNumber());
 			PurchaseOrderData purchaseOrderData = populatePurchaseOrderData(purchaseOrderDTO, existingPurchaseOrder, companyId);			
 			return purchaseOrderRepository.updatePurchaseOrder(purchaseOrderData);
 		}
@@ -96,9 +104,10 @@ public class PurchaseOrderService {
 		return null;		
 	}
 	
-	public String removePurchaseOrder(String companyId, String uid, String purchaseOrderNumber) {
+	public String removePurchaseOrder(String companyId, String uid, String purchaseOrderNumber) throws ItemDataException, InventoryValidationException {
 		if(StringUtils.isNotBlank(purchaseOrderNumber) && StringUtils.isNotBlank(companyId)){
-			PurchaseOrderData purchaseOrderData = purchaseOrderRepository.getPurchaseOrderByPurchaseOrderNumber(companyId, purchaseOrderNumber);
+			PurchaseOrderDTO purchaseOrderDTO = getPurchaseOrderByPurchaseOrderNumber(companyId, purchaseOrderNumber);
+			PurchaseOrderData purchaseOrderData = populatePurchaseOrderData(purchaseOrderDTO, purchaseOrderDTO, companyId);			
 			purchaseOrderData.setUid(uid);
 			purchaseOrderData.setIsRemoved(Constants.YES);
 			return purchaseOrderRepository.updatePurchaseOrder(purchaseOrderData);
@@ -107,10 +116,30 @@ public class PurchaseOrderService {
 	}
 
 	public List<PurchaseOrderDTO> getAllPurchaseOrdersBasedOnCompanyId(String companyId) {
-		List<PurchaseOrderData> purchaseOrders = purchaseOrderRepository.getAllPurchaseOrdersBasedOnCompanyId(companyId);
+		purchaseOrderRepository.getAllPurchaseOrdersBasedOnCompanyId(companyId, new OnGetDataListener() {
+	        @Override
+	        public void onStart() {
+	        }
+
+	        @Override
+	        public void onSuccess(DataSnapshot purchaseOrderSnapshot) {
+	        	purchaseOrdersList.clear();
+		        for (DataSnapshot purchaseOrderPostSnapshot: purchaseOrderSnapshot.getChildren()) {
+		            PurchaseOrderData purchaseOrderData = purchaseOrderPostSnapshot.getValue(PurchaseOrderData.class);
+		            purchaseOrdersList.add(purchaseOrderData);
+		        }  
+	        	LOGGER.info("The key for the transaction is " + purchaseOrderSnapshot.getKey());
+	        }
+
+	        @Override
+	        public void onFailed(DatabaseError databaseError) {
+	           LOGGER.info("Error retrieving data");
+	           throw new BillliveServiceException(databaseError.getMessage());
+	        }
+	    });
 		List<PurchaseOrderDTO> purchaseOrdersNotRemoved = new ArrayList<PurchaseOrderDTO>();
-		for(PurchaseOrderData purchaseOrder : purchaseOrders){
-			if(!Constants.YES.equalsIgnoreCase(purchaseOrder.getIsRemoved())){
+		for(PurchaseOrderData purchaseOrder : purchaseOrdersList){
+			if(purchaseOrder != null && !Constants.YES.equalsIgnoreCase(purchaseOrder.getIsRemoved())){
 				purchaseOrdersNotRemoved.add(populatePurchaseOrderDTO(purchaseOrder));
 			}
 		}
@@ -118,8 +147,24 @@ public class PurchaseOrderService {
 	}
 
 	public PurchaseOrderDTO getPurchaseOrderByPurchaseOrderNumber(String companyId, String purchaseOrderNumber) {
-		PurchaseOrderData purchaseOrderData = purchaseOrderRepository.getPurchaseOrderByPurchaseOrderNumber(companyId, purchaseOrderNumber);
-		if(!Constants.YES.equalsIgnoreCase(purchaseOrderData.getIsRemoved())){
+		purchaseOrderRepository.getPurchaseOrderByPurchaseOrderNumber(companyId, purchaseOrderNumber, new OnGetDataListener() {
+	        @Override
+	        public void onStart() {
+	        }
+
+	        @Override
+	        public void onSuccess(DataSnapshot dataSnapshot) {
+	        	purchaseOrderData = dataSnapshot.getValue(PurchaseOrderData.class);  
+	        	LOGGER.info(dataSnapshot.getKey() + " was " + purchaseOrderData.getPurchaseOrderNumber());
+	        }
+
+	        @Override
+	        public void onFailed(DatabaseError databaseError) {
+	           LOGGER.info("Error retrieving data");
+	           throw new BillliveServiceException(databaseError.getMessage());
+	        }
+	    });
+		if(purchaseOrderData != null && !Constants.YES.equalsIgnoreCase(purchaseOrderData.getIsRemoved())){
 			return populatePurchaseOrderDTO(purchaseOrderData);
 		}else {
 			return null;
@@ -127,10 +172,30 @@ public class PurchaseOrderService {
 	}
 	
 	public List<PurchaseOrderDTO> getAllPurchaseOrdersInAMonth(String companyId, String year, String month) {
-		List<PurchaseOrderData> purchaseOrders = purchaseOrderRepository.getAllPurchaseOrdersInAMonth(companyId, year, month);
+		purchaseOrderRepository.getAllPurchaseOrdersInAMonth(companyId, year, month, new OnGetDataListener() {
+	        @Override
+	        public void onStart() {
+	        }
+
+	        @Override
+	        public void onSuccess(DataSnapshot purchaseOrderSnapshot) {
+	        	purchaseOrdersList.clear();
+		        for (DataSnapshot purchaseOrderPostSnapshot: purchaseOrderSnapshot.getChildren()) {
+		            PurchaseOrderData purchaseOrderData = purchaseOrderPostSnapshot.getValue(PurchaseOrderData.class);
+		            purchaseOrdersList.add(purchaseOrderData);
+		        }  
+	        	LOGGER.info("The key for the transaction is " + purchaseOrderSnapshot.getKey());
+	        }
+
+	        @Override
+	        public void onFailed(DatabaseError databaseError) {
+	           LOGGER.info("Error retrieving data");
+	           throw new BillliveServiceException(databaseError.getMessage());
+	        }
+	    });
 		List<PurchaseOrderDTO> purchaseOrdersNotRemoved = new ArrayList<PurchaseOrderDTO>();
-		for(PurchaseOrderData purchaseOrder : purchaseOrders){
-			if(!Constants.YES.equalsIgnoreCase(purchaseOrder.getIsRemoved())){
+		for(PurchaseOrderData purchaseOrder : purchaseOrdersList){
+			if(purchaseOrder != null && !Constants.YES.equalsIgnoreCase(purchaseOrder.getIsRemoved())){
 				purchaseOrdersNotRemoved.add(populatePurchaseOrderDTO(purchaseOrder));
 			}
 		}
@@ -138,10 +203,30 @@ public class PurchaseOrderService {
 	}
 	
 	public List<PurchaseOrderDTO> getAllPurchaseOrdersInADay(String companyId, String year, String month, String day) {
-		List<PurchaseOrderData> purchaseOrders = purchaseOrderRepository.getAllPurchaseOrdersInADay(companyId, year, month, day);
+		purchaseOrderRepository.getAllPurchaseOrdersInADay(companyId, year, month, day, new OnGetDataListener() {
+	        @Override
+	        public void onStart() {
+	        }
+
+	        @Override
+	        public void onSuccess(DataSnapshot purchaseOrderSnapshot) {
+	        	purchaseOrdersList.clear();
+		        for (DataSnapshot purchaseOrderPostSnapshot: purchaseOrderSnapshot.getChildren()) {
+		            PurchaseOrderData purchaseOrderData = purchaseOrderPostSnapshot.getValue(PurchaseOrderData.class);
+		            purchaseOrdersList.add(purchaseOrderData);
+		        }  
+	        	LOGGER.info("The key for the transaction is " + purchaseOrderSnapshot.getKey());
+	        }
+
+	        @Override
+	        public void onFailed(DatabaseError databaseError) {
+	           LOGGER.info("Error retrieving data");
+	           throw new BillliveServiceException(databaseError.getMessage());
+	        }
+	    });
 		List<PurchaseOrderDTO> purchaseOrdersNotRemoved = new ArrayList<PurchaseOrderDTO>();
-		for(PurchaseOrderData purchaseOrder : purchaseOrders){
-			if(!Constants.YES.equalsIgnoreCase(purchaseOrder.getIsRemoved())){
+		for(PurchaseOrderData purchaseOrder : purchaseOrdersList){
+			if(purchaseOrder != null && !Constants.YES.equalsIgnoreCase(purchaseOrder.getIsRemoved())){
 				purchaseOrdersNotRemoved.add(populatePurchaseOrderDTO(purchaseOrder));
 			}
 		}
@@ -149,10 +234,30 @@ public class PurchaseOrderService {
 	}
 	
 	public List<PurchaseOrderDTO> getAllPurchaseOrdersInAnYear(String companyId, String year) {
-		List<PurchaseOrderData> purchaseOrders = purchaseOrderRepository.getAllPurchaseOrdersInAYear(companyId, year);
+		purchaseOrderRepository.getAllPurchaseOrdersInAYear(companyId, year, new OnGetDataListener() {
+	        @Override
+	        public void onStart() {
+	        }
+
+	        @Override
+	        public void onSuccess(DataSnapshot purchaseOrderSnapshot) {
+	        	purchaseOrdersList.clear();
+		        for (DataSnapshot purchaseOrderPostSnapshot: purchaseOrderSnapshot.getChildren()) {
+		            PurchaseOrderData purchaseOrderData = purchaseOrderPostSnapshot.getValue(PurchaseOrderData.class);
+		            purchaseOrdersList.add(purchaseOrderData);
+		        }  
+	        	LOGGER.info("The key for the transaction is " + purchaseOrderSnapshot.getKey());
+	        }
+
+	        @Override
+	        public void onFailed(DatabaseError databaseError) {
+	           LOGGER.info("Error retrieving data");
+	           throw new BillliveServiceException(databaseError.getMessage());
+	        }
+	    });
 		List<PurchaseOrderDTO> purchaseOrdersNotRemoved = new ArrayList<PurchaseOrderDTO>();
-		for(PurchaseOrderData purchaseOrder : purchaseOrders){
-			if(!Constants.YES.equalsIgnoreCase(purchaseOrder.getIsRemoved())){
+		for(PurchaseOrderData purchaseOrder : purchaseOrdersList){
+			if(purchaseOrder != null && !Constants.YES.equalsIgnoreCase(purchaseOrder.getIsRemoved())){
 				purchaseOrdersNotRemoved.add(populatePurchaseOrderDTO(purchaseOrder));
 			}
 		}
@@ -187,7 +292,7 @@ public class PurchaseOrderService {
 	}
 
 
-	private PurchaseOrderData populatePurchaseOrderData(PurchaseOrderDTO purchaseOrderDTO, PurchaseOrderData existingPurchaseOrder, String companyId) throws ItemDataException, InventoryValidationException {
+	private PurchaseOrderData populatePurchaseOrderData(PurchaseOrderDTO purchaseOrderDTO, PurchaseOrderDTO existingPurchaseOrder, String companyId) throws ItemDataException, InventoryValidationException {
 		PurchaseOrderData purchaseOrderData = new PurchaseOrderData();
 		purchaseOrderData.setPurchaseFromContactId(purchaseOrderDTO.getPurchaseFromContactId());
 		purchaseOrderData.setPurchaseToContactId(purchaseOrderDTO.getPurchaseToContactId());

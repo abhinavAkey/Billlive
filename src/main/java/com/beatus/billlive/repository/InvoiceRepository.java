@@ -12,8 +12,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.InvoiceData;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
 import com.beatus.billlive.service.exception.BillliveServiceException;
-import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -124,137 +124,110 @@ public class InvoiceRepository {
 		}
 	}
 
-	public InvoiceData getInvoiceById(String companyId, String invoiceNumber) {
+	public InvoiceData getInvoiceById(String companyId, String invoiceNumber, OnGetDataListener listener) {
 		logger.info("In getInvoiceById method of InvoiceRepository");
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
 		invoiceData = null;
-		invoiceDataRef.orderByChild("uid").equalTo(invoiceNumber).addChildEventListener(new ChildEventListener() {
-			@Override
-			public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-				invoiceData = dataSnapshot.getValue(InvoiceData.class);
-				System.out.println(dataSnapshot.getKey() + " was " + invoiceData.getUid());
-			}
+		invoiceDataRef.orderByChild("uid").equalTo(invoiceNumber)
+				.addListenerForSingleValueEvent(new ValueEventListener() {
+					@Override
+					public void onDataChange(DataSnapshot dataSnapshot) {
+						listener.onSuccess(dataSnapshot);
+					}
 
-			@Override
-			public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
-
-			}
-
-			@Override
-			public void onChildRemoved(DataSnapshot snapshot) {
-
-			}
-
-			@Override
-			public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
-
-			}
-
-			@Override
-			public void onCancelled(DatabaseError error) {
-
-			}
-		});
+					@Override
+					public void onCancelled(DatabaseError databaseError) {
+						listener.onFailed(databaseError);
+					}
+				});
 		logger.info("Invoice loaded successfully, Invoice details=" + invoiceData);
 		return invoiceData;
 	}
 
-	public List<InvoiceData> getAllInvoices(String companyId) {
+	public List<InvoiceData> getAllInvoices(String companyId, OnGetDataListener listener) {
 		logger.info("In getAllInvoices method of InvoiceRepository");
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
-		invoiceDataRef.orderByChild("companyId").equalTo(companyId).addValueEventListener(new ValueEventListener() {
-			public void onDataChange(DataSnapshot invoiceSnapshot) {
-				invoicesList.clear();
-				for (DataSnapshot invoicePostSnapshot : invoiceSnapshot.getChildren()) {
-					InvoiceData invoiceData = invoicePostSnapshot.getValue(InvoiceData.class);
-					invoicesList.add(invoiceData);
-				}
-			}
+		invoiceDataRef.orderByChild("companyId").equalTo(companyId)
+				.addListenerForSingleValueEvent(new ValueEventListener() {
+					@Override
+					public void onDataChange(DataSnapshot dataSnapshot) {
+						listener.onSuccess(dataSnapshot);
+					}
 
-			@Override
-			public void onCancelled(DatabaseError error) {
-
-			}
-		});
+					@Override
+					public void onCancelled(DatabaseError databaseError) {
+						listener.onFailed(databaseError);
+					}
+				});
 		return invoicesList;
 	}
 
-	public List<InvoiceData> getAllInvoicesInADay(String companyId, String year, String month, String day) {
+	public List<InvoiceData> getAllInvoicesInADay(String companyId, String year, String month, String day,
+			OnGetDataListener listener) {
 		logger.info("In getAllInvoicesInADay method of InvoiceRepository");
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
 		invoiceDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month).orderByChild("day")
-				.equalTo(day).addValueEventListener(new ValueEventListener() {
-					public void onDataChange(DataSnapshot invoiceSnapshot) {
-						invoicesList.clear();
-						for (DataSnapshot invoicePostSnapshot : invoiceSnapshot.getChildren()) {
-							InvoiceData invoiceData = invoicePostSnapshot.getValue(InvoiceData.class);
-							invoicesList.add(invoiceData);
-						}
+				.equalTo(day).addListenerForSingleValueEvent(new ValueEventListener() {
+					@Override
+					public void onDataChange(DataSnapshot dataSnapshot) {
+						listener.onSuccess(dataSnapshot);
 					}
 
 					@Override
-					public void onCancelled(DatabaseError error) {
-
+					public void onCancelled(DatabaseError databaseError) {
+						listener.onFailed(databaseError);
 					}
 				});
 		return invoicesList;
 	}
 
-	public List<InvoiceData> getAllInvoicesInAMonth(String companyId, String year, String month) {
+	public List<InvoiceData> getAllInvoicesInAMonth(String companyId, String year, String month,
+			OnGetDataListener listener) {
 		logger.info("In getAllInvoicesInAMonth method of InvoiceRepository");
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
 		invoiceDataRef.orderByChild("year").equalTo(year).orderByChild("month").equalTo(month)
-				.addValueEventListener(new ValueEventListener() {
-					public void onDataChange(DataSnapshot invoiceSnapshot) {
-						invoicesList.clear();
-						for (DataSnapshot invoicePostSnapshot : invoiceSnapshot.getChildren()) {
-							InvoiceData invoiceData = invoicePostSnapshot.getValue(InvoiceData.class);
-							invoicesList.add(invoiceData);
-						}
+				.addListenerForSingleValueEvent(new ValueEventListener() {
+					@Override
+					public void onDataChange(DataSnapshot dataSnapshot) {
+						listener.onSuccess(dataSnapshot);
 					}
 
 					@Override
-					public void onCancelled(DatabaseError error) {
-
+					public void onCancelled(DatabaseError databaseError) {
+						listener.onFailed(databaseError);
 					}
 				});
 		return invoicesList;
 	}
 
-	public List<InvoiceData> getAllInvoicesInAYear(String companyId, String year) {
+	public List<InvoiceData> getAllInvoicesInAYear(String companyId, String year, OnGetDataListener listener) {
 		logger.info("In getAllInvoicesInAYear method of InvoiceRepository");
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
-		invoiceDataRef.orderByChild("year").equalTo(year).addValueEventListener(new ValueEventListener() {
-			public void onDataChange(DataSnapshot invoiceSnapshot) {
-				invoicesList.clear();
-				for (DataSnapshot invoicePostSnapshot : invoiceSnapshot.getChildren()) {
-					InvoiceData invoiceData = invoicePostSnapshot.getValue(InvoiceData.class);
-					invoicesList.add(invoiceData);
-				}
+		invoiceDataRef.orderByChild("year").equalTo(year).addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				listener.onSuccess(dataSnapshot);
 			}
 
 			@Override
-			public void onCancelled(DatabaseError error) {
-
+			public void onCancelled(DatabaseError databaseError) {
+				listener.onFailed(databaseError);
 			}
 		});
 		return invoicesList;
 	}
 
-	public List<InvoiceData> getAllInvoicesBasedOnCompanyId(String companyId) {
+	public List<InvoiceData> getAllInvoicesBasedOnCompanyId(String companyId, OnGetDataListener listener) {
 		DatabaseReference invoiceDataRef = databaseReference.child("invoices").child(companyId);
-		invoiceDataRef.addValueEventListener(new ValueEventListener() {
-			public void onDataChange(DataSnapshot invoiceSnapshot) {
-				invoicesList.clear();
-				for (DataSnapshot invoicePostSnapshot : invoiceSnapshot.getChildren()) {
-					InvoiceData invoiceData = invoicePostSnapshot.getValue(InvoiceData.class);
-					invoicesList.add(invoiceData);
-				}
+		invoiceDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+			@Override
+			public void onDataChange(DataSnapshot dataSnapshot) {
+				listener.onSuccess(dataSnapshot);
 			}
 
 			@Override
-			public void onCancelled(DatabaseError error) {
-
+			public void onCancelled(DatabaseError databaseError) {
+				listener.onFailed(databaseError);
 			}
 		});
 		return invoicesList;

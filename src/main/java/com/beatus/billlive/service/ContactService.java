@@ -16,10 +16,13 @@ import org.springframework.stereotype.Service;
 import com.beatus.billlive.domain.model.ContactInfo;
 import com.beatus.billlive.exception.ContactInfoException;
 import com.beatus.billlive.repository.ContactRepository;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
 import com.beatus.billlive.service.exception.BillliveServiceException;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.ContactValidator;
 import com.beatus.billlive.validation.exception.BillValidationException;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 @Service
 @Component("contactService")
@@ -32,6 +35,10 @@ public class ContactService {
 
 	@Resource(name = "contactValidator")
 	private ContactValidator contactValidator;
+	
+	private ContactInfo contactInfo = null;
+
+	List<ContactInfo> contactsList = new ArrayList<ContactInfo>();
 
 	public String addContact(HttpServletRequest request, HttpServletResponse response, ContactInfo contact)
 			throws BillValidationException, BillliveServiceException, ContactInfoException {
@@ -42,7 +49,7 @@ public class ContactService {
 			String companyId = contact.getCompanyId();
 			ContactInfo existingcontact = null;
 			if (StringUtils.isNotBlank(contact.getContactId())) {
-				existingcontact = contactRepository.getContactByContactId(companyId, contact.getContactId());
+				existingcontact = getContactByContactId(companyId, contact.getContactId());
 				return updateContact(request, response, existingcontact);
 			}
 
@@ -61,7 +68,7 @@ public class ContactService {
 				String companyId = contact.getCompanyId();
 				ContactInfo existingcontact = null;
 				if (StringUtils.isNotBlank(contact.getContactId()))
-					existingcontact = contactRepository.getContactByContactId(companyId, contact.getContactId());
+					existingcontact = getContactByContactId(companyId, contact.getContactId());
 
 				return contactRepository.updateContact(existingcontact);
 			}
@@ -75,10 +82,30 @@ public class ContactService {
 
 	public List<ContactInfo> getAllContacts(String companyId) {
 
-		List<ContactInfo> contacts = contactRepository.getAllContacts(companyId);
+		contactRepository.getAllContacts(companyId, new OnGetDataListener() {
+	        @Override
+	        public void onStart() {
+	        }
+
+	        @Override
+	        public void onSuccess(DataSnapshot contactSnapshot) {
+	        	contactsList.clear();
+				for (DataSnapshot contactPostSnapshot : contactSnapshot.getChildren()) {
+					ContactInfo contactInfo = contactPostSnapshot.getValue(ContactInfo.class);
+					contactsList.add(contactInfo);
+				}
+	        	LOGGER.info(contactSnapshot.getKey() + " was " + contactInfo.getContactId());
+	        }
+
+	        @Override
+	        public void onFailed(DatabaseError databaseError) {
+	           LOGGER.info("Error retrieving data");
+	           throw new BillliveServiceException(databaseError.getMessage());
+	        }
+	    });
 		List<ContactInfo> contactsNotRemoved = new ArrayList<ContactInfo>();
-		for (ContactInfo contactInfo : contacts) {
-			if (!Constants.YES.equalsIgnoreCase(contactInfo.getIsRemoved())) {
+		for (ContactInfo contactInfo : contactsList) {
+			if (contactInfo != null && !Constants.YES.equalsIgnoreCase(contactInfo.getIsRemoved())) {
 				contactsNotRemoved.add(contactInfo);
 			}
 		}
@@ -87,8 +114,24 @@ public class ContactService {
 
 	public ContactInfo getContactByContactId(String companyId, String contactId) {
 		if (StringUtils.isNotBlank(contactId) && StringUtils.isNotBlank(companyId)) {
-			ContactInfo contactInfo = contactRepository.getContactByContactId(companyId, contactId);
-			if (!Constants.YES.equalsIgnoreCase(contactInfo.getIsRemoved())) {
+			contactRepository.getContactByContactId(companyId, contactId, new OnGetDataListener() {
+		        @Override
+		        public void onStart() {
+		        }
+
+		        @Override
+		        public void onSuccess(DataSnapshot dataSnapshot) {
+		        	contactInfo = dataSnapshot.getValue(ContactInfo.class);  
+		        	LOGGER.info(dataSnapshot.getKey() + " was " + contactInfo.getContactId());
+		        }
+
+		        @Override
+		        public void onFailed(DatabaseError databaseError) {
+		           LOGGER.info("Error retrieving data");
+		           throw new BillliveServiceException(databaseError.getMessage());
+		        }
+		    });
+			if (contactInfo != null && !Constants.YES.equalsIgnoreCase(contactInfo.getIsRemoved())) {
 				return contactInfo;
 			} else {
 				return null;
@@ -100,7 +143,7 @@ public class ContactService {
 	public String removeContact(String companyId, String uid, String contactId)
 			throws BillliveServiceException, BillValidationException {
 		if (StringUtils.isNotBlank(contactId) && StringUtils.isNotBlank(companyId)) {
-			ContactInfo contactInfo = contactRepository.getContactByContactId(companyId, contactId);
+			ContactInfo contactInfo = getContactByContactId(companyId, contactId);
 			contactInfo.setUid(uid);
 			contactInfo.setIsRemoved(Constants.YES);
 			return contactRepository.updateContact(contactInfo);

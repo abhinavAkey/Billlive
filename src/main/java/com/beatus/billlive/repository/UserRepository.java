@@ -1,66 +1,41 @@
 package com.beatus.billlive.repository;
 
-import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import com.beatus.billlive.domain.model.CompanyUsers;
-import com.google.firebase.database.ChildEventListener;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.ValueEventListener;
 
 
 @Component("userRepository")
 public class UserRepository {
 
+	private static final Logger logger = LoggerFactory.getLogger(TaxRepository.class);
+
 	@Autowired
     @Qualifier(value = "databaseReference")
     private DatabaseReference databaseReference;
-	private String companyId = null;
-	private CompanyUsers companyUsers;
 
-	public String isRegistered(String uid) {
-		
+	public void isRegistered(String uid, OnGetDataListener listener) {
+		logger.info("inside isRegistered method");
 		DatabaseReference companyUsersRef = databaseReference.child("companyusers");
-		companyUsersRef.orderByChild("uid").equalTo(uid).addChildEventListener(new ChildEventListener() {
+		companyUsersRef.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
-		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-		        companyUsers = dataSnapshot.getValue(CompanyUsers.class);
-		        if(companyUsers!=null){
-		        	if(StringUtils.isNotBlank(companyUsers.getUid()) && StringUtils.isNotBlank(companyUsers.getCompanyId())){
-		        		if(companyUsers.getUid() == uid ){
-		        			companyId = companyUsers.getCompanyId();
-		        		}
-		        	}
-		        }
-		        
-		        //System.out.println(dataSnapshot.getKey() + " was " + CompanyUsers.getCompanyId());
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
 
-			@Override
-			public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onChildRemoved(DataSnapshot snapshot) {
-				
-			}
-
-			@Override
-			public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
-		
-		return companyId;
 	}
 	
 	/*private static final Logger logger = LoggerFactory.getLogger(UserRepository.class);

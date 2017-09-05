@@ -4,7 +4,7 @@ import java.util.List;
 
 public class ReportData {
 
-	private List<BillData> bills;
+	private List<BillDTO> bills;
 	private Double totalAmountIncludingTax;
 	private Double totalTax;
 	private String taxId;
@@ -14,10 +14,10 @@ public class ReportData {
 	private String day;
 	private String companyId;
 	
-	public List<BillData> getBills() {
+	public List<BillDTO> getBills() {
 		return bills;
 	}
-	public void setBills(List<BillData> bills) {
+	public void setBills(List<BillDTO> bills) {
 		this.bills = bills;
 	}
 	public Double getTotalAmountIncludingTax() {

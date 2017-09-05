@@ -18,9 +18,13 @@ import com.beatus.billlive.domain.model.ItemData;
 import com.beatus.billlive.exception.InventoryValidationException;
 import com.beatus.billlive.exception.ItemDataException;
 import com.beatus.billlive.repository.ItemRepository;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
+import com.beatus.billlive.service.exception.BillliveServiceException;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.utils.Utils;
 import com.beatus.billlive.validation.ItemValidator;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 
 @Service
@@ -34,6 +38,10 @@ public class ItemService {
 	
 	@Resource(name = "itemRepository")
 	private ItemRepository itemRepository;
+	
+	private ItemData itemData = null;
+	
+	private List<ItemData> itemsList = new ArrayList<ItemData>();
 
 	public ItemData addItem(ItemData item, String companyId) throws ItemDataException, InventoryValidationException {
 		if(item == null){
@@ -45,7 +53,7 @@ public class ItemService {
 				if(StringUtils.isBlank(companyId)){
 					companyId = item.getCompanyId();
 				}
-				ItemData existingItem = itemRepository.getItemById(item.getCompanyId(), item.getItemId());
+				ItemData existingItem = getItemById(item.getCompanyId(), item.getItemId());
 				if(StringUtils.isNotBlank(item.getItemId()) && StringUtils.isNotBlank(item.getCompanyId())){
 					if(existingItem != null){
 						return updateItem(item,companyId);
@@ -62,7 +70,7 @@ public class ItemService {
 					item.setInventories(inventories);
 					String isAdded = itemRepository.addItem(item);
 					if(Constants.YES.equalsIgnoreCase(isAdded)){
-						return itemRepository.getItemById(item.getCompanyId(), item.getItemId());
+						return getItemById(item.getCompanyId(), item.getItemId());
 					}else {
 						return null;
 					}
@@ -86,7 +94,7 @@ public class ItemService {
 			boolean isValidated = itemValidator.validateItemData(item);
 			if(isValidated){
 				if(StringUtils.isNotBlank(item.getItemId()) && StringUtils.isNotBlank(item.getCompanyId())){
-					ItemData existingItem = itemRepository.getItemById(item.getCompanyId(), item.getItemId());
+					ItemData existingItem = getItemById(item.getCompanyId(), item.getItemId());
 					if(existingItem == null){
 						return addItem(item, companyId);
 					}else {
@@ -114,7 +122,7 @@ public class ItemService {
 				}
 				String isUpdated = itemRepository.updateItem(item);
 				if(Constants.YES.equalsIgnoreCase(isUpdated)){
-					return itemRepository.getItemById(item.getCompanyId(), item.getItemId());
+					return getItemById(item.getCompanyId(), item.getItemId());
 				}else {
 					return null;
 				}
@@ -129,7 +137,7 @@ public class ItemService {
 	
 	public String removeItem(String companyId, String uid, String itemId) {	
 		if(StringUtils.isNotBlank(itemId) && StringUtils.isNotBlank(companyId)){
-			ItemData itemData = itemRepository.getItemById(companyId, itemId);
+			ItemData itemData = getItemById(companyId, itemId);
 			itemData.setUid(uid);
 			itemData.setIsRemoved(Constants.YES);
 			return itemRepository.updateItem(itemData);
@@ -138,10 +146,33 @@ public class ItemService {
 	}
 
 	public List<ItemData> getAllItems(String companyId) {
-		List<ItemData> items = itemRepository.getAllItems(companyId);
+		itemRepository.getAllItems(companyId, new OnGetDataListener() {
+
+			@Override
+	        public void onStart() {
+	        }
+
+	        @Override
+	        public void onSuccess(DataSnapshot itemSnapshot) {
+	        	itemsList.clear();
+		        for (DataSnapshot itemPostSnapshot: itemSnapshot.getChildren()) {
+		            ItemData itemData = itemPostSnapshot.getValue(ItemData.class);
+		            itemsList.add(itemData);
+		        } 
+	        	LOGGER.info(" The bill Snapshot Key is " + itemSnapshot.getKey());
+	        }
+
+	        @Override
+	        public void onFailed(DatabaseError databaseError) {
+	           LOGGER.info("Error retrieving data");
+	           throw new BillliveServiceException(databaseError.getMessage());
+	        }
+	    });
+		
 		List<ItemData> itemsNotRemoved = new ArrayList<ItemData>();
-		for(ItemData item : items){
-			if(!Constants.YES.equalsIgnoreCase(item.getIsRemoved())){
+
+		for (ItemData item : itemsList) {
+			if (item != null && !Constants.YES.equalsIgnoreCase(item.getIsRemoved())) {
 				itemsNotRemoved.add(item);
 			}
 		}
@@ -149,8 +180,24 @@ public class ItemService {
 	}
 
 	public ItemData getItemById(String companyId, String itemId) {
-		ItemData itemData = itemRepository.getItemById(companyId, itemId);
-		if(!Constants.YES.equalsIgnoreCase(itemData.getIsRemoved())){
+		itemRepository.getItemById(companyId, itemId, new OnGetDataListener() {
+	        @Override
+	        public void onStart() {
+	        }
+
+	        @Override
+	        public void onSuccess(DataSnapshot dataSnapshot) {
+	        	itemData = dataSnapshot.getValue(ItemData.class);  
+	        	LOGGER.info(dataSnapshot.getKey() + " was " + itemData.getItemId());
+	        }
+
+	        @Override
+	        public void onFailed(DatabaseError databaseError) {
+	           LOGGER.info("Error retrieving data");
+	           throw new BillliveServiceException(databaseError.getMessage());
+	        }
+	    });
+		if(itemData != null && !Constants.YES.equalsIgnoreCase(itemData.getIsRemoved())){
 			return itemData;
 		}else {
 			return null;
@@ -284,7 +331,7 @@ public class ItemService {
 	
 	public String updateRemainingQuantityForItemInventory(String companyId, String itemId, String inventoryId, Double remainingQuantity) {
 		if(itemId != null && inventoryId != null){
-			ItemData existingItem = itemRepository.getItemById(companyId, itemId);
+			ItemData existingItem = getItemById(companyId, itemId);
 			if(existingItem != null){
 				if(existingItem.getInventories() != null && existingItem.getInventories().size() > 0){
 					for(int i=0; i< existingItem.getInventories().size(); i++ ){

@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.CompleteBillTransaction;
-import com.google.firebase.database.ChildEventListener;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -110,55 +110,36 @@ public class CompleteBillTransactionRepository {
 		}
 	}*/
 	
-	public CompleteBillTransaction getCompleteBillTransactionById(String companyId, String completeBillTransactionId) {
+	public CompleteBillTransaction getCompleteBillTransactionById(String companyId, String completeBillTransactionId, OnGetDataListener listener) {
 		DatabaseReference completeBillTransactionDataRef = databaseReference.child("completeBillTransactions").child(companyId);
 		completeBillTransactionData = null;
-		completeBillTransactionDataRef.orderByChild("completeBillTransactionId").equalTo(completeBillTransactionId).addChildEventListener(new ChildEventListener() {
+		completeBillTransactionDataRef.orderByChild("completeBillTransactionId").equalTo(completeBillTransactionId).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
-		    public void onChildAdded(DataSnapshot dataSnapshot, String prevChildKey) {
-		        completeBillTransactionData = dataSnapshot.getValue(CompleteBillTransaction.class);
-		        System.out.println(dataSnapshot.getKey() + " was " + completeBillTransactionData.getBillNumber());
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
 
-			@Override
-			public void onChildChanged(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onChildRemoved(DataSnapshot snapshot) {
-				
-			}
-
-			@Override
-			public void onChildMoved(DataSnapshot snapshot, String previousChildName) {
-				
-			}
-
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		logger.info("CompleteBillTransaction loaded successfully, CompleteBillTransaction details=" + completeBillTransactionData);
 		return completeBillTransactionData;
 	}
 	
-	public List<CompleteBillTransaction> getAllCompleteBillTransactions(String companyId) {
+	public List<CompleteBillTransaction> getAllCompleteBillTransactions(String companyId, OnGetDataListener listener) {
 		DatabaseReference completeBillTransactionDataRef = databaseReference.child("completeBillTransactions").child(companyId);
-		completeBillTransactionDataRef.orderByChild("companyId").equalTo(companyId).addValueEventListener(new ValueEventListener() {
-		    public void onDataChange(DataSnapshot completeBillTransactionSnapshot) {
-		    	completeBillTransactionsList.clear();
-		        for (DataSnapshot completeBillTransactionPostSnapshot: completeBillTransactionSnapshot.getChildren()) {
-		            CompleteBillTransaction completeBillTransactionData = completeBillTransactionPostSnapshot.getValue(CompleteBillTransaction.class);
-		            completeBillTransactionsList.add(completeBillTransactionData);
-		        }
+		completeBillTransactionDataRef.orderByChild("companyId").equalTo(companyId).addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	listener.onSuccess(dataSnapshot);
 		    }
-		    
-			@Override
-			public void onCancelled(DatabaseError error) {
-				
-			}
+
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
 		});
 		return completeBillTransactionsList;
 	}
