@@ -53,8 +53,9 @@ public class ItemService {
 				if(StringUtils.isBlank(companyId)){
 					companyId = item.getCompanyId();
 				}
-				ItemData existingItem = getItemById(item.getCompanyId(), item.getItemId());
+				ItemData existingItem = null;
 				if(StringUtils.isNotBlank(item.getItemId()) && StringUtils.isNotBlank(item.getCompanyId())){
+					existingItem = getItemById(item.getCompanyId(), item.getItemId());
 					if(existingItem != null){
 						return updateItem(item,companyId);
 					}
