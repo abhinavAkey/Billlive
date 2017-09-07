@@ -5,57 +5,105 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import com.beatus.billlive.domain.model.InvoiceData;
+import com.beatus.billlive.domain.model.InvoiceDTO;
+import com.beatus.billlive.domain.model.ItemDTO;
 import com.beatus.billlive.validation.exception.BillliveClientValidationException;
 
 @Component("invoiceDataValidator")
 public class InvoiceDataValidator {
 	private static final Logger LOGGER = LoggerFactory.getLogger(InvoiceDataValidator.class);
 
-	public boolean validateInvoiceData(InvoiceData invoiceData) throws BillliveClientValidationException{
-		LOGGER.info(" Validating InvoiceData " + invoiceData);
-
-		if(invoiceData == null){
-			throw new BillliveClientValidationException("invoiceData","InvoiceData, data is null");
+	public boolean validateInvoiceItemDTO(ItemDTO invoiceItemDTO) throws BillliveClientValidationException{
+		LOGGER.info(" Validating InvoiceItemDTO " + invoiceItemDTO);
+		if(invoiceItemDTO == null || StringUtils.isBlank(invoiceItemDTO.getItemId())){
+			throw new BillliveClientValidationException("invoiceItemDTO","InvoiceItemDTO, invoiceItemDTO is null");
 		}
-		if(invoiceData.getIsUpdated().equals('Y')){
-			if(StringUtils.isBlank(invoiceData.getInvoiceNumber())){
-				throw new BillliveClientValidationException("InvoiceNumber","InvoiceNumber is null");
-			}
+		if(StringUtils.isBlank(invoiceItemDTO.getInventoryId())){
+			throw new BillliveClientValidationException("inventoryId","InvoiceItemDTO, the inventoryId field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
-		if(invoiceData.getInvoiceFrom() != null){
-			throw new BillliveClientValidationException("invoiceFrom","InvoiceData, the invoiceFrom field is not available, for the invoiceData with id =  " + invoiceData.getInvoiceNumber());
+		if(invoiceItemDTO.getProductValue() == null){
+			throw new BillliveClientValidationException("productValue","InvoiceItemDTO, the productValue field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
-		if(invoiceData.getInvoiceTo() != null){
-			throw new BillliveClientValidationException("invoiceTo","InvoiceData, the invoiceTo field is not available, for the invoiceData with id =  " + invoiceData.getInvoiceNumber());
+		if(invoiceItemDTO.getQuantityType() == null){
+			throw new BillliveClientValidationException("quantityType","InvoiceItemDTO, the quantityType field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
-		if(invoiceData.getUid() != null){
-			throw new BillliveClientValidationException("uid","InvoiceData, the uid field is not available, for the invoiceData with id =  " + invoiceData.getInvoiceNumber());
+		if(invoiceItemDTO.getQuantity() == null){
+			throw new BillliveClientValidationException("quantity","InvoiceItemDTO, the quantity field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
-		if(invoiceData.getItemId() != null){
-			throw new BillliveClientValidationException("itemId","InvoiceData, the itemId field is not available, for the invoiceData with id =  " + invoiceData.getInvoiceNumber());
+		if(invoiceItemDTO.getActualUnitPrice() == null){
+			throw new BillliveClientValidationException("actualUnitPrice","InvoiceItemDTO, the actualUnitPrice field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
-	
-		if(StringUtils.isBlank(invoiceData.getDateOfBill())){
-			throw new BillliveClientValidationException("dateOfBill","InvoiceData, the dateOfBill field is not available, for the invoiceData with id =  " + invoiceData.getInvoiceNumber());
+		if(invoiceItemDTO.getAmountBeforeTax() == null){
+			throw new BillliveClientValidationException("amountBeforeTax","InvoiceItemDTO, the amountBeforeTax field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
-		if(StringUtils.isBlank(invoiceData.getDueDate())){
-			throw new BillliveClientValidationException("dueDate","InvoiceData, the dueDate field is not available, for the invoiceData with id =  " + invoiceData.getInvoiceNumber());
+		if(invoiceItemDTO.getTaxAmountForItem() == null){
+			throw new BillliveClientValidationException("taxAmountForItem","InvoiceItemDTO, the taxAmountForItem field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
-		if(StringUtils.isBlank(invoiceData.getInventoryId())){
-			throw new BillliveClientValidationException("inventoryId","InvoiceData, the inventoryId field is not available, for the invoiceData with id =  " + invoiceData.getInvoiceNumber());
+		if(invoiceItemDTO.getTotalCGST() == null){
+			throw new BillliveClientValidationException("totalCGST","InvoiceItemDTO, the totalCGST field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
-		if(StringUtils.isBlank(invoiceData.getUnitPrice())){
-			throw new BillliveClientValidationException("unitPrice","InvoiceData, the unitPrice field is not available, for the invoiceData with id =  " + invoiceData.getInvoiceNumber());
+		if(invoiceItemDTO.getTotalSGST() == null){
+			throw new BillliveClientValidationException("totalSGST","InvoiceItemDTO, the totalSGST field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
-		if(StringUtils.isBlank(invoiceData.getTotalAmount())){
-			throw new BillliveClientValidationException("totalAmount","InvoiceData, the totalAmount field is not available, for the invoiceData with id =  " + invoiceData.getInvoiceNumber());
+		if(invoiceItemDTO.getTotalIGST() != null){
+			throw new BillliveClientValidationException("totalIGST","InvoiceItemDTO, the totalIGST field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
-		if(StringUtils.isBlank(invoiceData.getTaxId())){
-			throw new BillliveClientValidationException("taxId","InvoiceData, the taxId field is not available, for the invoiceData with id =  " + invoiceData.getInvoiceNumber());
+		if(invoiceItemDTO.getAmountAfterTax() == null){
+			throw new BillliveClientValidationException("amountAfterTax","InvoiceItemDTO, the amountAfterTax field is not available, for the invoice number " + invoiceItemDTO.getItemId());
+		}
+		if(invoiceItemDTO.getMarginAmount() == null){
+			throw new BillliveClientValidationException("marginAmount","InvoiceItemDTO, the marginAmount field is not available, for the invoice number " + invoiceItemDTO.getItemId());
+		}
+		if(StringUtils.isBlank(invoiceItemDTO.getTaxId())){
+			throw new BillliveClientValidationException("taxId","InvoiceDTO, the taxId field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
 		return true;
-		
+	}
+
+	public boolean validateInvoiceDTO(InvoiceDTO invoiceDTO) throws BillliveClientValidationException {
+		LOGGER.info(" Validating invoiceDTO " + invoiceDTO);
+		if(invoiceDTO.getIsUpdated().equals('Y')){
+			if(invoiceDTO == null || StringUtils.isBlank(invoiceDTO.getInvoiceNumber())){
+				throw new BillliveClientValidationException("invoiceDTO","InvoiceDTO is null ot");
+			}
+		}
+		if(StringUtils.isBlank(invoiceDTO.getInvoiceFromContactId())){
+			throw new BillliveClientValidationException("invoiceFromContactId","InvoiceDTO, the invoiceFromContactId field is not available, for the invoice number " + invoiceDTO.getInvoiceNumber());
+		}
+		if(StringUtils.isBlank(invoiceDTO.getInvoiceToContactId())){
+			throw new BillliveClientValidationException("InvoiceToContactId","InvoiceDTO, the InvoiceToContactId field is not available, for the invoice number " + invoiceDTO.getInvoiceNumber());
+		}
+		if(StringUtils.isBlank(invoiceDTO.getCompanyId())){
+			throw new BillliveClientValidationException("CompanyId","InvoiceDTO, the CompanyId field is not available, for the invoice number " + invoiceDTO.getInvoiceNumber());
+		}
+		if(StringUtils.isBlank(invoiceDTO.getUid())){
+			throw new BillliveClientValidationException("uid","InvoiceDTO, the uid field is not available, for the invoice number " + invoiceDTO.getInvoiceNumber());
+		}
+		if(StringUtils.isBlank(invoiceDTO.getDateOfInvoice())){
+			throw new BillliveClientValidationException("dateOfInvoice","InvoiceDTO, the dateOfInvoice field is not available, for the invoice number " + invoiceDTO.getInvoiceNumber());
+		}
+		if(StringUtils.isBlank(invoiceDTO.getDueDate())){
+			throw new BillliveClientValidationException("dueDate","InvoiceDTO, the dueDate field is not available, for the invoice number " + invoiceDTO.getInvoiceNumber());
+		}
+		if(invoiceDTO.getTotalAmount() == null){
+			throw new BillliveClientValidationException("totalAmount","InvoiceDTO, the totalAmount field is not available, for the invoice number " + invoiceDTO.getInvoiceNumber());
+		}
+		if(invoiceDTO.getTotalTax() == null){
+			throw new BillliveClientValidationException("totalTax","InvoiceDTO, the totalTax field is not available, for the invoice number " + invoiceDTO.getInvoiceNumber());
+		}
+		if(invoiceDTO.getTotalCGST() == null){
+			throw new BillliveClientValidationException("totalCGST","InvoiceDTO, the totalCGST field is not available, for the invoice number " + invoiceDTO.getInvoiceNumber());
+		}
+		if(invoiceDTO.getTotalSGST() == null){
+			throw new BillliveClientValidationException("totalSGST","InvoiceDTO, the totalSGST field is not available, for the invoice number " + invoiceDTO.getInvoiceNumber());
+		}
+		if(invoiceDTO.getTotalIGST() != null){
+			throw new BillliveClientValidationException("totalIGST","InvoiceDTO, the totalIGST field is not available, for the invoice number " + invoiceDTO.getInvoiceNumber());
+		}
+		for(ItemDTO itemDTO : invoiceDTO.getItems()){
+			validateInvoiceItemDTO(itemDTO);
+		}
+		return true;
 	}
 
 }

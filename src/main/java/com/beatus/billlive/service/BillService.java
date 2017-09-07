@@ -17,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 import com.beatus.billlive.domain.model.BillDTO;
 import com.beatus.billlive.domain.model.BillData;
-import com.beatus.billlive.domain.model.BillItemDTO;
+import com.beatus.billlive.domain.model.ItemDTO;
 import com.beatus.billlive.domain.model.BillItemData;
 import com.beatus.billlive.domain.model.ItemData;
 import com.beatus.billlive.domain.model.Tax;
@@ -353,7 +353,7 @@ public class BillService {
 
 	private BillDTO populateBillDTO(BillData bill) {
 		BillDTO billDTO = new BillDTO();
-		List<BillItemDTO> listItems = new ArrayList<BillItemDTO>();
+		List<ItemDTO> listItems = new ArrayList<ItemDTO>();
 		billDTO.setBillNumber(bill.getBillNumber());
 		billDTO.setBillFromContactId(bill.getBillFromContactId());
 		billDTO.setBillToContactId(bill.getBillToContactId());
@@ -371,7 +371,7 @@ public class BillService {
 		billDTO.setTotalIGST(bill.getTotalIGST());
 
 		for (BillItemData billItem : bill.getBillItems()) {
-			BillItemDTO itemDTO = new BillItemDTO();
+			ItemDTO itemDTO = new ItemDTO();
 			itemDTO.setItemId(billItem.getItemId());
 			itemDTO.setInventoryId(billItem.getInventoryId());
 			itemDTO.setIsTaxeble(billItem.getIsTaxeble());
@@ -430,7 +430,7 @@ public class BillService {
 		billData.setTotalSGST(billDTO.getTotalSGST());
 		billData.setTotalIGST(billDTO.getTotalIGST());
 		List<BillItemData> billItems = new ArrayList<BillItemData>();
-		for (BillItemDTO itemDTO : billDTO.getItems()) {
+		for (ItemDTO itemDTO : billDTO.getItems()) {
 			BillItemData billItem = new BillItemData();
 			if (Constants.YES.equalsIgnoreCase(itemDTO.getIsAdded())
 					|| Constants.YES.equalsIgnoreCase(itemDTO.getIsUpdated())) {

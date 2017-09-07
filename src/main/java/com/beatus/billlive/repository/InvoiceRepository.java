@@ -128,7 +128,7 @@ public class InvoiceRepository {
 		}
 	}
 
-	public void getInvoiceById(String companyId, String invoiceNumber, OnGetDataListener listener) {
+	public void getInvoiceByInvoiceNumber(String companyId, String invoiceNumber, OnGetDataListener listener) {
 		logger.info("In getInvoiceById method of InvoiceRepository");
 		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
 

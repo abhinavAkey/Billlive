@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.beatus.billlive.domain.model.BillDTO;
-import com.beatus.billlive.domain.model.BillItemDTO;
+import com.beatus.billlive.domain.model.ItemDTO;
 import com.beatus.billlive.validation.exception.BillliveClientValidationException;
 
 @Component("billValidator")
@@ -41,7 +41,7 @@ public class BillValidator {
 		}		*/
 		return true;
 	}
-	public boolean validateBillItemDTO(BillItemDTO billItemDTO) throws BillliveClientValidationException{
+	public boolean validateBillItemDTO(ItemDTO billItemDTO) throws BillliveClientValidationException{
 		LOGGER.info(" Validating BillItemDTO " + billItemDTO);
 		if(billItemDTO == null || StringUtils.isBlank(billItemDTO.getItemId())){
 			throw new BillliveClientValidationException("billItemDTO","BillItemDTO, billItemDTO is null");
@@ -128,7 +128,7 @@ public class BillValidator {
 		if(billDTO.getTotalIGST() != null){
 			throw new BillliveClientValidationException("totalIGST","BillDTO, the totalIGST field is not available, for the bill number " + billDTO.getBillNumber());
 		}
-		for(BillItemDTO itemDTO : billDTO.getItems()){
+		for(ItemDTO itemDTO : billDTO.getItems()){
 			validateBillItemDTO(itemDTO);
 		}
 		return true;

@@ -1,6 +1,6 @@
 package com.beatus.billlive.domain.model;
 
-public class BillItemDTO {
+public class ItemDTO {
 	
 	private String itemId;
 	private String inventoryId;

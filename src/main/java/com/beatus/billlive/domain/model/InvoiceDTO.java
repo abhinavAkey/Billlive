@@ -2,15 +2,15 @@ package com.beatus.billlive.domain.model;
 
 import java.util.List;
 
-public class BillDTO {
+public class InvoiceDTO {
 
-	private String billNumber;
-	private String billFromContactId;
-	private String billToContactId;
+	private String invoiceNumber;
+	private String invoiceFromContactId;
+	private String invoiceToContactId;
 	private String companyId;
 	private String uid;
 	private List<ItemDTO> items;
-	private String dateOfBill;
+	private String dateOfInvoice;
 	private String dueDate;
 	private Double totalAmount;
 	private Double totalTax;
@@ -26,23 +26,23 @@ public class BillDTO {
 	private String month;
 	private String day;
 	
-	public String getBillNumber() {
-		return billNumber;
+	public String getInvoiceNumber() {
+		return invoiceNumber;
 	}
-	public void setBillNumber(String billNumber) {
-		this.billNumber = billNumber;
+	public void setInvoiceNumber(String invoiceNumber) {
+		this.invoiceNumber = invoiceNumber;
 	}
-	public String getBillFromContactId() {
-		return billFromContactId;
+	public String getInvoiceFromContactId() {
+		return invoiceFromContactId;
 	}
-	public void setBillFromContactId(String billFromContactId) {
-		this.billFromContactId = billFromContactId;
+	public void setInvoiceFromContactId(String invoiceFromContactId) {
+		this.invoiceFromContactId = invoiceFromContactId;
 	}
-	public String getBillToContactId() {
-		return billToContactId;
+	public String getInvoiceToContactId() {
+		return invoiceToContactId;
 	}
-	public void setBillToContactId(String billToContactId) {
-		this.billToContactId = billToContactId;
+	public void setInvoiceToContactId(String invoiceToContactId) {
+		this.invoiceToContactId = invoiceToContactId;
 	}
 	public String getUid() {
 		return uid;
@@ -50,11 +50,11 @@ public class BillDTO {
 	public void setUid(String uid) {
 		this.uid = uid;
 	}
-	public String getDateOfBill() {
-		return dateOfBill;
+	public String getDateOfInvoice() {
+		return dateOfInvoice;
 	}
-	public void setDateOfBill(String dateOfBill) {
-		this.dateOfBill = dateOfBill;
+	public void setDateOfInvoice(String dateOfInvoice) {
+		this.dateOfInvoice = dateOfInvoice;
 	}
 	public String getDueDate() {
 		return dueDate;

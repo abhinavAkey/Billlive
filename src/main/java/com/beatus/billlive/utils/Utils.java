@@ -7,8 +7,8 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.beatus.billlive.domain.model.BillItemDTO;
 import com.beatus.billlive.domain.model.Inventory;
+import com.beatus.billlive.domain.model.ItemDTO;
 import com.beatus.billlive.domain.model.ItemData;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -31,15 +31,15 @@ public class Utils {
 		return taxAmount;
 	}
 	
-	public static Double calculateMarginAmount(ItemData itemDataFromDatabase, BillItemDTO billItemToBeSaved) {
+	public static Double calculateMarginAmount(ItemData itemDataFromDatabase, ItemDTO itemToBeSaved) {
 		List<Inventory> inventories = itemDataFromDatabase.getInventories();
 		Double marginAmount = Constants.DEFAULT_DOUBLE_VALUE;
 		if(inventories != null){
 			for(int i=0; i<inventories.size(); i++){
-				if(inventories.get(i).getInventoryId().equalsIgnoreCase(billItemToBeSaved.getInventoryId())){
-					Double unitPrice = inventories.get(i).getBuyPricesPerQuantityType().get(billItemToBeSaved.getQuantityType().toString());
-					Double actualBuyPriceForQuantity = unitPrice*billItemToBeSaved.getQuantity();
-					Double actualProductValue = billItemToBeSaved.getProductValue() * billItemToBeSaved.getQuantity();
+				if(inventories.get(i).getInventoryId().equalsIgnoreCase(itemToBeSaved.getInventoryId())){
+					Double unitPrice = inventories.get(i).getBuyPricesPerQuantityType().get(itemToBeSaved.getQuantityType().toString());
+					Double actualBuyPriceForQuantity = unitPrice*itemToBeSaved.getQuantity();
+					Double actualProductValue = itemToBeSaved.getProductValue() * itemToBeSaved.getQuantity();
 					marginAmount = actualProductValue - actualBuyPriceForQuantity;
 				}
 			}
