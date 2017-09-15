@@ -21,7 +21,7 @@ public class InvoiceDataValidator {
 		if(StringUtils.isBlank(invoiceItemDTO.getInventoryId())){
 			throw new BillliveClientValidationException("inventoryId","InvoiceItemDTO, the inventoryId field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
-		if(invoiceItemDTO.getProductValue() == null){
+		if(invoiceItemDTO.getItemValue() == null){
 			throw new BillliveClientValidationException("productValue","InvoiceItemDTO, the productValue field is not available, for the invoice number " + invoiceItemDTO.getItemId());
 		}
 		if(invoiceItemDTO.getQuantityType() == null){

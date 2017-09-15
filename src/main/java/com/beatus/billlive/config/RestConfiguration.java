@@ -1,10 +1,12 @@
 package com.beatus.billlive.config;
 
-import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.ServerProperties;
+import org.springframework.context.annotation.Configuration;
+
+import com.beatus.billlive.filter.CORSResponseFilter;
 
 /**
  * Jersey-specific configuration class that extends and wraps the JSR-311 
@@ -13,7 +15,7 @@ import org.glassfish.jersey.server.ServerProperties;
  * 
  * @author Abhinav Akey
  */
-@ApplicationPath("api")
+@Configuration
 public class RestConfiguration extends ResourceConfig {
 
     private static final String APPLICATION_NAME = "billlive";
@@ -24,6 +26,8 @@ public class RestConfiguration extends ResourceConfig {
         // Provider-specific properties
         property(ServerProperties.APPLICATION_NAME, APPLICATION_NAME); 
         property(ServerProperties.MONITORING_STATISTICS_MBEANS_ENABLED, true);
+        this.register(CORSResponseFilter.class);
+
 
         // Providers
        /* this.register(ResponseWriter.class);

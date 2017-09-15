@@ -9,7 +9,7 @@ public class BillItemData {
 	private Double quantity;
 	private Double unitPriceInclusiveOfTaxes;
 	private Double unitPriceExclusiveOfTaxes;
-	private Double productValue;
+	private Double itemValue;
 	private Double amountBeforeTax;
 	private Double taxAmountForItem;
 	private Double totalCGST;
@@ -58,11 +58,11 @@ public class BillItemData {
 	public void setUnitPriceExclusiveOfTaxes(Double unitPriceExclusiveOfTaxes) {
 		this.unitPriceExclusiveOfTaxes = unitPriceExclusiveOfTaxes;
 	}
-	public Double getProductValue() {
-		return productValue;
+	public Double getItemValue() {
+		return itemValue;
 	}
-	public void setProductValue(Double productValue) {
-		this.productValue = productValue;
+	public void setItemValue(Double itemValue) {
+		this.itemValue = itemValue;
 	}
 	public Double getAmountBeforeTax() {
 		return amountBeforeTax;

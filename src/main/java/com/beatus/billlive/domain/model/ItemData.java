@@ -6,6 +6,7 @@ import java.util.List;
 public class ItemData extends BaseData{
 	
 	private String itemId;
+	private ItemType itemType;
 	private String uid;
 	private String postId;
 	private String hsnCode;
@@ -21,6 +22,12 @@ public class ItemData extends BaseData{
 	}
 	public void setItemId(String itemId) {
 		this.itemId = itemId;
+	}
+	public ItemType getItemType() {
+		return itemType;
+	}
+	public void setItemType(ItemType itemType) {
+		this.itemType = itemType;
 	}
 	public String getHsnCode() {
 		return hsnCode;

@@ -49,7 +49,7 @@ public class BillValidator {
 		if(StringUtils.isBlank(billItemDTO.getInventoryId())){
 			throw new BillliveClientValidationException("inventoryId","BillItemDTO, the inventoryId field is not available, for the bill number " + billItemDTO.getItemId());
 		}
-		if(billItemDTO.getProductValue() == null){
+		if(billItemDTO.getItemValue() == null){
 			throw new BillliveClientValidationException("productValue","BillItemDTO, the productValue field is not available, for the bill number " + billItemDTO.getItemId());
 		}
 		if(billItemDTO.getQuantityType() == null){

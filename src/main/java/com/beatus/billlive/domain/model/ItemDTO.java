@@ -3,9 +3,10 @@ package com.beatus.billlive.domain.model;
 public class ItemDTO {
 	
 	private String itemId;
+	private ItemType itemType;
 	private String inventoryId;
 	private String isTaxeble;
-	private Double productValue;
+	private Double itemValue;
 	private QuantityType quantityType;
 	private Double quantity;
 	private Double actualUnitPrice;
@@ -43,11 +44,17 @@ public class ItemDTO {
 	public void setIsTaxeble(String isTaxeble) {
 		this.isTaxeble = isTaxeble;
 	}
-	public Double getProductValue() {
-		return productValue;
+	public ItemType getItemType() {
+		return itemType;
 	}
-	public void setProductValue(Double productValue) {
-		this.productValue = productValue;
+	public void setItemType(ItemType itemType) {
+		this.itemType = itemType;
+	}
+	public Double getItemValue() {
+		return itemValue;
+	}
+	public void setItemValue(Double itemValue) {
+		this.itemValue = itemValue;
 	}
 	public Double getQuantity() {
 		return quantity;

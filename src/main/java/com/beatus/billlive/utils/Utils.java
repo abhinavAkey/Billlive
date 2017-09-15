@@ -39,7 +39,7 @@ public class Utils {
 				if(inventories.get(i).getInventoryId().equalsIgnoreCase(itemToBeSaved.getInventoryId())){
 					Double unitPrice = inventories.get(i).getBuyPricesPerQuantityType().get(itemToBeSaved.getQuantityType().toString());
 					Double actualBuyPriceForQuantity = unitPrice*itemToBeSaved.getQuantity();
-					Double actualProductValue = itemToBeSaved.getProductValue() * itemToBeSaved.getQuantity();
+					Double actualProductValue = itemToBeSaved.getItemValue() * itemToBeSaved.getQuantity();
 					marginAmount = actualProductValue - actualBuyPriceForQuantity;
 				}
 			}

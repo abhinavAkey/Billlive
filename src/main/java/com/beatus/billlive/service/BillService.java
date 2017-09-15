@@ -20,6 +20,7 @@ import com.beatus.billlive.domain.model.BillData;
 import com.beatus.billlive.domain.model.ItemDTO;
 import com.beatus.billlive.domain.model.BillItemData;
 import com.beatus.billlive.domain.model.ItemData;
+import com.beatus.billlive.domain.model.ItemType;
 import com.beatus.billlive.domain.model.Tax;
 import com.beatus.billlive.repository.BillRepository;
 import com.beatus.billlive.repository.data.listener.OnGetDataListener;
@@ -376,7 +377,7 @@ public class BillService {
 			itemDTO.setInventoryId(billItem.getInventoryId());
 			itemDTO.setIsTaxeble(billItem.getIsTaxeble());
 			itemDTO.setQuantity(billItem.getQuantity());
-			itemDTO.setProductValue(billItem.getProductValue());
+			itemDTO.setItemValue(billItem.getItemValue());
 			itemDTO.setQuantityType(billItem.getQuantityType());
 
 			// itemDTO.setActualUnitPrice(billItem.getA());
@@ -434,56 +435,89 @@ public class BillService {
 			BillItemData billItem = new BillItemData();
 			if (Constants.YES.equalsIgnoreCase(itemDTO.getIsAdded())
 					|| Constants.YES.equalsIgnoreCase(itemDTO.getIsUpdated())) {
-				// Get Item Details
-				ItemData existingItem = itemService.getItemById(companyId, itemDTO.getItemId());
-				billItem.setItemId(itemDTO.getItemId());
-				billItem.setInventoryId(itemDTO.getInventoryId());
-				billItem.setIsTaxeble(itemDTO.getIsTaxeble());
-				billItem.setQuantity(itemDTO.getQuantity());
-				billItem.setProductValue(itemDTO.getProductValue());
-				billItem.setQuantityType(itemDTO.getQuantityType());
-				billItem.setTotalCGST(itemDTO.getTotalCGST());
-				billItem.setTotalSGST(itemDTO.getTotalSGST());
-				billItem.setTotalIGST(itemDTO.getTotalIGST());
-				Double amountBeforeTax = itemDTO.getProductValue() * itemDTO.getQuantity();
-				if (itemDTO.getAmountBeforeTax() == null) {
-					billItem.setAmountBeforeTax(amountBeforeTax);
-				} else {
-					billItem.setAmountBeforeTax(itemDTO.getAmountBeforeTax());
-				}
-				Double taxAmountForItem = null;
-				Double taxPercentage = 0.0;
-				if(itemDTO.getTaxPercentage() == null){
-					Tax tax = taxService.getTaxById(companyId, itemDTO.getTaxId());
-					if(tax != null)
-						taxPercentage = tax.getTotalTaxPercentage();
-				}else {
-					taxPercentage = itemDTO.getTaxPercentage();
-				}
-				if (Constants.YES.equalsIgnoreCase(itemDTO.getIsTaxeble())) {
-					if (itemDTO.getTaxAmountForItem() == null) {
-						taxAmountForItem = Utils.calculateTaxAmount(amountBeforeTax, taxPercentage);
-						billItem.setTaxAmountForItem(taxAmountForItem);
+				if(ItemType.PRODUCT.equals(itemDTO.getItemType())){
+					// Get Item Details
+					ItemData existingItem = itemService.getItemById(companyId, itemDTO.getItemId());
+					billItem.setItemId(itemDTO.getItemId());
+					billItem.setInventoryId(itemDTO.getInventoryId());
+					billItem.setIsTaxeble(itemDTO.getIsTaxeble());
+					billItem.setQuantity(itemDTO.getQuantity());
+					billItem.setItemValue(itemDTO.getItemValue());
+					billItem.setQuantityType(itemDTO.getQuantityType());
+					billItem.setTotalCGST(itemDTO.getTotalCGST());
+					billItem.setTotalSGST(itemDTO.getTotalSGST());
+					billItem.setTotalIGST(itemDTO.getTotalIGST());
+					Double amountBeforeTax = itemDTO.getItemValue() * itemDTO.getQuantity();
+					if (itemDTO.getAmountBeforeTax() == null) {
+						billItem.setAmountBeforeTax(amountBeforeTax);
 					} else {
-						billItem.setTaxAmountForItem(itemDTO.getTaxAmountForItem());
+						billItem.setAmountBeforeTax(itemDTO.getAmountBeforeTax());
 					}
-				} else {
-					taxAmountForItem = 0.00;
-				}
-				if (itemDTO.getAmountAfterTax() == null) {
-					Double amountAfterTax = amountBeforeTax + taxAmountForItem;
-					billItem.setAmountBeforeTax(amountAfterTax);
-				} else {
-					billItem.setAmountBeforeTax(itemDTO.getAmountAfterTax());
-				}
-				billItem.setDiscount(itemDTO.getDiscount());
-				Double marginAmount = itemDTO.getMarginAmount();
-				if (marginAmount == null) {
-					marginAmount = Utils.calculateMarginAmount(existingItem, itemDTO);
-					billItem.setMarginAmount(marginAmount);
-				}
-				if (itemDTO.getTaxOnMargin() == null) {
-					billItem.setTaxOnMargin(Utils.calculateTaxOnMargin(marginAmount, taxPercentage));
+					Double taxAmountForItem = 0.0;
+					Double taxPercentage = 0.0;
+					if(itemDTO.getTaxPercentage() == null){
+						Tax tax = taxService.getTaxById(companyId, itemDTO.getTaxId());
+						if(tax != null)
+							taxPercentage = tax.getTotalTaxPercentage();
+					}else {
+						taxPercentage = itemDTO.getTaxPercentage();
+					}
+					if (Constants.YES.equalsIgnoreCase(itemDTO.getIsTaxeble())) {
+						if (itemDTO.getTaxAmountForItem() == null) {
+							taxAmountForItem = Utils.calculateTaxAmount(amountBeforeTax, taxPercentage);
+							billItem.setTaxAmountForItem(taxAmountForItem);
+						} else {
+							billItem.setTaxAmountForItem(itemDTO.getTaxAmountForItem());
+						}
+					} else {
+						taxAmountForItem = 0.00;
+					}
+					if (itemDTO.getAmountAfterTax() == null) {
+						Double amountAfterTax = amountBeforeTax + taxAmountForItem;
+						billItem.setAmountAfterTax(amountAfterTax);
+					} else {
+						billItem.setAmountAfterTax(itemDTO.getAmountAfterTax());
+					}
+					billItem.setDiscount(itemDTO.getDiscount());
+					Double marginAmount = itemDTO.getMarginAmount();
+					if (marginAmount == null) {
+						marginAmount = Utils.calculateMarginAmount(existingItem, itemDTO);
+						billItem.setMarginAmount(marginAmount);
+					}
+					if (itemDTO.getTaxOnMargin() == null) {
+						billItem.setTaxOnMargin(Utils.calculateTaxOnMargin(marginAmount, taxPercentage));
+					}
+				}else if(ItemType.EXPENSE.equals(itemDTO.getItemType()) || ItemType.SERVICE.equals(itemDTO.getItemType())){
+					billItem.setItemId(itemDTO.getItemId());
+					billItem.setItemValue(itemDTO.getItemValue());
+					billItem.setTotalCGST(itemDTO.getTotalCGST());
+					billItem.setTotalSGST(itemDTO.getTotalSGST());
+					billItem.setTotalIGST(itemDTO.getTotalIGST());
+					Double taxAmountForItem = 0.0;
+					Double taxPercentage = 0.0;
+					if(itemDTO.getTaxPercentage() == null){
+						Tax tax = taxService.getTaxById(companyId, itemDTO.getTaxId());
+						if(tax != null)
+							taxPercentage = tax.getTotalTaxPercentage();
+					}else {
+						taxPercentage = itemDTO.getTaxPercentage();
+					}
+					if (Constants.YES.equalsIgnoreCase(itemDTO.getIsTaxeble())) {
+						if (itemDTO.getTaxAmountForItem() == null) {
+							taxAmountForItem = Utils.calculateTaxAmount(itemDTO.getItemValue(), taxPercentage);
+							billItem.setTaxAmountForItem(taxAmountForItem);
+						} else {
+							billItem.setTaxAmountForItem(itemDTO.getTaxAmountForItem());
+						}
+					} else {
+						taxAmountForItem = 0.00;
+					}
+					if (itemDTO.getAmountAfterTax() == null) {
+						Double amountAfterTax = itemDTO.getItemValue() + taxAmountForItem;
+						billItem.setAmountAfterTax(amountAfterTax);
+					} else {
+						billItem.setAmountAfterTax(itemDTO.getAmountAfterTax());
+					}
 				}
 			} else if (billData != null && Constants.YES.equalsIgnoreCase(itemDTO.getIsDeleted())) {
 				for (BillItemData existingBillItem : billData.getBillItems()) {

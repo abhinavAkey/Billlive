@@ -1,241 +1,335 @@
-
 package com.beatus.billlive.service;
 
-
-
-import java.math.BigDecimal;
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.BindException;
-import org.springframework.validation.Errors;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.beatus.billlive.domain.model.ColumnTemplate;
-import com.beatus.billlive.domain.model.ExcelFile;
-import com.beatus.billlive.domain.model.FileTemplate;
-import com.beatus.billlive.domain.model.ItemData;
-import com.beatus.billlive.utils.FileUploadTemplateHandler;
+import com.beatus.billlive.domain.model.ExcelData;
 
+@Service
+@Component("excelService")
+public class ExcelService {
 
+	private static final Logger LOG = LoggerFactory.getLogger(ExcelService.class);
 
-public class ExcelService {/*
-	public static final String VARCHAR = "VARCHAR";
-	public static final String DECIMAL = "DECIMAL";
-	public static final String TIMESTAMP = "TIMESTAMP";
-	public static final String BOOLEAN = "BOOLEAN";
-	@Autowired
-	FileUploadTemplateHandler  fileUploadTemplateHandler;
-	public FileUploadTemplateHandler getFileUploadTemplateHandler() {
-		return fileUploadTemplateHandler;
-	}
+	public static Map<String, ExcelData> items = new HashMap<String, ExcelData>();
+	public static Map<String, Integer> columnsids = new HashMap<String, Integer>();
 
-	public void setFileUploadTemplateHandler(
-			FileUploadTemplateHandler fileUploadTemplateHandler) {
-		this.fileUploadTemplateHandler = fileUploadTemplateHandler;
-	}
-	
-	public  List<Object> LoadExcel(MultipartFile file) throws Exception{
-    	List<Object> list = null;
-    	if (!file.isEmpty()) {
-			  try {
-	            	Workbook workbook = null;
-					if (file.getOriginalFilename().endsWith("xls")) {
-						workbook = new HSSFWorkbook(file.getInputStream());
-					} else if (file.getOriginalFilename().endsWith("xlsx")) {
-						workbook = new XSSFWorkbook(file.getInputStream());
-					} 
-					ExcelFile excelFile = new ExcelFile(workbook.getSheetAt(0), true, 2000,
-							fileUploadTemplateHandler.getUserfileTemplate()
-							);
-					list = readExcelFile(excelFile.getSheet(), excelFile.getFileTemplate(), 
-							true, -1,-1);
-				} 
-				catch (Exception e) {
-	                throw e;
-	            }
-	    		
-	        } else {
-	        	 throw new Exception("You failed to upload because the file was empty.");
-	        }
-		return list;
-    }
-	public static List<Object> readExcelFile(Sheet sheet,FileTemplate fileTemplate, boolean hasHeaderRow,int startRow, int endRow) {
-		List<Object> itemList = null;
-		Object item;
-		BindException bindException;
-		try {
-			//Sheet sheet = workbook.getSheetAt(0);
-			if(startRow == -1 && endRow == -1){
-				startRow=sheet.getFirstRowNum();
-				endRow = sheet.getLastRowNum();
-			}
-			//Iterator<Row> rowIterator = sheet.iterator();
+	public static void readXLSFile() throws IOException {
+		InputStream ExcelFileToRead = new FileInputStream("C:/Test.xls");
+		HSSFWorkbook wb = new HSSFWorkbook(ExcelFileToRead);
 
-			itemList = new ArrayList<>();
-			
-			for(int currRow = startRow; currRow <= endRow; currRow++){
+		HSSFSheet sheet = wb.getSheetAt(0);
+		HSSFRow row;
+		HSSFCell cell;
 
-				item = new ItemData();
-				Row row = (Row) sheet.getRow(currRow);
-				bindException = new BindException(item, ""+ row.getRowNum());
-				ColumnTemplate column;
-				if (hasHeaderRow && row.getRowNum() < 1) {
-					continue; // just skip the row if row number 0  if header row is true
+		Iterator rows = sheet.rowIterator();
+
+		while (rows.hasNext()) {
+			row = (HSSFRow) rows.next();
+			Iterator cells = row.cellIterator();
+
+			while (cells.hasNext()) {
+				cell = (HSSFCell) cells.next();
+
+				if (cell.getCellType() == HSSFCell.CELL_TYPE_STRING) {
+					LOG.debug(cell.getStringCellValue() + " ");
+				} else if (cell.getCellType() == HSSFCell.CELL_TYPE_NUMERIC) {
+					LOG.debug(cell.getNumericCellValue() + " ");
+				} else {
+					// U Can Handel Boolean, Formula, Errors
 				}
-				
-				
-				 * Dynamically calculate positions based on Column Name 
-				 * and Bean Name if needed to not use static pos from conf
-				 * 
-				for (Integer pos : fileTemplate.getColumnTemplatesMap()
-							.keySet()) {
-						column = fileTemplate.getColumnTemplateByPos(pos);
-						switch (column.getType()) {
-						case TIMESTAMP:
-							try{
-							BeanUtils.setProperty(
-									item,
-									column.getBeanColumnName(),
-									getDateCellValue(row.getCell(pos),
-											bindException, column));
-							}
-							catch (Exception e) {
-								// TODO: handle exception
-								e.printStackTrace();
-								
-							}
-							break;
-						case DECIMAL:
-							BeanUtils.setProperty(
-									item,
-									column.getBeanColumnName(),
-									getDecimalCellValue(row.getCell(pos),
-											bindException, column));
-							break;
-						case BOOLEAN:
-							BeanUtils.setProperty(
-									item,
-									column.getBeanColumnName(),
-									getBooleanCellValue(row.getCell(pos),
-											bindException, column));
-							break;
+			}
+			LOG.debug("Exit readXLSFile");
+		}
 
-						default:
-							BeanUtils.setProperty(
-									item,
-									column.getBeanColumnName(),
-									getStringCellValue(row.getCell(pos),
-											bindException, column));
-							break;
+	}
+
+	public static void writeXLSFile() throws IOException {
+
+		String excelFileName = "C:/Test.xls";// name of excel file
+
+		String sheetName = "Sheet1";// name of sheet
+
+		HSSFWorkbook wb = new HSSFWorkbook();
+		HSSFSheet sheet = wb.createSheet(sheetName);
+
+		// iterating r number of rows
+		for (int r = 0; r < 5; r++) {
+			HSSFRow row = sheet.createRow(r);
+
+			// iterating c number of columns
+			for (int c = 0; c < 5; c++) {
+				HSSFCell cell = row.createCell(c);
+
+				cell.setCellValue("Cell " + r + " " + c);
+			}
+		}
+
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		// write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
+	}
+
+	@SuppressWarnings("deprecation")
+	public List<ExcelData> readExcelFile(MultipartFile file)
+			throws IOException, EncryptedDocumentException, InvalidFormatException {
+		InputStream excelFileToRead = new ByteArrayInputStream(file.getBytes());
+		// XSSFWorkbook wb = new XSSFWorkbook(excelFileToRead);
+		List<ExcelData> itemsData = new ArrayList<ExcelData>();
+		Workbook wb = WorkbookFactory.create(excelFileToRead);
+		if (wb != null) {
+			Sheet sheet = wb.getSheetAt(0);
+			// XSSFSheet sheet = wb.getSheetAt(0);
+			XSSFRow row;
+			XSSFCell cell;
+
+			Iterator<Row> rows = sheet.rowIterator();
+			Boolean isColumnNameVisited = true;
+			while (isColumnNameVisited) {
+				row = (XSSFRow) rows.next();
+				Iterator<Cell> cells = row.cellIterator();
+				int i = 0;
+				while (cells.hasNext()) {
+					cell = (XSSFCell) cells.next();
+
+					if (cell.getCellType() == XSSFCell.CELL_TYPE_STRING) {
+						if (cell.getStringCellValue().equals("Item Name")) {
+							LOG.debug("inside Item Name");
+							columnsids.put("Item Name", i);
+							isColumnNameVisited = false;
 						}
+						if (cell.getStringCellValue().equals("Kgs/Grams")) {
+							LOG.debug("inside Kgs/Grams");
+							columnsids.put("Kgs/Grams", i);
+							isColumnNameVisited = false;
+						}
+						if (cell.getStringCellValue().equals("Bags")) {
+							LOG.debug("inside Bags");
+							columnsids.put("Bags", i);
+							isColumnNameVisited = false;
+						}
+						if (cell.getStringCellValue().equals("Rate")) {
+							LOG.debug("inside Rate");
+							columnsids.put("Rate", i);
+							isColumnNameVisited = false;
+						}
+						if (cell.getStringCellValue().equals("Qty")) {
+							LOG.debug("inside Qty");
+							columnsids.put("Qty", i);
+							isColumnNameVisited = false;
+						}
+						if (cell.getStringCellValue().equals("Gross")) {
+							LOG.debug("inside Gross");
+							columnsids.put("Gross", i);
+							isColumnNameVisited = false;
+						}
+						if (cell.getStringCellValue().equals("VAT")) {
+							LOG.debug("inside VAT");
+							columnsids.put("VAT", i);
+							isColumnNameVisited = false;
+						}
+						if (cell.getStringCellValue().equals("Net")) {
+							LOG.debug("inside Net");
+							columnsids.put("Net", i);
+							isColumnNameVisited = false;
+						}
+
 					}
-				
-				
-				
-				itemList.add(item);
+					i++;
+				}
+				LOG.debug(columnsids.toString());
 			}
-		} catch (Exception e) {
-			
-			e.printStackTrace();
-		}
 
-		return itemList;
-	}
-	
-	private static Date getDateCellValue(Cell cell ,
-			Errors result, ColumnTemplate columnTemplate) {
-		Date parsedDate = null;
-		if(cell==null){
-			return parsedDate;
-		}
-		try {
-		parsedDate = cell.getDateCellValue();
-		} catch (IllegalStateException | NumberFormatException e ) {
-		}
-		return parsedDate;
-	}
+			while (rows.hasNext()) {
+				LOG.debug("inside Second While loop");
+				row = (XSSFRow) rows.next();
+				LOG.debug("inside Second While loop in cells");
+				String itemNameSize = null;
+				String itemName = row.getCell((Integer) columnsids.get("Item Name")).getStringCellValue();
+				LOG.debug("Item name is" + itemName + "test");
+				LOG.debug("length : " + itemName.length());
+				if (itemName.length() > 0) {
+					LOG.debug("inside If in cells");
+					String itemUnitsSize = String.valueOf(row.getCell((Integer) columnsids.get("Kgs/Grams")) == null
+							? 0.0 : row.getCell((Integer) columnsids.get("Kgs/Grams")).getNumericCellValue());
+					itemNameSize = itemName+" - "+itemUnitsSize;
+					LOG.debug("itemNameSize is" + itemNameSize + "test");
+					if (items.containsKey(itemNameSize)) {
+						LOG.debug("In side map contains");
+						ExcelData itemData = (ExcelData) items.get(itemNameSize);
+						itemData.setNumberOfBags(row.getCell((Integer) columnsids.get("Bags")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("Bags")).getNumericCellValue()
+										+ itemData.getNumberOfBags());
+						LOG.debug("Bags : ");
+						if (columnsids.get("Qty") != null) {
+							itemData.setQuantityOrdered(row.getCell((Integer) columnsids.get("Qty")) == null ? 0.0
+									: row.getCell((Integer) columnsids.get("Qty")).getNumericCellValue()
+											+ itemData.getQuantityOrdered());
+							LOG.debug("Qty : ");
+						}
+						LOG.debug("Gross amount 1 is: " + String.valueOf(itemData.getGrossAmount()));
+						LOG.debug("Gross amount : "
+								+ String.valueOf(row.getCell((Integer) columnsids.get("Gross")) == null ? 0.0
+										: row.getCell((Integer) columnsids.get("Gross")).getNumericCellValue())
+								+ "test");
+						itemData.setGrossAmount(row.getCell((Integer) columnsids.get("Gross")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("Gross")).getNumericCellValue()
+										+ itemData.getGrossAmount());
 
-	@SuppressWarnings("deprecation")
-	private static String getStringCellValue(Cell cell, Errors errors,
-			ColumnTemplate columnTemplate) {
+						LOG.debug("Gross : " + String.valueOf(itemData.getGrossAmount()));
 
-		String rtrnVal = "";
-		if(cell==null){
-			return rtrnVal;
-		}
-		try {
+						itemData.setVatAmount(row.getCell((Integer) columnsids.get("VAT")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("VAT")).getNumericCellValue()
+										+ itemData.getVatAmount());
+						LOG.debug("VAT   : ");
 
-			if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-				rtrnVal = "" + cell.getNumericCellValue();
-			} else if (cell.getCellType() == Cell.CELL_TYPE_FORMULA) {
-				rtrnVal = cell.getCellFormula();
-			}else{
-				rtrnVal = cell.getStringCellValue();
-			}
-		} catch (Exception exception) {
-			
-		}
-		return rtrnVal;
-	}
-
-	@SuppressWarnings("deprecation")
-	private static BigDecimal getDecimalCellValue(Cell cell, Errors errors,
-			ColumnTemplate columnTemplate) {
-		BigDecimal rtrnVal = new BigDecimal(0);
-		if(cell==null){
-			return rtrnVal;
-		}
-		try {
-			if (cell != null) {
-				if (cell.toString().trim().length() == 0)
-					return rtrnVal = new BigDecimal(0);
-				else if (cell.getCellType() == Cell.CELL_TYPE_NUMERIC) {
-					rtrnVal = BigDecimal.valueOf(cell.getNumericCellValue());
-					return rtrnVal = rtrnVal.setScale(3,
-							BigDecimal.ROUND_CEILING).stripTrailingZeros();
+						itemData.setNetAmount(row.getCell((Integer) columnsids.get("Net")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("Net")).getNumericCellValue()
+										+ itemData.getNetAmount());
+						LOG.debug("Net : ");
+					} else {
+						LOG.debug("Inside Else");
+						ExcelData itemData = new ExcelData();
+						itemData.setItemName(itemName);
+						LOG.debug("itemName : " + itemName);
+						itemData.setUnits(itemUnitsSize);
+						LOG.debug("itemUnitsSize : " + itemUnitsSize);
+						itemData.setQuantityOrdered(
+								row.getCell((Integer) columnsids.get("Kgs/Grams")).getNumericCellValue());
+						LOG.debug("itemUnitsSize : " + itemUnitsSize);
+						itemData.setNumberOfBags(row.getCell((Integer) columnsids.get("Bags")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("Bags")).getNumericCellValue());
+						LOG.debug("Bags : " + String.valueOf(row.getCell((Integer) columnsids.get("Bags")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("Bags")).getNumericCellValue()));
+						itemData.setRateOfEachBag(row.getCell((Integer) columnsids.get("Rate")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("Rate")).getNumericCellValue());
+						LOG.debug("Rate : " + String.valueOf(row.getCell((Integer) columnsids.get("Rate")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("Rate")).getNumericCellValue()));
+						if (columnsids.get("Qty") != null) {
+							LOG.debug("Inside Else Before QTY");
+							itemData.setQuantityOrdered(row.getCell((Integer) columnsids.get("Qty")) == null ? 0.0
+									: row.getCell((Integer) columnsids.get("Qty")).getNumericCellValue());
+							LOG.debug("Qty : " + String.valueOf(row.getCell((Integer) columnsids.get("Qty")) == null
+									? 0.0 : row.getCell((Integer) columnsids.get("Qty")).getNumericCellValue()));
+						}
+						itemData.setGrossAmount(row.getCell((Integer) columnsids.get("Rate")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("Rate")).getNumericCellValue());
+						LOG.debug("Gross : " + String.valueOf(row.getCell((Integer) columnsids.get("Gross")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("Gross")).getNumericCellValue()));
+						itemData.setVatAmount(row.getCell((Integer) columnsids.get("VAT")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("VAT")).getNumericCellValue());
+						LOG.debug("VAT : " + String.valueOf(row.getCell((Integer) columnsids.get("VAT")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("VAT")).getNumericCellValue()));
+						itemData.setNetAmount(row.getCell((Integer) columnsids.get("Net")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("Net")).getNumericCellValue());
+						LOG.debug("Net : " + String.valueOf(row.getCell((Integer) columnsids.get("Net")) == null ? 0.0
+								: row.getCell((Integer) columnsids.get("Net")).getNumericCellValue()));
+						items.put(itemNameSize, itemData);
+					}
 				}
 			}
-		} catch (Exception exception) {
-			
 		}
-
-		return rtrnVal;
+		for (Entry<String, ExcelData> entry : items.entrySet()) {
+			ExcelData itemData = entry.getValue();
+			String displayValue = "Rate : " + itemData.getRateOfEachBag() + " Qty : " + itemData.getQuantityOrdered()+" Gross : " + itemData.getGrossAmount()+" Tax : " + itemData.getVatAmount()+ " Net : " + itemData.getNetAmount();
+			itemData.setLabel(entry.getKey());
+			itemData.setDisplayValue(displayValue);
+			itemData.setValue(String.valueOf(itemData.getNumberOfBags()));
+			itemsData.add(itemData);		
+		}
+		LOG.debug(items.toString());
+		return itemsData;
 	}
-	
-	private static Boolean getBooleanCellValue(Cell cell, Errors errors,
-			ColumnTemplate columnTemplate) {
-		boolean rtrnVal = false;
-		if(cell==null){
-			return rtrnVal;
+
+	@SuppressWarnings("resource")
+	public static void writeXLSXFile() throws IOException {
+
+		String excelFileName = "C:/Test2.xlsx";// name of excel file
+
+		String sheetName = "Sheet1";// name of sheet
+
+		XSSFWorkbook wb = new XSSFWorkbook();
+		XSSFSheet sheet = wb.createSheet(sheetName);
+		int i = 0;
+		int j = 0;
+		XSSFRow row = sheet.createRow(i);
+		for (String key : columnsids.keySet()) {
+			XSSFCell cell = row.createCell(j);
+			cell.setCellValue(key);
+			j++;
 		}
-		try {
-			if (cell != null) {
-				if (cell.toString().trim().length() == 0)
-					return rtrnVal;
-				else if (cell.getCellType() == Cell.CELL_TYPE_BOOLEAN) {
-					rtrnVal = cell.getBooleanCellValue();
-					return rtrnVal;
-				}
-			}
-		} catch (IllegalStateException exception) {
+
+		for (String key : items.keySet()) {
+			i++;
+			j = 0;
+			row = sheet.createRow(i);
+			ExcelData item = items.get(key);
+			XSSFCell cell1 = row.createCell(j);
+			cell1.setCellValue(String.valueOf(item.getItemName()));
+			j++;
+			XSSFCell cell2 = row.createCell(j);
+			cell2.setCellValue(String.valueOf(item.getNumberOfBags()));
+			j++;
+			XSSFCell cell3 = row.createCell(j);
+			cell3.setCellValue(String.valueOf(item.getRateOfEachBag()));
+			j++;
+			XSSFCell cell4 = row.createCell(j);
+			cell4.setCellValue(String.valueOf(item.getUnits()));
+			j++;
+			XSSFCell cell5 = row.createCell(j);
+			cell5.setCellValue(String.valueOf(item.getQuantityOrdered()));
+			j++;
+			XSSFCell cell6 = row.createCell(j);
+			cell6.setCellValue(String.valueOf(item.getVatAmount()));
+			j++;
+			XSSFCell cell7 = row.createCell(j);
+			cell7.setCellValue(String.valueOf(item.getGrossAmount()));
+			j++;
+			XSSFCell cell8 = row.createCell(j);
+			cell8.setCellValue(String.valueOf(item.getNetAmount()));
+			j++;
 
 		}
 
-		return rtrnVal;
+		FileOutputStream fileOut = new FileOutputStream(excelFileName);
+
+		// write this workbook to an Outputstream.
+		wb.write(fileOut);
+		fileOut.flush();
+		fileOut.close();
 	}
-	
 
-    
-
-    	
-*/}
+}

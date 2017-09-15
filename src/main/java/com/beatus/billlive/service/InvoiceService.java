@@ -20,6 +20,7 @@ import com.beatus.billlive.domain.model.InvoiceData;
 import com.beatus.billlive.domain.model.InvoiceItemData;
 import com.beatus.billlive.domain.model.ItemDTO;
 import com.beatus.billlive.domain.model.ItemData;
+import com.beatus.billlive.domain.model.ItemType;
 import com.beatus.billlive.domain.model.Tax;
 import com.beatus.billlive.repository.InvoiceRepository;
 import com.beatus.billlive.repository.data.listener.OnGetDataListener;
@@ -376,7 +377,7 @@ public class InvoiceService {
 			itemDTO.setInventoryId(invoiceItem.getInventoryId());
 			itemDTO.setIsTaxeble(invoiceItem.getIsTaxeble());
 			itemDTO.setQuantity(invoiceItem.getQuantity());
-			itemDTO.setProductValue(invoiceItem.getProductValue());
+			itemDTO.setItemValue(invoiceItem.getItemValue());
 			itemDTO.setQuantityType(invoiceItem.getQuantityType());
 
 			// itemDTO.setActualUnitPrice(invoiceItem.getA());
@@ -434,56 +435,89 @@ public class InvoiceService {
 			InvoiceItemData invoiceItem = new InvoiceItemData();
 			if (Constants.YES.equalsIgnoreCase(itemDTO.getIsAdded())
 					|| Constants.YES.equalsIgnoreCase(itemDTO.getIsUpdated())) {
-				// Get Item Details
-				ItemData existingItem = itemService.getItemById(companyId, itemDTO.getItemId());
-				invoiceItem.setItemId(itemDTO.getItemId());
-				invoiceItem.setInventoryId(itemDTO.getInventoryId());
-				invoiceItem.setIsTaxeble(itemDTO.getIsTaxeble());
-				invoiceItem.setQuantity(itemDTO.getQuantity());
-				invoiceItem.setProductValue(itemDTO.getProductValue());
-				invoiceItem.setQuantityType(itemDTO.getQuantityType());
-				invoiceItem.setTotalCGST(itemDTO.getTotalCGST());
-				invoiceItem.setTotalSGST(itemDTO.getTotalSGST());
-				invoiceItem.setTotalIGST(itemDTO.getTotalIGST());
-				Double amountBeforeTax = itemDTO.getProductValue() * itemDTO.getQuantity();
-				if (itemDTO.getAmountBeforeTax() == null) {
-					invoiceItem.setAmountBeforeTax(amountBeforeTax);
-				} else {
-					invoiceItem.setAmountBeforeTax(itemDTO.getAmountBeforeTax());
-				}
-				Double taxAmountForItem = null;
-				Double taxPercentage = 0.0;
-				if(itemDTO.getTaxPercentage() == null){
-					Tax tax = taxService.getTaxById(companyId, itemDTO.getTaxId());
-					if(tax != null)
-						taxPercentage = tax.getTotalTaxPercentage();
-				}else {
-					taxPercentage = itemDTO.getTaxPercentage();
-				}
-				if (Constants.YES.equalsIgnoreCase(itemDTO.getIsTaxeble())) {
-					if (itemDTO.getTaxAmountForItem() == null) {
-						taxAmountForItem = Utils.calculateTaxAmount(amountBeforeTax, taxPercentage);
-						invoiceItem.setTaxAmountForItem(taxAmountForItem);
+				if(ItemType.PRODUCT.equals(itemDTO.getItemType())){
+					// Get Item Details
+					ItemData existingItem = itemService.getItemById(companyId, itemDTO.getItemId());
+					invoiceItem.setItemId(itemDTO.getItemId());
+					invoiceItem.setInventoryId(itemDTO.getInventoryId());
+					invoiceItem.setIsTaxeble(itemDTO.getIsTaxeble());
+					invoiceItem.setQuantity(itemDTO.getQuantity());
+					invoiceItem.setItemValue(itemDTO.getItemValue());
+					invoiceItem.setQuantityType(itemDTO.getQuantityType());
+					invoiceItem.setTotalCGST(itemDTO.getTotalCGST());
+					invoiceItem.setTotalSGST(itemDTO.getTotalSGST());
+					invoiceItem.setTotalIGST(itemDTO.getTotalIGST());
+					Double amountBeforeTax = itemDTO.getItemValue() * itemDTO.getQuantity();
+					if (itemDTO.getAmountBeforeTax() == null) {
+						invoiceItem.setAmountBeforeTax(amountBeforeTax);
 					} else {
-						invoiceItem.setTaxAmountForItem(itemDTO.getTaxAmountForItem());
+						invoiceItem.setAmountBeforeTax(itemDTO.getAmountBeforeTax());
 					}
-				} else {
-					taxAmountForItem = 0.00;
-				}
-				if (itemDTO.getAmountAfterTax() == null) {
-					Double amountAfterTax = amountBeforeTax + taxAmountForItem;
-					invoiceItem.setAmountBeforeTax(amountAfterTax);
-				} else {
-					invoiceItem.setAmountBeforeTax(itemDTO.getAmountAfterTax());
-				}
-				invoiceItem.setDiscount(itemDTO.getDiscount());
-				Double marginAmount = itemDTO.getMarginAmount();
-				if (marginAmount == null) {
-					marginAmount = Utils.calculateMarginAmount(existingItem, itemDTO);
-					invoiceItem.setMarginAmount(marginAmount);
-				}
-				if (itemDTO.getTaxOnMargin() == null) {
-					invoiceItem.setTaxOnMargin(Utils.calculateTaxOnMargin(marginAmount, taxPercentage));
+					Double taxAmountForItem = 0.0;
+					Double taxPercentage = 0.0;
+					if(itemDTO.getTaxPercentage() == null){
+						Tax tax = taxService.getTaxById(companyId, itemDTO.getTaxId());
+						if(tax != null)
+							taxPercentage = tax.getTotalTaxPercentage();
+					}else {
+						taxPercentage = itemDTO.getTaxPercentage();
+					}
+					if (Constants.YES.equalsIgnoreCase(itemDTO.getIsTaxeble())) {
+						if (itemDTO.getTaxAmountForItem() == null) {
+							taxAmountForItem = Utils.calculateTaxAmount(amountBeforeTax, taxPercentage);
+							invoiceItem.setTaxAmountForItem(taxAmountForItem);
+						} else {
+							invoiceItem.setTaxAmountForItem(itemDTO.getTaxAmountForItem());
+						}
+					} else {
+						taxAmountForItem = 0.00;
+					}
+					if (itemDTO.getAmountAfterTax() == null) {
+						Double amountAfterTax = amountBeforeTax + taxAmountForItem;
+						invoiceItem.setAmountAfterTax(amountAfterTax);
+					} else {
+						invoiceItem.setAmountAfterTax(itemDTO.getAmountAfterTax());
+					}
+					invoiceItem.setDiscount(itemDTO.getDiscount());
+					Double marginAmount = itemDTO.getMarginAmount();
+					if (marginAmount == null) {
+						marginAmount = Utils.calculateMarginAmount(existingItem, itemDTO);
+						invoiceItem.setMarginAmount(marginAmount);
+					}
+					if (itemDTO.getTaxOnMargin() == null) {
+						invoiceItem.setTaxOnMargin(Utils.calculateTaxOnMargin(marginAmount, taxPercentage));
+					}
+				}else if(ItemType.EXPENSE.equals(itemDTO.getItemType()) || ItemType.SERVICE.equals(itemDTO.getItemType())){
+					invoiceItem.setItemId(itemDTO.getItemId());
+					invoiceItem.setItemValue(itemDTO.getItemValue());
+					invoiceItem.setTotalCGST(itemDTO.getTotalCGST());
+					invoiceItem.setTotalSGST(itemDTO.getTotalSGST());
+					invoiceItem.setTotalIGST(itemDTO.getTotalIGST());
+					Double taxAmountForItem = 0.0;
+					Double taxPercentage = 0.0;
+					if(itemDTO.getTaxPercentage() == null){
+						Tax tax = taxService.getTaxById(companyId, itemDTO.getTaxId());
+						if(tax != null)
+							taxPercentage = tax.getTotalTaxPercentage();
+					}else {
+						taxPercentage = itemDTO.getTaxPercentage();
+					}
+					if (Constants.YES.equalsIgnoreCase(itemDTO.getIsTaxeble())) {
+						if (itemDTO.getTaxAmountForItem() == null) {
+							taxAmountForItem = Utils.calculateTaxAmount(itemDTO.getItemValue(), taxPercentage);
+							invoiceItem.setTaxAmountForItem(taxAmountForItem);
+						} else {
+							invoiceItem.setTaxAmountForItem(itemDTO.getTaxAmountForItem());
+						}
+					} else {
+						taxAmountForItem = 0.00;
+					}
+					if (itemDTO.getAmountAfterTax() == null) {
+						Double amountAfterTax = itemDTO.getItemValue() + taxAmountForItem;
+						invoiceItem.setAmountAfterTax(amountAfterTax);
+					} else {
+						invoiceItem.setAmountAfterTax(itemDTO.getAmountAfterTax());
+					}
 				}
 			} else if (invoiceData != null && Constants.YES.equalsIgnoreCase(itemDTO.getIsDeleted())) {
 				for (InvoiceItemData existingInvoiceItem : invoiceData.getInvoiceItems()) {
