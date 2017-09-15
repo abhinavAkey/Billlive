@@ -13,12 +13,12 @@ import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 
 @Controller
-public class PrinterController extends BaseController{
-	
+public class PrinterController extends BaseController {
+
 	@Resource(name = "printerService")
 	private PrinterService printerService;
-	
-	@RequestMapping(value = "/print" , method = RequestMethod.GET, consumes = {BillliveMediaType.APPLICATION_JSON}, produces = {BillliveMediaType.APPLICATION_JSON})
+
+	@RequestMapping(value = "/print", method = RequestMethod.GET, produces = { BillliveMediaType.APPLICATION_JSON })
 	public JSendResponse<String> print(Receipt receipt) {
 		printerService.printDocument(receipt);
 		return jsend(Constants.YES);

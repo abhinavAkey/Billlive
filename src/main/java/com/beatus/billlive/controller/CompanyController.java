@@ -101,8 +101,8 @@ public class CompanyController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/remove", method = RequestMethod.DELETE, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/remove", method = RequestMethod.DELETE, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<String> removeCompany(@RequestParam(Constants.COMPANY_ID) String companyId,
 			HttpServletRequest request, HttpServletResponse response) throws CompanyDataException {
 		LOG.info("In removeCompany method of Company Controller");
@@ -125,8 +125,8 @@ public class CompanyController extends BaseController {
 		return jsend(Constants.NO);
 	}
 
-	@RequestMapping(value = "/company/getcompany/{id}", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getcompany/{id}", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<CompanyData> getCompanyById(HttpServletRequest request,
 			HttpServletResponse response) throws CompanyDataException {
 		LOG.info("In getCompanyById method of Company Controller");
@@ -144,8 +144,8 @@ public class CompanyController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "/company/getallcompanys", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getallcompanys", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<CompanyData>> getAllCompanys(HttpServletRequest request,
 			HttpServletResponse response) throws CompanyDataException {
 		LOG.info("In getAllCompanys method of Company Controller");

@@ -104,11 +104,12 @@ public class PurchaseOrderController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/purchaseOrder/remove", method = RequestMethod.DELETE, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/purchaseOrder/remove", method = RequestMethod.DELETE, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<String> removePurchaseOrder(
 			@RequestParam(Constants.PURCHASE_ORDER_NUMBER) String purchaseOrderNumber, HttpServletRequest request,
-			HttpServletResponse response) throws PurchaseOrderDataException, ItemDataException, InventoryValidationException {
+			HttpServletResponse response)
+			throws PurchaseOrderDataException, ItemDataException, InventoryValidationException {
 		LOG.info("In removePurchaseOrder method of PurchaseOrderController");
 		if (StringUtils.isNotBlank(purchaseOrderNumber)) {
 			// These comments will be removed once the auth_token is sent from
@@ -128,8 +129,8 @@ public class PurchaseOrderController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getpurchaseOrder/{id}", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getpurchaseOrder/{id}", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<PurchaseOrderDTO> getPurchaseOrderById(
 			@RequestParam(Constants.PURCHASE_ORDER_NUMBER) String purchaseOrderNumber, HttpServletRequest request,
 			HttpServletResponse response) throws PurchaseOrderDataException {
@@ -151,8 +152,8 @@ public class PurchaseOrderController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "/company/getallpurchaseOrders", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getallpurchaseOrders", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<PurchaseOrderDTO>> getAllPurchaseOrders(HttpServletRequest request,
 			HttpServletResponse response) throws PurchaseOrderDataException {
 		LOG.info("In getAllPurchaseOrders method of PurchaseOrderController");
@@ -171,8 +172,8 @@ public class PurchaseOrderController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getallpurchaseOrders/year/{year}/month/{month}/day/{day}", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getallpurchaseOrders/year/{year}/month/{month}/day/{day}", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<PurchaseOrderDTO>> getAllPurchaseOrdersInADay(
 			@PathVariable(Constants.YEAR) String year, @PathVariable(Constants.MONTH) String month,
 			@PathVariable(Constants.DAY) String day, HttpServletRequest request, HttpServletResponse response)
@@ -192,8 +193,8 @@ public class PurchaseOrderController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getallpurchaseOrders/year/{year}/month/{month}", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getallpurchaseOrders/year/{year}/month/{month}", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<PurchaseOrderDTO>> getAllPurchaseOrdersInAMonth(
 			@PathVariable(Constants.YEAR) String year, @PathVariable(Constants.MONTH) String month,
 			HttpServletRequest request, HttpServletResponse response) throws PurchaseOrderDataException {
@@ -214,8 +215,8 @@ public class PurchaseOrderController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getallpurchaseOrders/year/{year}", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getallpurchaseOrders/year/{year}", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<PurchaseOrderDTO>> getAllPurchaseOrdersInAYear(
 			@PathVariable("year") String year, HttpServletRequest request, HttpServletResponse response)
 			throws PurchaseOrderDataException {

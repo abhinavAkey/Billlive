@@ -98,8 +98,8 @@ public class BillController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/bill/remove", method = RequestMethod.DELETE, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/bill/remove", method = RequestMethod.DELETE, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<String> removeBill(@RequestParam(Constants.BILL_NUMBER) String billNumber,
 			HttpServletRequest request, HttpServletResponse response)
 			throws BillliveServiceException, BillliveServiceException, BillValidationException {
@@ -120,8 +120,8 @@ public class BillController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getbill", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getbill", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<BillDTO> getBillById(@RequestParam(Constants.BILL_NUMBER) String billNumber,
 			HttpServletRequest request, HttpServletResponse response)
 			throws BillliveServiceException, BillliveServiceException {
@@ -139,8 +139,8 @@ public class BillController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "/company/getallbills", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getallbills", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<BillDTO>> getAllBills(HttpServletRequest request,
 			HttpServletResponse response) throws BillliveServiceException {
 		LOG.info("In getAllBills method of Bill Controller");
@@ -155,12 +155,12 @@ public class BillController extends BaseController {
 			throw new BillliveServiceException("CompanyID passed cant be null or empty string");
 		}
 	}
-	
-	@RequestMapping(value = "/company/getallbills/year/{year}/month/{month}/day/{day}", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+
+	@RequestMapping(value = "/company/getallbills/year/{year}/month/{month}/day/{day}", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<BillDTO>> getAllBillsInADay(@PathVariable(Constants.YEAR) String year,
-			@PathVariable(Constants.MONTH) String month, @PathVariable(Constants.DAY) String day, HttpServletRequest request, HttpServletResponse response)
-			throws BillliveServiceException {
+			@PathVariable(Constants.MONTH) String month, @PathVariable(Constants.DAY) String day,
+			HttpServletRequest request, HttpServletResponse response) throws BillliveServiceException {
 		LOG.info("In getAllBillsInAMonth method of Bill Controller");
 		// These comments will be removed once the auth_token is sent from UI
 		// SessionModel sessionModel = initSessionModel(request);
@@ -174,8 +174,8 @@ public class BillController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getallbills/year/{year}/month/{month}", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getallbills/year/{year}/month/{month}", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<BillDTO>> getAllBillsInAMonth(@PathVariable(Constants.YEAR) String year,
 			@PathVariable(Constants.MONTH) String month, HttpServletRequest request, HttpServletResponse response)
 			throws BillliveServiceException {
@@ -192,8 +192,8 @@ public class BillController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getallbills/year/{year}", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getallbills/year/{year}", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<BillDTO>> getAllBillsInAYear(@PathVariable(Constants.YEAR) String year,
 			HttpServletRequest request, HttpServletResponse response) throws BillliveServiceException {
 		LOG.info("In getAllBillsInAYear method of Bill Controller");

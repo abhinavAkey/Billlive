@@ -48,8 +48,8 @@ public class ContactController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getallcontacts", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getallcontacts", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<ContactInfo>> getAllContacts(HttpServletRequest request,
 			HttpServletResponse response) {
 		// These comments will be removed once the auth_token is sent from UI
@@ -61,8 +61,8 @@ public class ContactController extends BaseController {
 		return jsend(contactList);
 	}
 
-	@RequestMapping(value = "/company/getcontact", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getcontact", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<ContactInfo> getContactById(@RequestParam(Constants.CONTACT_ID) String contactId,
 			HttpServletRequest request, HttpServletResponse response) throws ContactInfoException {
 		LOG.info("In getContactById method of ContactController");
@@ -128,8 +128,8 @@ public class ContactController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/removecontact", method = RequestMethod.DELETE, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/removecontact", method = RequestMethod.DELETE, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public JSendResponse<String> removeContact(@RequestParam(Constants.CONTACT_ID) String contactId,
 			HttpServletRequest request, HttpServletResponse response)
 			throws BillliveServiceException, BillValidationException {

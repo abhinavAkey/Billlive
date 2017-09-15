@@ -31,7 +31,7 @@ import com.beatus.billlive.validation.ItemValidator;
 @Controller
 public class ItemController extends BaseController {
 	private static final Logger LOG = LoggerFactory.getLogger(ItemController.class);
-	
+
 	@Resource(name = "itemService")
 	private ItemService itemService;
 
@@ -97,8 +97,8 @@ public class ItemController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/item/remove", method = RequestMethod.DELETE, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/item/remove", method = RequestMethod.DELETE, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<String> removeItem(@RequestParam(Constants.ITEM_ID) String itemId,
 			HttpServletRequest request, HttpServletResponse response) throws ItemDataException {
 		if (StringUtils.isNotBlank(itemId)) {
@@ -116,8 +116,8 @@ public class ItemController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getitem", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getitem", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<ItemData> getItemById(@RequestParam(Constants.ITEM_ID) String itemId,
 			HttpServletRequest request, HttpServletResponse response) throws ItemDataException {
 		// These comments will be removed once the auth_token is sent from UI
@@ -133,8 +133,8 @@ public class ItemController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "/company/getallitems", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getallitems", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<ItemData>> getAllItems(HttpServletRequest request,
 			HttpServletResponse response) throws ItemDataException {
 		SessionModel sessionModel = initSessionModel(request);

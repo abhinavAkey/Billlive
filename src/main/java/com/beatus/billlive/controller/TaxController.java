@@ -90,8 +90,8 @@ public class TaxController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/tax/remove", method = RequestMethod.DELETE, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/tax/remove", method = RequestMethod.DELETE, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<String> removeTax(@RequestParam(Constants.TAX_ID) String taxId,
 			HttpServletRequest request, HttpServletResponse response) throws TaxException {
 		if (StringUtils.isNotBlank(taxId)) {
@@ -109,8 +109,8 @@ public class TaxController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getalltaxs", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getalltaxs", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<Tax>> getAllTaxs(HttpServletRequest request, HttpServletResponse response)
 			throws TaxException {
 		// These comments will be removed once the auth_token is sent from UI
@@ -125,8 +125,8 @@ public class TaxController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/gettax", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/gettax", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<Tax> getTaxById(@RequestParam(Constants.TAX_ID) String taxId,
 			HttpServletRequest request, HttpServletResponse response) throws TaxException {
 		// These comments will be removed once the auth_token is sent from UI

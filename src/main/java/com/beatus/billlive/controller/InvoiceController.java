@@ -26,7 +26,6 @@ import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.exception.BillliveClientValidationException;
 
-
 @Controller
 public class InvoiceController extends BaseController {
 
@@ -34,7 +33,6 @@ public class InvoiceController extends BaseController {
 
 	@Resource(name = "invoiceService")
 	private InvoiceService invoiceService;
-
 
 	private JSendResponse<List<InvoiceDTO>> jsend(List<InvoiceDTO> invoiceDTOList) {
 		if (invoiceDTOList == null || invoiceDTOList.size() == 0) {
@@ -55,8 +53,9 @@ public class InvoiceController extends BaseController {
 	// For add and update invoice both
 	@RequestMapping(value = "/company/invoice/add", method = RequestMethod.POST, consumes = {
 			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
-	public @ResponseBody JSendResponse<String> addInvoice(@RequestBody InvoiceDTO invoiceDTO, HttpServletRequest request,
-			HttpServletResponse response) throws BillliveClientValidationException, BillliveServiceException {
+	public @ResponseBody JSendResponse<String> addInvoice(@RequestBody InvoiceDTO invoiceDTO,
+			HttpServletRequest request, HttpServletResponse response)
+			throws BillliveClientValidationException, BillliveServiceException {
 		LOG.info("In addInvoice method of Invoice Controller");
 		if (invoiceDTO != null) {
 			// These comments will be removed once the auth_token is sent from
@@ -77,8 +76,9 @@ public class InvoiceController extends BaseController {
 
 	@RequestMapping(value = "/company/invoice/update", method = RequestMethod.POST, consumes = {
 			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
-	public @ResponseBody JSendResponse<String> editInvoice(@RequestBody InvoiceDTO invoiceDTO, HttpServletRequest request,
-			HttpServletResponse response) throws BillliveClientValidationException, BillliveServiceException {
+	public @ResponseBody JSendResponse<String> editInvoice(@RequestBody InvoiceDTO invoiceDTO,
+			HttpServletRequest request, HttpServletResponse response)
+			throws BillliveClientValidationException, BillliveServiceException {
 		LOG.info("In editInvoice method of Invoice Controller");
 		if (invoiceDTO != null) {
 			// These comments will be removed once the auth_token is sent from
@@ -97,8 +97,8 @@ public class InvoiceController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/invoice/remove", method = RequestMethod.DELETE, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/invoice/remove", method = RequestMethod.DELETE, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<String> removeInvoice(@RequestParam(Constants.BILL_NUMBER) String invoiceNumber,
 			HttpServletRequest request, HttpServletResponse response)
 			throws BillliveServiceException, BillliveServiceException, BillliveClientValidationException {
@@ -119,11 +119,11 @@ public class InvoiceController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getinvoice", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
-	public @ResponseBody JSendResponse<InvoiceDTO> getInvoiceById(@RequestParam(Constants.BILL_NUMBER) String invoiceNumber,
-			HttpServletRequest request, HttpServletResponse response)
-			throws BillliveServiceException, BillliveServiceException {
+	@RequestMapping(value = "/company/getinvoice", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
+	public @ResponseBody JSendResponse<InvoiceDTO> getInvoiceById(
+			@RequestParam(Constants.BILL_NUMBER) String invoiceNumber, HttpServletRequest request,
+			HttpServletResponse response) throws BillliveServiceException, BillliveServiceException {
 		LOG.info("In getInvoiceById method of Invoice Controller");
 		// These comments will be removed once the auth_token is sent from UI
 		// SessionModel sessionModel = initSessionModel(request);
@@ -138,8 +138,8 @@ public class InvoiceController extends BaseController {
 
 	}
 
-	@RequestMapping(value = "/company/getallinvoices", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	@RequestMapping(value = "/company/getallinvoices", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<InvoiceDTO>> getAllInvoices(HttpServletRequest request,
 			HttpServletResponse response) throws BillliveServiceException {
 		LOG.info("In getAllInvoices method of Invoice Controller");
@@ -154,12 +154,12 @@ public class InvoiceController extends BaseController {
 			throw new BillliveServiceException("CompanyID passed cant be null or empty string");
 		}
 	}
-	
-	@RequestMapping(value = "/company/getallinvoices/year/{year}/month/{month}/day/{day}", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+
+	@RequestMapping(value = "/company/getallinvoices/year/{year}/month/{month}/day/{day}", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<InvoiceDTO>> getAllInvoicesInADay(@PathVariable(Constants.YEAR) String year,
-			@PathVariable(Constants.MONTH) String month, @PathVariable(Constants.DAY) String day, HttpServletRequest request, HttpServletResponse response)
-			throws BillliveServiceException {
+			@PathVariable(Constants.MONTH) String month, @PathVariable(Constants.DAY) String day,
+			HttpServletRequest request, HttpServletResponse response) throws BillliveServiceException {
 		LOG.info("In getAllInvoicesInAMonth method of Invoice Controller");
 		// These comments will be removed once the auth_token is sent from UI
 		// SessionModel sessionModel = initSessionModel(request);
@@ -173,11 +173,11 @@ public class InvoiceController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getallinvoices/year/{year}/month/{month}", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
-	public @ResponseBody JSendResponse<List<InvoiceDTO>> getAllInvoicesInAMonth(@PathVariable(Constants.YEAR) String year,
-			@PathVariable(Constants.MONTH) String month, HttpServletRequest request, HttpServletResponse response)
-			throws BillliveServiceException {
+	@RequestMapping(value = "/company/getallinvoices/year/{year}/month/{month}", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
+	public @ResponseBody JSendResponse<List<InvoiceDTO>> getAllInvoicesInAMonth(
+			@PathVariable(Constants.YEAR) String year, @PathVariable(Constants.MONTH) String month,
+			HttpServletRequest request, HttpServletResponse response) throws BillliveServiceException {
 		LOG.info("In getAllInvoicesInAMonth method of Invoice Controller");
 		// These comments will be removed once the auth_token is sent from UI
 		// SessionModel sessionModel = initSessionModel(request);
@@ -191,10 +191,11 @@ public class InvoiceController extends BaseController {
 		}
 	}
 
-	@RequestMapping(value = "/company/getallinvoices/year/{year}", method = RequestMethod.GET, consumes = {
-			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
-	public @ResponseBody JSendResponse<List<InvoiceDTO>> getAllInvoicesInAYear(@PathVariable(Constants.YEAR) String year,
-			HttpServletRequest request, HttpServletResponse response) throws BillliveServiceException {
+	@RequestMapping(value = "/company/getallinvoices/year/{year}", method = RequestMethod.GET, produces = {
+			BillliveMediaType.APPLICATION_JSON })
+	public @ResponseBody JSendResponse<List<InvoiceDTO>> getAllInvoicesInAYear(
+			@PathVariable(Constants.YEAR) String year, HttpServletRequest request, HttpServletResponse response)
+			throws BillliveServiceException {
 		LOG.info("In getAllInvoicesInAYear method of Invoice Controller");
 		// These comments will be removed once the auth_token is sent from UI
 		// SessionModel sessionModel = initSessionModel(request);
@@ -207,5 +208,5 @@ public class InvoiceController extends BaseController {
 			throw new BillliveServiceException("CompanyId passed cant be null or empty string");
 		}
 	}
-	
+
 }
