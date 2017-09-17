@@ -391,6 +391,7 @@ public class BillService {
 			itemDTO.setMarginAmount(billItem.getMarginAmount());
 			itemDTO.setTaxOnMargin(billItem.getTaxOnMargin());
 			itemDTO.setTaxId(billItem.getTaxId());
+			itemDTO.setTaxPercentage(billItem.getTaxPercentage());
 
 			listItems.add(itemDTO);
 		}
@@ -457,10 +458,15 @@ public class BillService {
 					Double taxPercentage = 0.0;
 					if(itemDTO.getTaxPercentage() == null){
 						Tax tax = taxService.getTaxById(companyId, itemDTO.getTaxId());
-						if(tax != null)
+						if(tax != null){
 							taxPercentage = tax.getTotalTaxPercentage();
+							billItem.setTaxId(itemDTO.getTaxId());
+							billItem.setTaxPercentage(taxPercentage);
+						}
 					}else {
 						taxPercentage = itemDTO.getTaxPercentage();
+						billItem.setTaxId(itemDTO.getTaxId());
+						billItem.setTaxPercentage(taxPercentage);
 					}
 					if (Constants.YES.equalsIgnoreCase(itemDTO.getIsTaxeble())) {
 						if (itemDTO.getTaxAmountForItem() == null) {
@@ -497,10 +503,15 @@ public class BillService {
 					Double taxPercentage = 0.0;
 					if(itemDTO.getTaxPercentage() == null){
 						Tax tax = taxService.getTaxById(companyId, itemDTO.getTaxId());
-						if(tax != null)
+						if(tax != null){
 							taxPercentage = tax.getTotalTaxPercentage();
+							billItem.setTaxId(itemDTO.getTaxId());
+							billItem.setTaxPercentage(taxPercentage);
+						}
 					}else {
 						taxPercentage = itemDTO.getTaxPercentage();
+						billItem.setTaxId(itemDTO.getTaxId());
+						billItem.setTaxPercentage(taxPercentage);
 					}
 					if (Constants.YES.equalsIgnoreCase(itemDTO.getIsTaxeble())) {
 						if (itemDTO.getTaxAmountForItem() == null) {

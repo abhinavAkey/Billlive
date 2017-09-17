@@ -20,7 +20,9 @@ public class BillItemData {
 	private Double marginAmount;
 	private Double taxOnMargin;
 	private String taxId;
+	
 	private String isRemoved;
+	private Double taxPercentage;
 	
 	public String getItemId() {
 		return itemId;
@@ -135,5 +137,11 @@ public class BillItemData {
 	}
 	public void setTotalIGST(Double totalIGST) {
 		this.totalIGST = totalIGST;
+	}
+	public Double getTaxPercentage() {
+		return taxPercentage;
+	}
+	public void setTaxPercentage(Double taxPercentage) {
+		this.taxPercentage = taxPercentage;
 	}
 }

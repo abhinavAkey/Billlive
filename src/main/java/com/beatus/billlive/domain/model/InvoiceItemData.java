@@ -21,6 +21,7 @@ public class InvoiceItemData {
 	private Double taxOnMargin;
 	private String taxId;
 	private String isRemoved;
+	private Double taxPercentage;
 	public String getItemId() {
 		return itemId;
 	}
@@ -134,5 +135,11 @@ public class InvoiceItemData {
 	}
 	public void setIsRemoved(String isRemoved) {
 		this.isRemoved = isRemoved;
+	}
+	public Double getTaxPercentage() {
+		return taxPercentage;
+	}
+	public void setTaxPercentage(Double taxPercentage) {
+		this.taxPercentage = taxPercentage;
 	}
 }

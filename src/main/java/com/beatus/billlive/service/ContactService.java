@@ -94,7 +94,7 @@ public class ContactService {
 					ContactInfo contactInfo = contactPostSnapshot.getValue(ContactInfo.class);
 					contactsList.add(contactInfo);
 				}
-	        	LOGGER.info(contactSnapshot.getKey() + " was " + contactInfo.getContactId());
+	        	LOGGER.info(contactSnapshot.getKey() + " for contact list");
 	        }
 
 	        @Override

@@ -10,7 +10,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,8 +21,6 @@ import com.beatus.billlive.domain.model.JSendResponse;
 import com.beatus.billlive.exception.InventoryValidationException;
 import com.beatus.billlive.exception.ItemDataException;
 import com.beatus.billlive.service.ItemService;
-import com.beatus.billlive.service.exception.BillliveServiceException;
-import com.beatus.billlive.session.management.SessionModel;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
 import com.beatus.billlive.validation.ItemValidator;
@@ -137,13 +134,15 @@ public class ItemController extends BaseController {
 			BillliveMediaType.APPLICATION_JSON })
 	public @ResponseBody JSendResponse<List<ItemData>> getAllItems(HttpServletRequest request,
 			HttpServletResponse response) throws ItemDataException {
-		SessionModel sessionModel = initSessionModel(request);
-		String companyId = sessionModel.getCompanyId();
+		// These comments will be removed once the auth_token is sent from UI
+		// SessionModel sessionModel = initSessionModel(request);
+		// String companyId = sessionModel.getCompanyId();
+		String companyId = (String) request.getParameter(Constants.COMPANY_ID);
 		if (StringUtils.isNotBlank(companyId)) {
 			List<ItemData> itemList = itemService.getAllItems(companyId);
 			return jsend(itemList);
 		} else {
-			throw new ItemDataException("itemId passed cant be null or empty string");
+			throw new ItemDataException("companyId passed cant be null or empty string");
 		}
 	}
 

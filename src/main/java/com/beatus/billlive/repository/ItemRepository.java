@@ -140,19 +140,18 @@ public class ItemRepository {
 	public void getAllItems(String companyId, OnGetDataListener listener) {
 		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
 
-		DatabaseReference itemDataRef = databaseReference.child("items").child(itemData.getCompanyId());
-		itemDataRef.orderByChild("companyId").equalTo(companyId)
-				.addListenerForSingleValueEvent(new ValueEventListener() {
-					@Override
-					public void onDataChange(DataSnapshot dataSnapshot) {
-						waitSource.setResult(dataSnapshot);
-					}
+		DatabaseReference itemDataRef = databaseReference.child("items").child(companyId);
+		itemDataRef.addListenerForSingleValueEvent(new ValueEventListener() {
+		    @Override
+		    public void onDataChange(DataSnapshot dataSnapshot) {
+		    	waitSource.setResult(dataSnapshot);
+		    }
 
-					@Override
-					public void onCancelled(DatabaseError databaseError) {
-						listener.onFailed(databaseError);
-					}
-				});
+		    @Override
+		    public void onCancelled(DatabaseError databaseError) {
+		    	listener.onFailed(databaseError);
+		    }
+		});
 		waitForTheTaskToCompleteAndReturn(waitSource, listener);
 
 	}

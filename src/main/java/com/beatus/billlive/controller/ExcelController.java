@@ -3,6 +3,8 @@ package com.beatus.billlive.controller;
 import java.util.List;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +38,17 @@ public class ExcelController {
 	private ExcelService excelService;
 	
 	@RequestMapping(value="/company/loadexcel", method=RequestMethod.POST, produces = { BillliveMediaType.APPLICATION_JSON })
-    public  @ResponseBody JSendResponse<List<ExcelData>> LoadExcel(@RequestParam("uploadFile") MultipartFile file){
+    public  @ResponseBody JSendResponse<List<ExcelData>> LoadExcel(@RequestParam("uploadFile") MultipartFile file,HttpServletRequest request,
+			HttpServletResponse response){
 		List<ExcelData> itemsData = null;
+		String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+		//String uid = (String) request.getParameter(Constants.UID);
 		if (!file.isEmpty()) {
         	LOG.debug("In here " + file);
         	LOG.debug("File size"+file.getSize());
         	
             try {
-            	itemsData = excelService.readExcelFile(file);
+            	itemsData = excelService.readExcelFile(file,companyId);
             } catch (Exception e) {
             	 e.printStackTrace();
             }
@@ -53,4 +58,19 @@ public class ExcelController {
 		LOG.info("FileData " + itemsData);
 		return jsend(itemsData);
     }
+	
+	@RequestMapping(value="/company/getexcel", method=RequestMethod.GET, produces = { BillliveMediaType.APPLICATION_JSON })
+    public  @ResponseBody JSendResponse<List<ExcelData>> getExcel(HttpServletRequest request,
+			HttpServletResponse response, String excepReportId){
+		List<ExcelData> itemsData = null;
+		String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+		
+		try {
+        	itemsData = excelService.getExcelData(companyId,excepReportId);
+		} catch (Exception e) {
+       	 e.printStackTrace();
+       }
+		return jsend(itemsData);
+		
+	}
 }

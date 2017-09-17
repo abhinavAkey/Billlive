@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -12,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.annotation.Resource;
+
+import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -34,16 +39,30 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.beatus.billlive.domain.model.ExcelData;
+import com.beatus.billlive.domain.model.ExcelReport;
+import com.beatus.billlive.repository.ExcelRepository;
+import com.beatus.billlive.repository.data.listener.OnGetDataListener;
+import com.beatus.billlive.service.exception.BillliveServiceException;
+import com.beatus.billlive.utils.Constants;
+import com.beatus.billlive.utils.Utils;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 
 @Service
 @Component("excelService")
 public class ExcelService {
-
+	@Resource(name = "excelRepository")
+	private ExcelRepository excelRepository;
+	
+	private ExcelReport excelReport = null;
+	
 	private static final Logger LOG = LoggerFactory.getLogger(ExcelService.class);
 
 	public static Map<String, ExcelData> items = new HashMap<String, ExcelData>();
 	public static Map<String, Integer> columnsids = new HashMap<String, Integer>();
 
+	private List<ExcelReport> excelList = new ArrayList<ExcelReport>();
+	
 	public static void readXLSFile() throws IOException {
 		InputStream ExcelFileToRead = new FileInputStream("C:/Test.xls");
 		HSSFWorkbook wb = new HSSFWorkbook(ExcelFileToRead);
@@ -104,7 +123,7 @@ public class ExcelService {
 	}
 
 	@SuppressWarnings("deprecation")
-	public List<ExcelData> readExcelFile(MultipartFile file)
+	public List<ExcelData> readExcelFile(MultipartFile file, String companyId)
 			throws IOException, EncryptedDocumentException, InvalidFormatException {
 		InputStream excelFileToRead = new ByteArrayInputStream(file.getBytes());
 		// XSSFWorkbook wb = new XSSFWorkbook(excelFileToRead);
@@ -126,44 +145,69 @@ public class ExcelService {
 					cell = (XSSFCell) cells.next();
 
 					if (cell.getCellType() == XSSFCell.CELL_TYPE_STRING) {
-						if (cell.getStringCellValue().equals("Item Name")) {
+						if (cell.getStringCellValue().equalsIgnoreCase("Item Name")) {
 							LOG.debug("inside Item Name");
 							columnsids.put("Item Name", i);
 							isColumnNameVisited = false;
 						}
-						if (cell.getStringCellValue().equals("Kgs/Grams")) {
+						if (cell.getStringCellValue().equalsIgnoreCase("Kgs/Grams")) {
 							LOG.debug("inside Kgs/Grams");
 							columnsids.put("Kgs/Grams", i);
 							isColumnNameVisited = false;
 						}
-						if (cell.getStringCellValue().equals("Bags")) {
+						if (cell.getStringCellValue().equalsIgnoreCase("Bags")) {
 							LOG.debug("inside Bags");
 							columnsids.put("Bags", i);
 							isColumnNameVisited = false;
 						}
-						if (cell.getStringCellValue().equals("Rate")) {
+						if (cell.getStringCellValue().equalsIgnoreCase("Rate")) {
 							LOG.debug("inside Rate");
 							columnsids.put("Rate", i);
 							isColumnNameVisited = false;
 						}
-						if (cell.getStringCellValue().equals("Qty")) {
+						if (cell.getStringCellValue().equalsIgnoreCase("Qty")) {
 							LOG.debug("inside Qty");
 							columnsids.put("Qty", i);
 							isColumnNameVisited = false;
 						}
-						if (cell.getStringCellValue().equals("Gross")) {
+						if (cell.getStringCellValue().equalsIgnoreCase("Gross")) {
 							LOG.debug("inside Gross");
 							columnsids.put("Gross", i);
 							isColumnNameVisited = false;
 						}
-						if (cell.getStringCellValue().equals("VAT")) {
+						if (cell.getStringCellValue().equalsIgnoreCase("VAT")) {
 							LOG.debug("inside VAT");
 							columnsids.put("VAT", i);
 							isColumnNameVisited = false;
 						}
-						if (cell.getStringCellValue().equals("Net")) {
+						if (cell.getStringCellValue().equalsIgnoreCase("Net")) {
 							LOG.debug("inside Net");
 							columnsids.put("Net", i);
+							isColumnNameVisited = false;
+						}
+						if (cell.getStringCellValue().equalsIgnoreCase("Date")) {
+							LOG.debug("inside Item Name");
+							columnsids.put("Item Name", i);
+							isColumnNameVisited = false;
+						}
+						if (cell.getStringCellValue().equalsIgnoreCase("Agent")) {
+							LOG.debug("inside Kgs/Grams");
+							columnsids.put("Kgs/Grams", i);
+							isColumnNameVisited = false;
+						}
+						if (cell.getStringCellValue().equalsIgnoreCase("City")) {
+							LOG.debug("inside Bags");
+							columnsids.put("Bags", i);
+							isColumnNameVisited = false;
+						}
+						if (cell.getStringCellValue().equalsIgnoreCase("District")) {
+							LOG.debug("inside Rate");
+							columnsids.put("Rate", i);
+							isColumnNameVisited = false;
+						}
+						if (cell.getStringCellValue().equalsIgnoreCase("State")) {
+							LOG.debug("inside Qty");
+							columnsids.put("Qty", i);
 							isColumnNameVisited = false;
 						}
 
@@ -271,6 +315,17 @@ public class ExcelService {
 			itemsData.add(itemData);		
 		}
 		LOG.debug(items.toString());
+		
+		excelReport = new ExcelReport();
+		excelReport.setReportId(Utils.generateRandomKey(20));
+		excelReport.setCompanyId(companyId);
+		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+		LocalDate localDate = LocalDate.now();
+		excelReport.setDateOfReport(dtf.format(localDate));
+		excelReport.setFileName(file.getOriginalFilename());
+		excelReport.setFileSize(file.getSize());
+		excelReport.setExcelDataList(itemsData);
+		excelRepository.addExcelData(excelReport);
 		return itemsData;
 	}
 
@@ -332,4 +387,40 @@ public class ExcelService {
 		fileOut.close();
 	}
 
-}
+	public List<ExcelData> getExcelData(String companyId,String excepReportId) {
+		LOG.info("In getExcelData method of Excel Service");
+		if (StringUtils.isNotBlank(excepReportId) && StringUtils.isNotBlank(companyId)) {
+
+			excelRepository.getExcelData(companyId, excepReportId, new OnGetDataListener() {
+
+				@Override
+		        public void onStart() {
+		        }
+
+		        @Override
+		        public void onSuccess(DataSnapshot billSnapshot) {
+		            ExcelReport excelReport = billSnapshot.getValue(ExcelReport.class);
+		            excelList.add(excelReport);
+		            LOG.info(" The excel Snapshot Key is " + billSnapshot.getKey());
+		        }
+
+		        @Override
+		        public void onFailed(DatabaseError databaseError) {
+		        	LOG.info("Error retrieving data");
+		           throw new BillliveServiceException(databaseError.getMessage());
+		        }
+		    });
+			if (excelReport != null && !Constants.YES.equalsIgnoreCase(excelReport.getIsRemoved())) {
+				return excelReport.getExcelDataList();
+			} else {
+				return null;
+			}
+		} else {
+			LOG.error(
+					"Billlive Service Exception in the getExcelData() {},  CompanyId or excepReportId passed cant be null or empty string");
+			throw new BillliveServiceException("Company Id or excepReportId passed cant be null or empty string");
+		}
+	}
+	}
+
+
