@@ -112,7 +112,7 @@ public class ExcelRepository {
 		logger.info("In getExcelReport method of ExcelRepository");
 		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
 		
-		DatabaseReference excelDataRef = databaseReference.child("excelreport").child(companyId);
+		DatabaseReference excelDataRef = databaseReference.child("excelRecords").child(companyId);
 		excelDataRef.orderByChild("itemName").equalTo(itemname).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {
