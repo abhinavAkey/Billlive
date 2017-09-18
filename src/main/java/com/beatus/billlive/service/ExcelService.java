@@ -572,7 +572,7 @@ public class ExcelService {
 							" ");
 					if (st.hasMoreTokens()) {
 						// System.out.println(st.nextToken());
-						Date date = new SimpleDateFormat("dd-mm-yyyy").parse(st.nextToken());
+						Date date = new SimpleDateFormat("dd-MM-yyyy").parse(st.nextToken());
 						System.out.println("Date : " + date.toString());
 						itemData.setDate(date);
 						itemData.setMonth(date.getMonth());
@@ -815,6 +815,7 @@ public class ExcelService {
 					throw new BillliveServiceException(databaseError.getMessage());
 				}
 			});
+			LOG.info(excelDataList.toString());
 			if (excelDataList != null) {
 				double janGrossAmount = 0;
 				double febGrossAmount = 0;
@@ -835,6 +836,7 @@ public class ExcelService {
 					}
 					else{
 						if(excel.getMonth() == 0){
+							LOG.info("In January method of Excel Service");
 							janGrossAmount = janGrossAmount + excel.getGrossAmount();
 							
 						}
@@ -891,58 +893,58 @@ public class ExcelService {
 			
 			ExcelPieChart feb = new ExcelPieChart();
 			feb.setValue(String.valueOf(febGrossAmount));
-			feb.setDisplayValue(itemname  + ", " + String.valueOf(janGrossAmount)); 
+			feb.setDisplayValue(itemname  + ", " + String.valueOf(febGrossAmount)); 
 			feb.setLabel("February");
 			
 			ExcelPieChart mar = new ExcelPieChart();
 			mar.setValue(String.valueOf(marGrossAmount));
-			mar.setDisplayValue(itemname  + ", " + String.valueOf(janGrossAmount)); 
+			mar.setDisplayValue(itemname  + ", " + String.valueOf(marGrossAmount)); 
 			mar.setLabel("March");
 			
 			
 			ExcelPieChart apr = new ExcelPieChart();
 			apr.setValue(String.valueOf(aprGrossAmount));
-			apr.setDisplayValue(itemname  + ", " + String.valueOf(janGrossAmount)); 
+			apr.setDisplayValue(itemname  + ", " + String.valueOf(aprGrossAmount)); 
 			apr.setLabel("April");
 			
 			ExcelPieChart may = new ExcelPieChart();
 			may.setValue(String.valueOf(mayGrossAmount));
-			may.setDisplayValue(itemname  + ", " + String.valueOf(janGrossAmount)); 
+			may.setDisplayValue(itemname  + ", " + String.valueOf(mayGrossAmount)); 
 			may.setLabel("May");
 			
 			ExcelPieChart jun = new ExcelPieChart();
 			jun.setValue(String.valueOf(junGrossAmount));
-			jun.setDisplayValue(itemname  + ", " + String.valueOf(janGrossAmount)); 
+			jun.setDisplayValue(itemname  + ", " + String.valueOf(junGrossAmount)); 
 			jun.setLabel("June");
 			
 			ExcelPieChart jul = new ExcelPieChart();
 			jul.setValue(String.valueOf(julGrossAmount));
-			jul.setDisplayValue(itemname  + ", " + String.valueOf(janGrossAmount)); 
+			jul.setDisplayValue(itemname  + ", " + String.valueOf(julGrossAmount)); 
 			jul.setLabel("July");
 			
 			ExcelPieChart aug = new ExcelPieChart();
 			aug.setValue(String.valueOf(augGrossAmount));
-			aug.setDisplayValue(itemname  + ", " + String.valueOf(janGrossAmount)); 
+			aug.setDisplayValue(itemname  + ", " + String.valueOf(augGrossAmount)); 
 			aug.setLabel("August");
 			
 			ExcelPieChart sep = new ExcelPieChart();
 			sep.setValue(String.valueOf(sepGrossAmount));
-			sep.setDisplayValue(itemname  + ", " + String.valueOf(janGrossAmount)); 
+			sep.setDisplayValue(itemname  + ", " + String.valueOf(sepGrossAmount)); 
 			sep.setLabel("September");
 			
 			ExcelPieChart oct = new ExcelPieChart();
 			oct.setValue(String.valueOf(octGrossAmount));
-			oct.setDisplayValue(itemname  + ", " + String.valueOf(janGrossAmount)); 
+			oct.setDisplayValue(itemname  + ", " + String.valueOf(octGrossAmount)); 
 			oct.setLabel("October");
 			
 			ExcelPieChart nov = new ExcelPieChart();
 			nov.setValue(String.valueOf(novGrossAmount));
-			nov.setDisplayValue(itemname  + ", " + String.valueOf(janGrossAmount)); 
+			nov.setDisplayValue(itemname  + ", " + String.valueOf(novGrossAmount)); 
 			nov.setLabel("November");
 			
 			ExcelPieChart dec = new ExcelPieChart();
 			dec.setValue(String.valueOf(decGrossAmount));
-			dec.setDisplayValue(itemname  + ", " + String.valueOf(janGrossAmount)); 
+			dec.setDisplayValue(itemname  + ", " + String.valueOf(decGrossAmount)); 
 			dec.setLabel("December");
 			
 			
