@@ -1,10 +1,11 @@
 package com.beatus.billlive.logging;
 
 
+import java.util.Map;
+
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.contrib.json.classic.JsonLayout;
 import ch.qos.logback.core.CoreConstants;
-import java.util.Map;
 
 /**
  * Custom Logback JSON Layout. Wraps Logback's {@code JsonLayout} providing

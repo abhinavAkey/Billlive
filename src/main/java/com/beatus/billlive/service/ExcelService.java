@@ -288,7 +288,7 @@ public class ExcelService {
 							" ");
 					if (st.hasMoreTokens()) {
 						// System.out.println(st.nextToken());
-						Date date = new SimpleDateFormat("dd-mm-yyyy").parse(st.nextToken());
+						Date date = new SimpleDateFormat("dd-MM-yyyy").parse(st.nextToken());
 						System.out.println("Date : " + date.toString());
 						itemData.setDate(date);
 						itemData.setMonth(date.getMonth());
@@ -790,7 +790,7 @@ public class ExcelService {
 		}
 	}
 	
-	public List<ExcelPieChart> getExcelReport(String companyId, String itemname, String state,String district,String year) {
+	public List<ExcelPieChart> getExcelReport(String companyId, String itemname, String state,String district,String year) throws InterruptedException {
 		LOG.info("In getExcelData method of Excel Service");
 		if (StringUtils.isNotBlank(state) && StringUtils.isNotBlank(companyId) && StringUtils.isNotBlank(district) && StringUtils.isNotBlank(year)) {
 
@@ -815,7 +815,8 @@ public class ExcelService {
 					throw new BillliveServiceException(databaseError.getMessage());
 				}
 			});
-			LOG.info(excelDataList.toString());
+			//Thread.sleep(20000);
+			LOG.info("Excel Data List" + excelDataList.toString());
 			if (excelDataList != null) {
 				double janGrossAmount = 0;
 				double febGrossAmount = 0;
@@ -958,7 +959,6 @@ public class ExcelService {
 			excelPieChartList.add(jul);
 			excelPieChartList.add(aug);
 			excelPieChartList.add(sep);
-			
 			excelPieChartList.add(oct);
 			excelPieChartList.add(nov);
 			excelPieChartList.add(dec);

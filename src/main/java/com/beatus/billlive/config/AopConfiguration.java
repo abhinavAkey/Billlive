@@ -1,13 +1,7 @@
 package com.beatus.billlive.config;
 
-import org.aspectj.lang.ProceedingJoinPoint;
-import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.core.Ordered;
-import org.springframework.core.annotation.Order;
 
 /**
  * Configuration class for AOP. This class contains static inner classes that

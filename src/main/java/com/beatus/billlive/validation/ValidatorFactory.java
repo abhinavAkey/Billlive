@@ -2,16 +2,11 @@ package com.beatus.billlive.validation;
 
 import javax.annotation.Resource;
 
-import org.apache.commons.codec.binary.Base64;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import com.beatus.billlive.config.ParameterValidationConfigurer;
 import com.beatus.billlive.domain.model.RequestParameterValidationData;
-import com.beatus.billlive.utils.Constants;
 
 @Component("validatorFactory")
 public class ValidatorFactory {

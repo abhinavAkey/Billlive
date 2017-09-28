@@ -1,7 +1,5 @@
 package com.beatus.billlive.domain.model;
 
-import java.util.Date;
-
 public class ExcelPieChart extends BaseData{
 	
 	private String label;

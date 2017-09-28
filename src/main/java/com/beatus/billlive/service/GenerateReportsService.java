@@ -1,24 +1,7 @@
 package com.beatus.billlive.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.lang3.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
-
-import com.beatus.billlive.domain.model.BillDTO;
-import com.beatus.billlive.domain.model.BillData;
-import com.beatus.billlive.repository.GenerateReportRepository;
-import com.beatus.billlive.utils.Constants;
-import com.beatus.billlive.validation.exception.BillValidationException;
-import com.beatus.billlive.validation.exception.GenerateReportException;
 
 @Service
 @Component("generateReportsService")

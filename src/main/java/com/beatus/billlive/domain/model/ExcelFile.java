@@ -1,13 +1,5 @@
 package com.beatus.billlive.domain.model;
 
-import java.io.Serializable;
-import java.util.Map;
-import java.util.TreeMap;
-
-import org.apache.poi.ss.usermodel.Sheet;
-
-import org.springframework.validation.Validator;
-
 public class ExcelFile {
 /*
 	Sheet sheet;

@@ -1,11 +1,13 @@
 package com.beatus.billlive.logging;
 
-import ch.qos.logback.contrib.jackson.JacksonJsonFormatter;
-import ch.qos.logback.contrib.json.classic.JsonLayout;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import ch.qos.logback.contrib.jackson.JacksonJsonFormatter;
+import ch.qos.logback.contrib.json.classic.JsonLayout;
 
 /**
  * Custom formatter, wrapping the {@code JacksonJsonFormatter}, providing

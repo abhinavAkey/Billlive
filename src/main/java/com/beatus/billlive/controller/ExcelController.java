@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,9 +48,9 @@ public class ExcelController {
 	
 	@RequestMapping(value="/company/loadexcel", method=RequestMethod.POST, produces = { BillliveMediaType.APPLICATION_JSON })
     public  @ResponseBody JSendResponse<List<ExcelData>> LoadExcel(@RequestParam("uploadFile") MultipartFile file,HttpServletRequest request,
-			HttpServletResponse response){
+			HttpServletResponse response, @RequestParam("companyId") String companyId){
 		List<ExcelData> itemsData = null;
-		String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+		//String companyId = (String) request.getParameter(Constants.COMPANY_ID);
 		//String uid = (String) request.getParameter(Constants.UID);
 		if (!file.isEmpty()) {
         	LOG.debug("In here " + file);

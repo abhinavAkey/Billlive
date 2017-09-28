@@ -64,7 +64,7 @@ public class ExcelRepository {
 	public String addExcelData(ExcelData excelData) {
 		try {
         	logger.info("In addExcelData method of ExcelRepository");
-			DatabaseReference excelDataRef = databaseReference.child("excelRecords").child(excelData.getCompanyId());
+			DatabaseReference excelDataRef = databaseReference.child("excelTest").child(excelData.getCompanyId());
 			Map<String, ExcelData> report = new HashMap<String, ExcelData>();
 			// Generate a reference to a new location and add some data using push()
 			DatabaseReference excelDataPostRef = excelDataRef.push();
@@ -112,7 +112,7 @@ public class ExcelRepository {
 		logger.info("In getExcelReport method of ExcelRepository");
 		TaskCompletionSource<DataSnapshot> waitSource = new TaskCompletionSource<DataSnapshot>();
 		
-		DatabaseReference excelDataRef = databaseReference.child("excelRecords").child(companyId);
+		DatabaseReference excelDataRef = databaseReference.child("excelTest").child(companyId);
 		excelDataRef.orderByChild("itemName").equalTo(itemname).addListenerForSingleValueEvent(new ValueEventListener() {
 		    @Override
 		    public void onDataChange(DataSnapshot dataSnapshot) {

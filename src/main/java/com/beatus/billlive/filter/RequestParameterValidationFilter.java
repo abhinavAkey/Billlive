@@ -1,31 +1,6 @@
 package com.beatus.billlive.filter;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
-
-import com.amazonaws.util.json.JSONObject;
-import com.beatus.billlive.domain.model.RequestParameterValidationData;
-import com.beatus.billlive.utils.Constants;
-import com.beatus.billlive.validation.ParameterValidationException;
-import com.beatus.billlive.validation.ValidatorFactory;
-
-public class RequestParameterValidationFilter implements Filter {
+public class RequestParameterValidationFilter {/*
 
 	private static final Logger LOG = LoggerFactory.getLogger(RequestParameterValidationFilter.class);
 	
@@ -38,28 +13,28 @@ public class RequestParameterValidationFilter implements Filter {
     private ValidatorFactory validatorFactory;
 
 	public void doFilter(ServletRequest req, ServletResponse res, FilterChain chain)
-			throws IOException, ServletException {
-		HttpServletRequest request = (HttpServletRequest) req;
-		HttpServletResponse response = (HttpServletResponse) res;
-		JSONObject jsonObject = null;
-        Map<String, String>  jsonParameters = getRequestParameters(request);
-		if(jsonParameters != null && !jsonParameters.isEmpty()){
-			jsonObject = new JSONObject(jsonParameters);	
-		}
-		
-		if(jsonObject != null){
-			RequestParameterValidationData validationData = constructRequestParameterValidationData(jsonObject);
-		    try{
-		    	validatorFactory.validate(validationData);
-		    }catch(ParameterValidationException ex){
-				LOG.error("Request Parameter validation failure " + ex);
-		    	AuthenticationEntryPoint entryPoint = securityRedirectMap.get(FilterConstants.SECURITY_ERROR);
-				commenceEntryPoint(request, response, ex, entryPoint);
-				return;
-		    }
-		}
-		res = addResponseHeaders(response);
-		chain.doFilter(req, res);
+//			throws IOException, ServletException {
+//		HttpServletRequest request = (HttpServletRequest) req;
+//		HttpServletResponse response = (HttpServletResponse) res;
+//		JSONObject jsonObject = null;
+//        Map<String, String>  jsonParameters = getRequestParameters(request);
+//		if(jsonParameters != null && !jsonParameters.isEmpty()){
+//			jsonObject = new JSONObject(jsonParameters);	
+//		}
+//		
+//		if(jsonObject != null){
+//			RequestParameterValidationData validationData = constructRequestParameterValidationData(jsonObject);
+//		    try{
+//		    	validatorFactory.validate(validationData);
+//		    }catch(ParameterValidationException ex){
+//				LOG.error("Request Parameter validation failure " + ex);
+//		    	AuthenticationEntryPoint entryPoint = securityRedirectMap.get(FilterConstants.SECURITY_ERROR);
+//				commenceEntryPoint(request, response, ex, entryPoint);
+//				return;
+//		    }
+//		}
+//		res = addResponseHeaders(response);
+//		chain.doFilter(req, res);
 		
 	}
 
@@ -151,5 +126,5 @@ public class RequestParameterValidationFilter implements Filter {
 
 	public void destroy() {
 		
-	}
+	}*/
 }

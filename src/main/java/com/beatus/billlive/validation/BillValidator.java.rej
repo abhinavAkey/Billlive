@@ -1,0 +1,9 @@
+diff a/src/main/java/com/beatus/billlive/validation/BillValidator.java b/src/main/java/com/beatus/billlive/validation/BillValidator.java	(rejected hunks)
+@@ -49,7 +49,6 @@
+ 		if(StringUtils.isBlank(billItemDTO.getInventoryId())){
+ 			throw new BillValidationException("BillItemDTO, the inventoryId field is not available, for the bill number " + billItemDTO.getItemId());
+ 		}
+-		if(billItemDTO.getProductValue() != null){
+ 		if(billItemDTO.getProductValue() == null){
+ 			throw new BillValidationException("BillItemDTO, the productValue field is not available, for the bill number " + billItemDTO.getItemId());
+ 		}

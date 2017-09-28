@@ -2,6 +2,7 @@ package com.beatus.billlive.utils;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
+
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.glassfish.jersey.apache.connector.ApacheClientProperties;

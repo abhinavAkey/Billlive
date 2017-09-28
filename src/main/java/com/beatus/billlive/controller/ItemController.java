@@ -17,9 +17,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.beatus.billlive.domain.model.ItemData;
+import com.beatus.billlive.domain.model.ItemDataTest;
 import com.beatus.billlive.domain.model.JSendResponse;
 import com.beatus.billlive.exception.InventoryValidationException;
 import com.beatus.billlive.exception.ItemDataException;
+import com.beatus.billlive.repository.ItemRepository;
 import com.beatus.billlive.service.ItemService;
 import com.beatus.billlive.utils.BillliveMediaType;
 import com.beatus.billlive.utils.Constants;
@@ -50,6 +52,14 @@ public class ItemController extends BaseController {
 			return new JSendResponse<ItemData>(Constants.SUCCESS, itemData);
 		}
 	}
+	
+	private JSendResponse<ItemDataTest> jsend(ItemDataTest itemData) {
+		if (itemData == null) {
+			return new JSendResponse<ItemDataTest>(Constants.FAILURE, itemData);
+		} else {
+			return new JSendResponse<ItemDataTest>(Constants.SUCCESS, itemData);
+		}
+	}
 
 	// For add and update item both
 	@RequestMapping(value = "/company/item/add", method = RequestMethod.POST, consumes = {
@@ -67,6 +77,28 @@ public class ItemController extends BaseController {
 			itemData.setCompanyId(companyId);
 			itemData.setUid(uid);
 			ItemData itemDataAdded = itemService.addItem(itemData, companyId);
+			return jsend(itemDataAdded);
+		} else {
+			throw new ItemDataException("Item data passed cant be null or empty string");
+		}
+	}
+	// For add and update item both
+	@RequestMapping(value = "/company/item/addtest", method = RequestMethod.POST, consumes = {
+			BillliveMediaType.APPLICATION_JSON }, produces = { BillliveMediaType.APPLICATION_JSON })
+	public @ResponseBody JSendResponse<ItemDataTest> addItemTest(@RequestBody ItemDataTest itemData, HttpServletRequest request,
+			HttpServletResponse response) throws Exception {
+		if (itemData != null) {
+			// These comments will be removed once the auth_token is sent from
+			// UI
+			// SessionModel sessionModel = initSessionModel(request);
+			// String companyId = sessionModel.getCompanyId();
+			// String uid = sessionModel.getUid();
+			ItemRepository itemRepository = new ItemRepository();
+			String companyId = (String) request.getParameter(Constants.COMPANY_ID);
+			String uid = (String) request.getParameter(Constants.UID);
+			itemData.setCompanyId(companyId);
+			itemData.setUid(uid);
+			ItemDataTest itemDataAdded = itemRepository.addItemTest(itemData);
 			return jsend(itemDataAdded);
 		} else {
 			throw new ItemDataException("Item data passed cant be null or empty string");
